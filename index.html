@@ -684,6 +684,383 @@ footer a:hover { color: var(--accent); }
   .cd-cta, .next-stage { flex-direction: column; align-items: flex-start; }
   .for-whom-grid { grid-template-columns: 1fr; }
 }
+
+/* ══════════════════════════════
+   SCROLL STORY
+══════════════════════════════ */
+#scroll-story {
+  background: var(--bg);
+  overflow: hidden;
+}
+
+/* 每一幕基礎 */
+.ss-scene {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10vh 8vw;
+  border-top: 1px solid rgba(43,71,64,0.06);
+  position: relative;
+}
+.ss-scene--center { text-align: center; }
+.ss-scene--quiet { background: var(--surface); }
+.ss-scene--dark {
+  background: var(--deep);
+}
+.ss-scene--cta {
+  text-align: center;
+  background: var(--white);
+}
+
+.ss-inner {
+  max-width: 680px;
+  width: 100%;
+}
+.ss-inner--split {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 4rem;
+  align-items: center;
+  max-width: 760px;
+}
+.ss-inner--contrast {
+  display: grid;
+  grid-template-columns: 1fr 1px 1fr;
+  gap: 3rem;
+  align-items: start;
+  max-width: 760px;
+}
+
+/* Fade-in animation */
+.ss-scene .ss-inner,
+.ss-scene .ss-symbol,
+.ss-scene .ss-beat,
+.ss-scene .ss-check-item,
+.ss-scene .ss-space {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+.ss-scene.ss-visible .ss-inner {
+  opacity: 1;
+  transform: translateY(0);
+}
+.ss-scene.ss-visible .ss-symbol {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: 0.1s;
+}
+.ss-scene.ss-visible .ss-beat:nth-child(1) { opacity:1; transform:translateY(0); transition-delay:0.3s; }
+.ss-scene.ss-visible .ss-beat:nth-child(2) { opacity:1; transform:translateY(0); transition-delay:0.55s; }
+.ss-scene.ss-visible .ss-beat:nth-child(3) { opacity:1; transform:translateY(0); transition-delay:0.8s; }
+.ss-scene.ss-visible .ss-check-item:nth-child(1) { opacity:1; transform:translateY(0); transition-delay:0.15s; }
+.ss-scene.ss-visible .ss-check-item:nth-child(2) { opacity:1; transform:translateY(0); transition-delay:0.3s; }
+.ss-scene.ss-visible .ss-check-item:nth-child(3) { opacity:1; transform:translateY(0); transition-delay:0.45s; }
+.ss-scene.ss-visible .ss-check-item:nth-child(4) { opacity:1; transform:translateY(0); transition-delay:0.6s; }
+.ss-scene.ss-visible .ss-space:nth-child(1) { opacity:1; transform:translateY(0); transition-delay:0.1s; }
+.ss-scene.ss-visible .ss-space:nth-child(2) { opacity:1; transform:translateY(0); transition-delay:0.25s; }
+.ss-scene.ss-visible .ss-space:nth-child(3) { opacity:1; transform:translateY(0); transition-delay:0.4s; }
+.ss-scene.ss-visible .ss-space:nth-child(4) { opacity:1; transform:translateY(0); transition-delay:0.55s; }
+
+/* Typography */
+.ss-overline {
+  font-size: 0.7rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 1rem;
+}
+.ss-title {
+  font-family: var(--serif);
+  font-size: clamp(1.5rem, 3.5vw, 2.4rem);
+  font-weight: 300;
+  color: var(--deep);
+  line-height: 1.5;
+  margin-bottom: 1.2rem;
+}
+.ss-title--lg {
+  font-size: clamp(1.6rem, 4vw, 2.8rem);
+}
+.ss-title--light { color: #fff; }
+.ss-subtitle {
+  font-size: 0.72rem;
+  letter-spacing: 0.3em;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin-top: 0.8rem;
+}
+.ss-lead {
+  font-family: var(--serif);
+  font-size: clamp(1.2rem, 2.8vw, 1.8rem);
+  font-weight: 300;
+  color: var(--deep);
+  line-height: 1.7;
+  margin-bottom: 2.5rem;
+}
+.ss-lead em {
+  font-style: normal;
+  color: var(--accent);
+}
+.ss-body {
+  font-size: 0.95rem;
+  color: var(--muted);
+  line-height: 2;
+  margin-bottom: 0.8rem;
+}
+.ss-body--light { color: rgba(255,255,255,0.65); }
+.ss-caption {
+  font-size: 0.88rem;
+  color: var(--muted);
+  line-height: 2;
+  text-align: center;
+  margin-top: 2rem;
+}
+.ss-notes p {
+  font-size: 0.93rem;
+  color: var(--muted);
+  line-height: 2;
+  padding-left: 1rem;
+  border-left: 2px solid var(--soft);
+  margin-bottom: 0.8rem;
+}
+.ss-dark-notes p {
+  font-size: 0.93rem;
+  color: rgba(255,255,255,0.55);
+  line-height: 2;
+  padding-left: 1rem;
+  border-left: 1px solid rgba(255,255,255,0.2);
+  margin-bottom: 0.7rem;
+}
+
+/* Beats */
+.ss-beats {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.ss-beat {
+  font-size: 0.93rem;
+  color: var(--muted);
+  line-height: 1.9;
+  padding-left: 1.2rem;
+  position: relative;
+}
+.ss-beat::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0.7em;
+  width: 4px; height: 4px;
+  border-radius: 50%;
+  background: var(--soft);
+}
+
+/* Symbol */
+.ss-symbol {
+  margin-bottom: 1.8rem;
+  display: flex;
+  justify-content: center;
+}
+
+/* Spaces grid */
+.ss-spaces-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem 3rem;
+  margin-top: 2rem;
+}
+.ss-space { display: flex; flex-direction: column; gap: 0.5rem; }
+.ss-space-dot {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  margin-bottom: 0.4rem;
+}
+.ss-space h3 {
+  font-family: var(--serif);
+  font-size: 0.95rem;
+  color: var(--deep);
+  font-weight: 400;
+}
+.ss-space p {
+  font-size: 0.83rem;
+  color: var(--muted);
+  line-height: 1.8;
+}
+
+/* Positions */
+.ss-positions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  margin: 2.5rem 0;
+}
+.ss-pos-dot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+}
+.ss-pos-dot::before {
+  content: '';
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  background: var(--deep);
+}
+.ss-pos-dot span {
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  color: var(--mid);
+}
+.ss-pos-between {
+  flex: 1;
+  max-width: 180px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+}
+.ss-pos-between::before {
+  content: '';
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg, var(--deep), rgba(169,120,96,0.4), var(--deep));
+}
+.ss-pos-between span {
+  font-size: 0.72rem;
+  color: var(--muted);
+  letter-spacing: 0.06em;
+}
+
+/* Checklist */
+.ss-checklist {
+  margin-top: 1.8rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+.ss-check-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  font-size: 0.93rem;
+  color: var(--text);
+  line-height: 1.8;
+}
+.ss-check-mark {
+  width: 18px; height: 18px;
+  border: 1px solid var(--soft);
+  border-radius: 1px;
+  flex-shrink: 0;
+  margin-top: 0.15em;
+  position: relative;
+}
+
+/* Contrast block */
+.ss-contrast-divider {
+  background: rgba(43,71,64,0.1);
+  width: 1px;
+}
+.ss-contrast-label {
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+}
+.ss-contrast-no .ss-contrast-label { color: var(--muted); }
+.ss-contrast-yes .ss-contrast-label { color: var(--accent); }
+.ss-contrast-no p {
+  font-size: 0.88rem;
+  color: var(--muted);
+  line-height: 2;
+  opacity: 0.6;
+}
+.ss-contrast-yes p {
+  font-size: 0.93rem;
+  color: var(--deep);
+  line-height: 2;
+  font-weight: 400;
+}
+
+/* CTA button */
+.ss-cta-btn {
+  display: inline-block;
+  padding: 0.9rem 2.4rem;
+  background: none;
+  border: 1px solid var(--deep);
+  color: var(--deep);
+  font-size: 0.88rem;
+  letter-spacing: 0.1em;
+  font-family: var(--sans);
+  font-weight: 300;
+  cursor: pointer;
+  border-radius: 2px;
+  transition: background 0.2s, color 0.2s;
+}
+.ss-cta-btn:hover {
+  background: var(--deep);
+  color: #fff;
+}
+
+/* SVG split visual */
+.ss-split-visual {
+  opacity: 0.6;
+}
+
+/* Fees */
+.ss-fees {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  margin: 0 auto 1.4rem;
+  max-width: 340px;
+  background: var(--bg);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.ss-fee-item {
+  flex: 1;
+  padding: 1.2rem 1.4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+.ss-fee-divider {
+  width: 1px;
+  align-self: stretch;
+  background: rgba(43,71,64,0.1);
+}
+.ss-fee-label {
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+}
+.ss-fee-price {
+  font-family: var(--serif);
+  font-size: 1.15rem;
+  color: var(--deep);
+  font-weight: 400;
+  letter-spacing: 0.04em;
+}
+.ss-fee-note {
+  font-size: 0.82rem;
+  color: var(--muted);
+  line-height: 1.9;
+  margin-bottom: 2rem;
+}
+
+/* Mobile */
+@media (max-width: 680px) {
+  .ss-scene { padding: 8vh 6vw; min-height: auto; padding-top: 14vh; padding-bottom: 14vh; }
+  .ss-inner--split { grid-template-columns: 1fr; }
+  .ss-split-visual { display: none; }
+  .ss-inner--contrast { grid-template-columns: 1fr; }
+  .ss-contrast-divider { display: none; }
+  .ss-spaces-grid { grid-template-columns: 1fr; gap: 1.4rem; }
+  .ss-pos-between { max-width: 100px; }
+}
+
 </style>
 </head>
 <body>
@@ -746,6 +1123,211 @@ footer a:hover { color: var(--accent); }
 
     <p class="portal-footnote">不確定你在哪一條路？先點路徑 A 看看。</p>
   </main>
+
+  <!-- ══ SCROLL STORY ══ -->
+  <section id="scroll-story" aria-label="自在邊界學 沉浸式預告">
+
+    <!-- 幕一：標題 -->
+    <div class="ss-scene ss-scene--center" data-scene="1">
+      <div class="ss-inner">
+        <div class="ss-symbol" aria-hidden="true">
+          <svg viewBox="0 0 160 100" width="160" height="100">
+            <circle cx="55" cy="50" r="38" fill="none" stroke="rgba(74,107,93,0.35)" stroke-width="1.2"/>
+            <circle cx="105" cy="50" r="38" fill="none" stroke="rgba(169,120,96,0.35)" stroke-width="1.2"/>
+          </svg>
+        </div>
+        <p class="ss-overline">自在邊界學</p>
+        <h2 class="ss-title">用 SOF 探索<br>人際空間的結構式團體</h2>
+        <p class="ss-subtitle">Invitation Only</p>
+      </div>
+    </div>
+
+    <!-- 幕二：關係裡的疲憊 -->
+    <div class="ss-scene" data-scene="2">
+      <div class="ss-inner">
+        <p class="ss-lead">在人際關係裡，<br>我們其實都在參加一場<br><em>看不見的 party。</em></p>
+        <div class="ss-beats">
+          <span class="ss-beat">有人靠近，有人退後。</span>
+          <span class="ss-beat">有人期待，有人抗拒。</span>
+          <span class="ss-beat">有人給出請求，<br>有人收下，<br>有人不知如何回應。</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 幕三：太快了 -->
+    <div class="ss-scene ss-scene--quiet" data-scene="3">
+      <div class="ss-inner">
+        <h2 class="ss-title ss-title--lg">這些動作往往發生得太快，<br>快到我們來不及感覺。</h2>
+        <div class="ss-notes">
+          <p>單靠談話有時會卡住。</p>
+          <p>有些人際張力總是重複。</p>
+          <p>我們需要一種方式去<br>「慢動作」播放這些瞬間。</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 幕四：SOF 是什麼 -->
+    <div class="ss-scene ss-scene--split" data-scene="4">
+      <div class="ss-inner ss-inner--split">
+        <div class="ss-split-text">
+          <p class="ss-overline">Social Oriented Focusing</p>
+          <h2 class="ss-title">SOF 是什麼？</h2>
+          <p class="ss-body">這是一種 bodily relational practice。</p>
+          <p class="ss-body">用身體作為感知工具，去覺察人際空間中的動作與張力。</p>
+          <p class="ss-body">它不是抽象的心理分析，而是透過結構練習，把經驗變得可感、可辨識、可命名。</p>
+        </div>
+        <div class="ss-split-visual" aria-hidden="true">
+          <svg viewBox="0 0 120 180" width="120" height="180">
+            <!-- 人形輪廓 -->
+            <circle cx="60" cy="28" r="16" fill="none" stroke="rgba(74,107,93,0.3)" stroke-width="1.2"/>
+            <line x1="60" y1="44" x2="60" y2="110" stroke="rgba(74,107,93,0.3)" stroke-width="1.2"/>
+            <line x1="60" y1="65" x2="30" y2="88" stroke="rgba(74,107,93,0.3)" stroke-width="1.2"/>
+            <line x1="60" y1="65" x2="90" y2="88" stroke="rgba(74,107,93,0.3)" stroke-width="1.2"/>
+            <line x1="60" y1="110" x2="40" y2="160" stroke="rgba(74,107,93,0.3)" stroke-width="1.2"/>
+            <line x1="60" y1="110" x2="80" y2="160" stroke="rgba(74,107,93,0.3)" stroke-width="1.2"/>
+            <!-- 核心光點 -->
+            <circle cx="60" cy="72" r="8" fill="rgba(169,120,96,0.25)" stroke="rgba(169,120,96,0.4)" stroke-width="0.8"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- 幕五：四個空間 -->
+    <div class="ss-scene ss-scene--spaces" data-scene="5">
+      <div class="ss-inner">
+        <p class="ss-overline">我們會探索的四個空間</p>
+        <div class="ss-spaces-grid">
+          <div class="ss-space">
+            <div class="ss-space-dot" style="background:rgba(74,107,93,0.5);"></div>
+            <h3>I Space</h3>
+            <p>我如何感覺自己？</p>
+          </div>
+          <div class="ss-space">
+            <div class="ss-space-dot" style="background:rgba(74,107,93,0.35);width:52px;height:52px;"></div>
+            <h3>We Space</h3>
+            <p>當我們形成一個場域時，發生了什麼？</p>
+          </div>
+          <div class="ss-space">
+            <div class="ss-space-dot" style="background:rgba(169,120,96,0.4);width:44px;height:44px;"></div>
+            <h3>I & We Space</h3>
+            <p>我如何在群體中保持自己，同時又連結？</p>
+          </div>
+          <div class="ss-space">
+            <div class="ss-space-dot" style="background:rgba(201,189,182,0.6);border:1px dashed rgba(169,120,96,0.4);width:64px;height:64px;"></div>
+            <h3>Beyond Space</h3>
+            <p>超越個體與群體之間的第三空間。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 幕六：三個位置 -->
+    <div class="ss-scene ss-scene--quiet" data-scene="6">
+      <div class="ss-inner">
+        <p class="ss-overline">我們會探索的三個位置</p>
+        <div class="ss-positions" aria-hidden="true">
+          <div class="ss-pos-dot ss-pos-me">
+            <span>Me</span>
+          </div>
+          <div class="ss-pos-between">
+            <span>我們之間</span>
+          </div>
+          <div class="ss-pos-dot ss-pos-you">
+            <span>You</span>
+          </div>
+        </div>
+        <p class="ss-caption">當我們移動位置，張力如何變化？<br>誰在靠近？誰在退後？誰在支配？誰在讓出空間？</p>
+      </div>
+    </div>
+
+    <!-- 幕七：不是討論，是練習 -->
+    <div class="ss-scene ss-scene--dark" data-scene="7">
+      <div class="ss-inner">
+        <h2 class="ss-title ss-title--light">這不是討論。<br>而是練習。</h2>
+        <p class="ss-body ss-body--light">每一次都會有一個具體練習結構，讓身體直接參與理解。</p>
+        <div class="ss-dark-notes">
+          <p>看見關係如何在「空間」中發生。</p>
+          <p>感覺界線如何移動。</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 幕八：不是分享會 -->
+    <div class="ss-scene ss-scene--split" data-scene="8">
+      <div class="ss-inner ss-inner--contrast">
+        <div class="ss-contrast-item ss-contrast-no">
+          <p class="ss-contrast-label">這不是⋯</p>
+          <p>這不是分享會，</p>
+          <p>也不是情緒宣洩團體。</p>
+          <p>它不是講理論。</p>
+        </div>
+        <div class="ss-contrast-divider"></div>
+        <div class="ss-contrast-item ss-contrast-yes">
+          <p class="ss-contrast-label">這是一個⋯</p>
+          <p>用身體覺察與結構練習，</p>
+          <p>探索人際空間的工具型團體。</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 幕九：給誰的 -->
+    <div class="ss-scene" data-scene="9">
+      <div class="ss-inner">
+        <p class="ss-overline">這是一個給誰的團體？</p>
+        <div class="ss-checklist">
+          <div class="ss-check-item">
+            <span class="ss-check-mark"></span>
+            <span>已在接受個別諮商</span>
+          </div>
+          <div class="ss-check-item">
+            <span class="ss-check-mark"></span>
+            <span>想建立更清晰探索工具的人</span>
+          </div>
+          <div class="ss-check-item">
+            <span class="ss-check-mark"></span>
+            <span>想把人際經驗帶回諮商深化的人</span>
+          </div>
+          <div class="ss-check-item">
+            <span class="ss-check-mark"></span>
+            <span>願意練習、願意實驗、願意一起研究空間的人</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 幕十：結尾 CTA -->
+    <div class="ss-scene ss-scene--cta" data-scene="10">
+      <div class="ss-inner">
+        <div class="ss-symbol" aria-hidden="true">
+          <svg viewBox="0 0 160 100" width="120" height="75">
+            <circle cx="55" cy="50" r="38" fill="none" stroke="rgba(74,107,93,0.25)" stroke-width="1"/>
+            <circle cx="105" cy="50" r="38" fill="none" stroke="rgba(169,120,96,0.25)" stroke-width="1"/>
+          </svg>
+        </div>
+        <p class="ss-overline">自在邊界學 第一階段</p>
+        <h2 class="ss-title">如果你想研究人際空間，<br>而不只是談它。</h2>
+        <p class="ss-body" style="max-width:26em;margin:0 auto 2rem;">小型封閉團體，4–6 人，邀請制。帶領者：王釗文。</p>
+
+        <div class="ss-fees">
+          <div class="ss-fee-item">
+            <span class="ss-fee-label">四堂課程</span>
+            <span class="ss-fee-price">NT$ 4,800</span>
+          </div>
+          <div class="ss-fee-divider"></div>
+          <div class="ss-fee-item">
+            <span class="ss-fee-label">六堂課程</span>
+            <span class="ss-fee-price">NT$ 7,200</span>
+          </div>
+        </div>
+
+        <p class="ss-fee-note">確切日期與時間請見報名表。<br>地點：格瑞思心理諮商所，或採線上進行。</p>
+
+        <button class="ss-cta-btn" onclick="goPageCourse('page-course-1','自在邊界學 I')">了解完整課程 →</button>
+      </div>
+    </div>
+
+  </section>
+  <!-- ══ END SCROLL STORY ══ -->
 
   <footer>
     <span>© IRC｜Inner Reality Circle</span>
@@ -1484,6 +2066,28 @@ function goPageCourse(id, title) {
   navBack.textContent = '← 認識課程';
   
 }
+
+// ── Scroll Story Observer
+(function() {
+  var scenes = document.querySelectorAll('.ss-scene');
+  if (!scenes.length) return;
+
+  var observer = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('ss-visible');
+      }
+    });
+  }, {
+    threshold: 0.18,
+    rootMargin: '0px 0px -8% 0px'
+  });
+
+  scenes.forEach(function(scene) {
+    observer.observe(scene);
+  });
+})();
+
 </script>
 
 </body>
