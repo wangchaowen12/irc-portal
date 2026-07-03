@@ -1051,6 +1051,48 @@ footer a:hover { color: var(--accent); }
 }
 
 /* Mobile */
+.ss-path-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-top: 2rem;
+  max-width: 420px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.ss-path-card {
+  background: var(--bg);
+  border: 1px solid rgba(43,71,64,0.1);
+  border-radius: 2px;
+  padding: 1.2rem 1.4rem;
+  cursor: pointer;
+  text-align: left;
+  position: relative;
+  transition: border-color 0.2s, background 0.2s;
+}
+.ss-path-card:hover {
+  border-color: rgba(43,71,64,0.25);
+  background: var(--surface);
+}
+.ss-path-label {
+  font-size: 0.68rem;
+  letter-spacing: 0.16em;
+  color: var(--accent);
+  text-transform: uppercase;
+  margin-bottom: 0.4rem;
+}
+.ss-path-text {
+  font-size: 0.83rem;
+  color: var(--mid);
+  line-height: 1.7;
+}
+.ss-path-arrow {
+  position: absolute;
+  bottom: 0.9rem; right: 1rem;
+  font-size: 0.75rem;
+  color: var(--soft);
+}
+
 @media (max-width: 680px) {
   .ss-scene { padding: 8vh 6vw; min-height: auto; padding-top: 14vh; padding-bottom: 14vh; }
   .ss-inner--split { grid-template-columns: 1fr; }
@@ -1069,6 +1111,20 @@ footer a:hover { color: var(--accent); }
 <nav>
   <button class="nav-logo" onclick="goHome()">IRC</button>
   <div style="display:flex;align-items:center;gap:0.5rem;" id="nav-right">
+    <div id="nav-shortcuts" style="display:flex;gap:0.6rem;margin-right:0.8rem;">
+      <button onclick="goPage('page-sof')"
+        style="background:none;border:1px solid rgba(43,71,64,0.2);font-family:var(--sans);font-size:0.75rem;font-weight:300;color:var(--mid);cursor:pointer;padding:0.4rem 0.9rem;border-radius:2px;letter-spacing:0.04em;transition:background 0.2s,color 0.2s;"
+        onmouseover="this.style.background='rgba(43,71,64,0.06)'"
+        onmouseout="this.style.background='none'">
+        個別諮商
+      </button>
+      <button onclick="goPage('page-members')"
+        style="background:none;border:1px solid rgba(43,71,64,0.2);font-family:var(--sans);font-size:0.75rem;font-weight:300;color:var(--mid);cursor:pointer;padding:0.4rem 0.9rem;border-radius:2px;letter-spacing:0.04em;transition:background 0.2s,color 0.2s;"
+        onmouseover="this.style.background='rgba(43,71,64,0.06)'"
+        onmouseout="this.style.background='none'">
+        已在課程
+      </button>
+    </div>
     <span id="nc-home" style="display:none;font-size:0.78rem;color:var(--muted);">
       <button onclick="goHome()" style="background:none;border:none;font-family:var(--sans);font-size:0.78rem;font-weight:300;color:var(--muted);cursor:pointer;padding:0;">入口</button>
       <span style="color:var(--soft);margin:0 0.3rem;">/</span>
@@ -1089,39 +1145,14 @@ footer a:hover { color: var(--accent); }
 <main id="page-portal-main" style="position:relative;z-index:1;">
     <p class="portal-kicker">Inner Reality Circle</p>
     <h1 class="portal-title">
-      你現在在哪裡？<br>
-      從這裡開始。
+      這是一個讓內在真實<br>有機會被接觸的練習場域。
     </h1>
     <p class="portal-desc">
-      這是一個讓內在真實有機會被接觸的練習場域。<br>
-      不需要立刻知道方向，先找到你現在的位置。
+      慢慢往下讀，<br>看看有沒有什麼讓你想靠近的東西。
     </p>
-
-    <div class="path-cards">
-      <!-- 路徑 A -->
-      <div class="path-card" tabindex="0"
-           onclick="goPage('page-sof')"
-           onkeydown="if(event.key==='Enter')goPage('page-sof')">
-        <span class="path-icon">🌱</span>
-        <p class="path-label">路徑 A</p>
-        <h2>我目前在個別諮商，<br>想了解 SOF 課程</h2>
-        <p>認識自在邊界學，看看課程是否適合你現在的狀態。</p>
-        <span class="arrow">→</span>
-      </div>
-
-      <!-- 路徑 B -->
-      <div class="path-card" tabindex="0"
-           onclick="goPage('page-members')"
-           onkeydown="if(event.key==='Enter')goPage('page-members')">
-        <span class="path-icon">🌿</span>
-        <p class="path-label">路徑 B</p>
-        <h2>我已經在 SOF 課程中，<br>想進入班級頁面</h2>
-        <p>找到你的班級，進入練習空間，與同學相遇。</p>
-        <span class="arrow">→</span>
-      </div>
+    <div style="margin-top:2rem;">
+      <span style="font-size:0.75rem;letter-spacing:0.15em;color:var(--soft);">↓ 繼續閱讀</span>
     </div>
-
-    <p class="portal-footnote">不確定你在哪一條路？先點路徑 A 看看。</p>
   </main>
 
   <!-- ══ SCROLL STORY ══ -->
@@ -1323,6 +1354,23 @@ footer a:hover { color: var(--accent); }
         <p class="ss-fee-note">確切日期與時間請見報名表。<br>地點：格瑞思心理諮商所，或採線上進行。</p>
 
         <button class="ss-cta-btn" onclick="goPageCourse('page-course-1','自在邊界學 I')">了解完整課程 →</button>
+
+        <div class="ss-path-cards">
+          <div class="ss-path-card" tabindex="0"
+               onclick="goPage('page-sof')"
+               onkeydown="if(event.key==='Enter')goPage('page-sof')">
+            <p class="ss-path-label">個別諮商中</p>
+            <p class="ss-path-text">想了解 SOF 課程與自在邊界學</p>
+            <span class="ss-path-arrow">→</span>
+          </div>
+          <div class="ss-path-card" tabindex="0"
+               onclick="goPage('page-members')"
+               onkeydown="if(event.key==='Enter')goPage('page-members')">
+            <p class="ss-path-label">已在課程中</p>
+            <p class="ss-path-text">進入班級頁面與練習空間</p>
+            <span class="ss-path-arrow">→</span>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -2028,6 +2076,8 @@ function goHome() {
   var el = document.getElementById('page-portal');
   el.classList.add('active');
   el.scrollTop = 0;
+  var sc = document.getElementById('nav-shortcuts');
+  if(sc) sc.style.display = 'flex';
   document.getElementById('nc-home').style.display = 'none';
   document.getElementById('nc-sof').style.display = 'none';
   document.getElementById('nc-sep').style.display = 'none';
@@ -2040,6 +2090,8 @@ function goPage(id) {
   var el = document.getElementById(id);
   el.classList.add('active');
   el.scrollTop = 0;
+  var sc = document.getElementById('nav-shortcuts');
+  if(sc) sc.style.display = 'none';
   var navBack = document.getElementById('nav-back');
   document.getElementById('nc-sof').style.display = 'none';
   document.getElementById('nc-sep').style.display = 'none';
@@ -2055,6 +2107,8 @@ function goPageCourse(id, title) {
   var el = document.getElementById(id);
   el.classList.add('active');
   el.scrollTop = 0;
+  var sc = document.getElementById('nav-shortcuts');
+  if(sc) sc.style.display = 'none';
   var navBack = document.getElementById('nav-back');
   document.getElementById('nc-home').style.display = 'inline';
   document.getElementById('nc-sof').style.display  = 'inline';
