@@ -1533,12 +1533,11 @@ footer a:hover { color: var(--accent); }
         <a class="course-link" href="https://docs.google.com/forms/d/e/1FAIpQLSfbt3kqtLt5PMTbU7zv_8ktAiJrqjshuGyRo_qlPxqLVxHDAg/viewform" target="_blank">前往報名 →</a>
       </div>
 
-      <div class="course-card">
-        <span class="badge badge-coming">進行中</span>
+      <div class="course-card" style="opacity:0.55;">
+        <span class="badge badge-past">已完成</span>
         <h3>2026.5｜A-4 班</h3>
         <div class="course-meta">
-          <span>📅 2026 年 5 月起</span>
-          <span>👥 小班制</span>
+          <span>📅 2026 年 5 月</span>
         </div>
       </div>
 
@@ -1596,22 +1595,15 @@ footer a:hover { color: var(--accent); }
     <h2 class="sec-title" style="font-family:var(--serif);font-size:1.3rem;color:var(--deep);font-weight:400;margin-bottom:0.5rem;">選擇你的班級</h2>
     <p style="font-size:0.86rem;color:var(--muted);margin-bottom:0;">根據你加入的開課月份點入。</p>
 
+    <!-- 現正招生 -->
     <div class="class-list">
 
-      <a class="class-card"
-         href="https://www.notion.so/2026-5-A-4-34908e590bd3806da5c7cd11c3b73bdf"
-         target="_blank">
-        <p class="class-date">2026.5</p>
-        <h3>A-4 班</h3>
-        <p class="class-status">進行中</p>
-      </a>
-
-      <a class="class-card"
-         href="https://www.notion.so/2026-4-C-2-34ccceba8ab8807e916fef07e77dc446"
-         target="_blank">
-        <p class="class-date">2026.4</p>
-        <h3>C-2 班</h3>
-        <p class="class-status">進行中</p>
+      <a class="class-card" href="https://docs.google.com/forms/d/e/1FAIpQLSfbt3kqtLt5PMTbU7zv_8ktAiJrqjshuGyRo_qlPxqLVxHDAg/viewform" target="_blank"
+         style="border-color:rgba(169,120,96,0.3);">
+        <p class="class-date">2026.7</p>
+        <h3>D 班</h3>
+        <p class="class-status" style="color:var(--accent);">招生中｜7 月底開課</p>
+        <p style="font-size:0.78rem;color:var(--accent);margin-top:0.8rem;letter-spacing:0.04em;">前往報名 →</p>
       </a>
 
       <a class="class-card" href="https://docs.google.com/forms/d/e/1FAIpQLSfbt3kqtLt5PMTbU7zv_8ktAiJrqjshuGyRo_qlPxqLVxHDAg/viewform" target="_blank"
@@ -1622,14 +1614,34 @@ footer a:hover { color: var(--accent); }
         <p style="font-size:0.78rem;color:var(--accent);margin-top:0.8rem;letter-spacing:0.04em;">前往報名 →</p>
       </a>
 
-      <a class="class-card" href="https://docs.google.com/forms/d/e/1FAIpQLSfbt3kqtLt5PMTbU7zv_8ktAiJrqjshuGyRo_qlPxqLVxHDAg/viewform" target="_blank"
-         style="border-color:rgba(169,120,96,0.3);">
-        <p class="class-date">2026.7</p>
-        <h3>D 班</h3>
-        <p class="class-status" style="color:var(--accent);">招生中｜7 月底開課</p>
-        <p style="font-size:0.78rem;color:var(--accent);margin-top:0.8rem;letter-spacing:0.04em;">前往報名 →</p>
-      </a>
+    </div>
 
+    <!-- 過往班次 -->
+    <div style="margin-top:2.8rem;">
+      <p style="font-size:0.66rem;letter-spacing:0.24em;text-transform:uppercase;color:var(--soft);margin-bottom:1rem;">過往班次</p>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:0.7rem;">
+
+        <a href="https://www.notion.so/2026-5-A-4-34908e590bd3806da5c7cd11c3b73bdf"
+           target="_blank"
+           style="padding:0.9rem 1.1rem;border:1px solid rgba(43,71,64,0.12);border-radius:2px;text-decoration:none;display:block;transition:border-color 0.2s,opacity 0.2s;opacity:0.6;"
+           onmouseover="this.style.opacity='1';this.style.borderColor='rgba(43,71,64,0.28)'"
+           onmouseout="this.style.opacity='0.6';this.style.borderColor='rgba(43,71,64,0.12)'">
+          <p style="font-size:0.66rem;letter-spacing:0.14em;color:var(--muted);margin-bottom:0.3rem;text-transform:uppercase;">2026.5</p>
+          <p style="font-family:var(--serif);font-size:0.88rem;color:var(--mid);font-weight:400;margin-bottom:0.4rem;">A-4 班</p>
+          <p style="font-size:0.7rem;color:var(--soft);">已完成　<span style="color:rgba(74,107,93,0.5);font-size:0.68rem;letter-spacing:0.04em;">進入班級頁 →</span></p>
+        </a>
+
+        <a href="https://www.notion.so/2026-4-C-2-34ccceba8ab8807e916fef07e77dc446"
+           target="_blank"
+           style="padding:0.9rem 1.1rem;border:1px solid rgba(43,71,64,0.12);border-radius:2px;text-decoration:none;display:block;transition:border-color 0.2s,opacity 0.2s;opacity:0.6;"
+           onmouseover="this.style.opacity='1';this.style.borderColor='rgba(43,71,64,0.28)'"
+           onmouseout="this.style.opacity='0.6';this.style.borderColor='rgba(43,71,64,0.12)'">
+          <p style="font-size:0.66rem;letter-spacing:0.14em;color:var(--muted);margin-bottom:0.3rem;text-transform:uppercase;">2026.4</p>
+          <p style="font-family:var(--serif);font-size:0.88rem;color:var(--mid);font-weight:400;margin-bottom:0.4rem;">C-2 班</p>
+          <p style="font-size:0.7rem;color:var(--soft);">已完成　<span style="color:rgba(74,107,93,0.5);font-size:0.68rem;letter-spacing:0.04em;">進入班級頁 →</span></p>
+        </a>
+
+      </div>
     </div>
   </div>
 
