@@ -407,16 +407,6 @@ nav {
 .class-card .class-status {
   font-size: 0.8rem; color: var(--muted);
 }
-.class-card {
-  background: var(--bg);
-  border: 1px dashed rgba(43,71,64,0.15);
-  border-radius: 2px;
-  padding: 1.6rem 1.8rem;
-  display: flex; align-items: center; gap: 0.8rem;
-}
-.class-card .class-date { font-size: 0.72rem; letter-spacing: 0.1em; color: var(--muted); }
-.class-card p { font-size: 0.84rem; color: var(--muted); }
-
 /* PRACTICE WALL INFO */
 .practice-box {
   background: var(--surface);
@@ -1533,24 +1523,25 @@ footer a:hover { color: var(--accent); }
     <h2 class="sec-title">目前開放的班次</h2>
     <div class="course-grid">
 
-      <div class="course-card">
+      <div class="course-card" style="border-color:rgba(169,120,96,0.45);position:relative;">
+        <span style="position:absolute;top:-10px;left:1.4rem;background:var(--accent);color:#fff;font-size:0.68rem;letter-spacing:0.08em;padding:3px 10px;border-radius:2px;">🌱 新手由此開始</span>
         <span class="badge badge-open">招生中</span>
-        <h3>2026.9｜D 班</h3>
+        <h3>自在邊界學 I<span style="display:block;font-size:0.72rem;color:var(--muted);font-weight:400;margin-top:0.2rem;">初階班</span></h3>
         <div class="course-meta">
-          <span>📅 預計 2026 年 9 月 2 日開課</span>
+          <span>📅 預計 2026 年 10 月底開課</span>
           <span>現正招生，名額有限</span>
         </div>
         <a class="course-link" href="https://docs.google.com/forms/d/e/1FAIpQLSfbt3kqtLt5PMTbU7zv_8ktAiJrqjshuGyRo_qlPxqLVxHDAg/viewform" target="_blank">前往報名 →</a>
       </div>
 
       <div class="course-card">
-        <span class="badge badge-coming">即將開始</span>
-        <h3>2026.8｜C-3 班</h3>
+        <span class="badge badge-open">招生中</span>
+        <h3>2026.8｜自在邊界學 II＋</h3>
         <div class="course-meta">
           <span>📅 2026 年 8 月 26 日起</span>
-          <span>👥 C-2 進階，集結中</span>
+          <span>六堂完整旅程・CII＋班</span>
         </div>
-        <a class="course-link" href="https://docs.google.com/forms/d/e/1FAIpQLSfbt3kqtLt5PMTbU7zv_8ktAiJrqjshuGyRo_qlPxqLVxHDAg/viewform" target="_blank">前往報名 →</a>
+        <span class="course-link" style="cursor:pointer;" onclick="goPageCourse('page-course-2plus','自在邊界學 II＋')">了解 II＋ →</span>
       </div>
 
       <div class="course-card" style="opacity:0.55;">
@@ -1620,18 +1611,19 @@ footer a:hover { color: var(--accent); }
 
       <a class="class-card" href="https://docs.google.com/forms/d/e/1FAIpQLSfbt3kqtLt5PMTbU7zv_8ktAiJrqjshuGyRo_qlPxqLVxHDAg/viewform" target="_blank"
          style="border-color:rgba(169,120,96,0.3);">
-        <p class="class-date">2026.9</p>
-        <h3>D 班</h3>
-        <p class="class-status" style="color:var(--accent);">招生中｜9 月 2 日開課</p>
+        <p class="class-date">2026.10</p>
+        <h3>自在邊界學 I<span style="display:block;font-size:0.7rem;color:var(--muted);font-weight:400;margin-top:0.15rem;">初階班</span></h3>
+        <p class="class-status" style="color:var(--accent);">招生中｜預計 10 月底開課</p>
         <p style="font-size:0.78rem;color:var(--accent);margin-top:0.8rem;letter-spacing:0.04em;">前往報名 →</p>
       </a>
 
-      <a class="class-card" href="https://docs.google.com/forms/d/e/1FAIpQLSfbt3kqtLt5PMTbU7zv_8ktAiJrqjshuGyRo_qlPxqLVxHDAg/viewform" target="_blank"
-         style="border-color:rgba(169,120,96,0.3);">
+      <a class="class-card" href="javascript:void(0)" onclick="goPageCourse('page-course-2plus','自在邊界學 II＋')"
+         style="border-color:rgba(169,120,96,0.3);cursor:pointer;">
         <p class="class-date">2026.8</p>
-        <h3>C-3 班</h3>
-        <p class="class-status" style="color:var(--mid);">即將開始｜8 月 26 日開課</p>
-        <p style="font-size:0.78rem;color:var(--mid);margin-top:0.8rem;letter-spacing:0.04em;">前往報名 →</p>
+        <h3>CII＋班</h3>
+        <p style="font-size:0.72rem;color:var(--muted);margin-top:-0.3rem;margin-bottom:0.4rem;">自在邊界學 II＋</p>
+        <p class="class-status" style="color:var(--mid);">招生中｜8 月 26 日開課</p>
+        <p style="font-size:0.78rem;color:var(--mid);margin-top:0.8rem;letter-spacing:0.04em;">了解課程內容 →</p>
       </a>
 
     </div>
