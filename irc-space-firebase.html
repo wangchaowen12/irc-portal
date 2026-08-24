@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-<<!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
 <meta charset="UTF-8">
@@ -56,6 +55,25 @@ body {
 .gate-msg { font-size: 0.82rem; color: var(--mid); margin-top: 0.9rem; min-height: 1.2em; line-height: 1.7; }
 .gate-msg.error { color: var(--accent); }
 
+/* ── CLASS PICKER ── */
+#classPicker {
+  display: none;
+  min-height: calc(100vh - 44px);
+  align-items: center; justify-content: center;
+  padding: 4rem 6vw;
+}
+.picker-box { max-width: 420px; width: 100%; text-align: center; }
+.picker-kicker { font-size: 0.7rem; letter-spacing: 0.28em; text-transform: uppercase; color: var(--accent); margin-bottom: 1.4rem; }
+.picker-title { font-family: var(--serif); font-size: clamp(1.4rem, 3.6vw, 1.7rem); font-weight: 300; color: var(--deep); line-height: 1.5; margin-bottom: 0.8rem; }
+.picker-sub { font-size: 0.88rem; color: var(--muted); margin-bottom: 2rem; }
+.class-pick-btn {
+  display: block; width: 100%; padding: 1rem 1.2rem; margin-bottom: 0.8rem;
+  background: var(--white); border: 1px solid rgba(43,71,64,0.18); border-radius: 2px;
+  font-family: var(--sans); font-size: 0.92rem; color: var(--text); text-align: left;
+  cursor: pointer; transition: border-color 0.2s, transform 0.2s;
+}
+.class-pick-btn:hover { border-color: var(--accent); transform: translateY(-1px); }
+
 /* ── SPACE SHELL ── */
 #space { display: none; }
 .space-nav {
@@ -65,6 +83,7 @@ body {
   backdrop-filter: blur(10px); border-bottom: 1px solid rgba(43,71,64,0.08);
 }
 .space-nav .logo { font-family: var(--serif); font-size: 0.9rem; color: var(--deep); letter-spacing: 0.1em; }
+.space-nav .nav-actions { display: flex; align-items: center; gap: 1rem; }
 .space-nav button {
   background: none; border: none; font-family: var(--sans); font-size: 0.78rem;
   color: var(--muted); cursor: pointer; letter-spacing: 0.04em;
@@ -160,6 +179,21 @@ details.practice[open] summary .chevron { transform: rotate(90deg); }
 .announce-item:first-child { border-top: 1px solid rgba(43,71,64,0.08); }
 .announce-item .a-date { font-size: 0.72rem; color: var(--accent); letter-spacing: 0.08em; display: block; margin-bottom: 0.3rem; }
 
+.video-item {
+  display: flex; gap: 1rem; align-items: flex-start;
+  padding: 1rem 0; border-bottom: 1px solid rgba(43,71,64,0.08);
+  max-width: 640px; text-decoration: none; color: inherit;
+}
+.video-item:first-child { border-top: 1px solid rgba(43,71,64,0.08); }
+.video-item .v-play {
+  flex-shrink: 0; width: 34px; height: 34px; border-radius: 50%;
+  background: var(--deep); color: #fff; display: flex; align-items: center;
+  justify-content: center; font-size: 0.75rem; margin-top: 0.1rem;
+}
+.video-item .v-title { font-size: 0.92rem; color: var(--text); margin-bottom: 0.2rem; }
+.video-item .v-date { font-size: 0.72rem; color: var(--soft); letter-spacing: 0.04em; }
+.video-item:hover .v-title { color: var(--accent); }
+
 .wall-box { max-width: 640px; }
 .wall-input { display: flex; gap: 0.7rem; margin-bottom: 1.8rem; }
 .wall-input textarea {
@@ -196,10 +230,22 @@ details.practice[open] summary .chevron { transform: rotate(90deg); }
   </div>
 </div>
 
+<div id="classPicker">
+  <div class="picker-box">
+    <p class="picker-kicker">IRC Space</p>
+    <h1 class="picker-title">你同時屬於好幾個班級</h1>
+    <p class="picker-sub">請選擇你這次想進入的空間，之後也可以隨時切換。</p>
+    <div id="classPickerList"></div>
+  </div>
+</div>
+
 <div id="space">
   <nav class="space-nav">
     <span class="logo">IRC Space</span>
-    <button onclick="logout()">← 登出</button>
+    <div class="nav-actions">
+      <button onclick="switchClass()" id="switchClassBtn" style="display:none;">切換班級</button>
+      <button onclick="logout()">← 登出</button>
+    </div>
   </nav>
 
   <div class="hero">
@@ -225,7 +271,7 @@ details.practice[open] summary .chevron { transform: rotate(90deg); }
     <p class="wall-empty">尚未提供練習內容。</p>
   </div>
 
-  <div class="space-section alt">
+  <div class="space-section">
     <p class="sec-label">Latest</p>
     <h2 class="sec-title">最新消息</h2>
     <div id="announceList"></div>
@@ -384,329 +430,13 @@ onAuthStateChanged(auth, async (user) => {
     document.getElementById('closingArea').style.display = 'block';
   }
 
-  const aList = document.getElementById('announceList');
-  aList.innerHTML = (cls.announcements || []).map(a =>
-    `<div class="announce-item"><span class="a-date">${a.date}</span>${a.text}</div>`
-  ).join('') || '<p class="wall-empty">目前沒有新消息。</p>';
-
-  if (unsubWall) unsubWall();
-  const wallQ = query(collection(db, 'groups', currentGroupCode, 'wall'), orderBy('createdAt', 'desc'));
-  unsubWall = onSnapshot(wallQ, (snap) => {
-    const wList = document.getElementById('wallList');
-    if (snap.empty) {
-      wList.innerHTML = '<p class="wall-empty">還沒有人留言，第一個開始也很好。</p>';
-      return;
-    }
-    wList.innerHTML = snap.docs.map(d => {
-      const m = d.data();
-      return `<div class="wall-msg"><div class="w-meta">${m.authorEmail}</div>${escapeHtml(m.text)}</div>`;
-    }).join('');
-  });
-});
-
-window.postMsg = async function () {
-  const ta = document.getElementById('wallText');
-  const text = ta.value.trim();
-  if (!text || !currentGroupCode || !auth.currentUser) return;
-  await addDoc(collection(db, 'groups', currentGroupCode, 'wall'), {
-    text,
-    authorEmail: auth.currentUser.email,
-    createdAt: serverTimestamp()
-  });
-  ta.value = '';
-};
-
-function escapeHtml(s) {
-  const d = document.createElement('div');
-  d.textContent = s;
-  return d.innerHTML;
-}
-</script>
-
-</body>
-</html>html lang="zh-Hant">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>IRC Space</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@300;400;600&family=Noto+Sans+TC:wght@300;400;500&display=swap" rel="stylesheet">
-<style>
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-:root {
-  --bg: #EDEEE9; --surface: #F7F5F1; --white: #FDFCFA;
-  --deep: #2B4740; --mid: #4A6B5D; --accent: #A97860; --soft: #C9BDB6;
-  --text: #2A2A27; --muted: #787870;
-  --serif: 'Noto Serif TC', serif; --sans: 'Noto Sans TC', sans-serif;
-}
-body {
-  font-family: var(--sans); background: var(--bg); color: var(--text);
-  font-weight: 300; line-height: 1.85; font-size: 16px; min-height: 100vh;
-}
-
-.demo-banner {
-  background: var(--deep); color: rgba(255,255,255,0.85);
-  font-size: 0.78rem; letter-spacing: 0.04em; text-align: center;
-  padding: 0.6rem 1rem; line-height: 1.6;
-}
-.demo-banner strong { color: #fff; font-weight: 400; }
-
-#gate {
-  min-height: calc(100vh - 44px);
-  display: flex; align-items: center; justify-content: center;
-  padding: 4rem 6vw;
-}
-.gate-box { max-width: 380px; width: 100%; text-align: center; }
-.gate-kicker { font-size: 0.7rem; letter-spacing: 0.28em; text-transform: uppercase; color: var(--accent); margin-bottom: 1.4rem; }
-.gate-title { font-family: var(--serif); font-size: clamp(1.5rem, 4vw, 1.9rem); font-weight: 300; color: var(--deep); line-height: 1.5; margin-bottom: 0.8rem; }
-.gate-sub { font-size: 0.88rem; color: var(--muted); margin-bottom: 2.4rem; }
-.gate-input {
-  width: 100%; padding: 0.9rem 1.1rem; font-family: var(--sans);
-  font-size: 0.95rem; text-align: center;
-  background: var(--white); border: 1px solid rgba(43,71,64,0.18);
-  border-radius: 2px; color: var(--text); margin-bottom: 0.9rem;
-  outline: none; transition: border-color 0.2s;
-}
-.gate-input:focus { border-color: var(--accent); }
-.gate-btn {
-  width: 100%; padding: 0.9rem; background: var(--deep); color: #fff;
-  border: none; border-radius: 2px; font-family: var(--sans);
-  font-size: 0.88rem; letter-spacing: 0.08em; cursor: pointer;
-  transition: background 0.2s;
-}
-.gate-btn:hover { background: var(--mid); }
-.gate-btn:disabled { opacity: 0.5; cursor: default; }
-.gate-msg { font-size: 0.82rem; color: var(--mid); margin-top: 0.9rem; min-height: 1.2em; line-height: 1.7; }
-.gate-msg.error { color: var(--accent); }
-
-#space { display: none; }
-.space-nav {
-  position: sticky; top: 0; z-index: 10;
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 1rem 6vw; background: rgba(237,238,233,0.92);
-  backdrop-filter: blur(10px); border-bottom: 1px solid rgba(43,71,64,0.08);
-}
-.space-nav .logo { font-family: var(--serif); font-size: 0.9rem; color: var(--deep); letter-spacing: 0.1em; }
-.space-nav button {
-  background: none; border: none; font-family: var(--sans); font-size: 0.78rem;
-  color: var(--muted); cursor: pointer; letter-spacing: 0.04em;
-}
-.space-nav button:hover { color: var(--accent); }
-
-.space-hero { padding: 4.5rem 6vw 3rem; background: var(--white); border-bottom: 1px solid rgba(43,71,64,0.07); }
-.space-hero .kicker { font-size: 0.7rem; letter-spacing: 0.26em; text-transform: uppercase; color: var(--accent); margin-bottom: 1rem; }
-.space-hero h1 { font-family: var(--serif); font-size: clamp(1.5rem, 3.5vw, 2.2rem); font-weight: 300; color: var(--deep); line-height: 1.5; }
-.space-hero p { margin-top: 0.7rem; font-size: 0.9rem; color: var(--muted); }
-
-.space-section { padding: 3.2rem 6vw; }
-.space-section.alt { background: var(--surface); }
-.space-section + .space-section { border-top: 1px solid rgba(43,71,64,0.06); }
-.sec-label { font-size: 0.68rem; letter-spacing: 0.26em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.6rem; }
-.sec-title { font-family: var(--serif); font-size: 1.2rem; font-weight: 400; color: var(--deep); margin-bottom: 1.6rem; }
-
-.exercise-card { background: var(--white); border-left: 2px solid var(--accent); padding: 1.6rem 1.8rem; max-width: 640px; }
-.exercise-card h3 { font-family: var(--serif); font-size: 1.02rem; color: var(--deep); font-weight: 400; margin-bottom: 0.6rem; }
-.exercise-card p { font-size: 0.88rem; color: var(--muted); line-height: 1.9; }
-
-.announce-item { padding: 1rem 0; border-bottom: 1px solid rgba(43,71,64,0.08); font-size: 0.87rem; color: var(--muted); max-width: 640px; }
-.announce-item:first-child { border-top: 1px solid rgba(43,71,64,0.08); }
-.announce-item .a-date { font-size: 0.72rem; color: var(--accent); letter-spacing: 0.08em; display: block; margin-bottom: 0.3rem; }
-
-.wall-box { max-width: 640px; }
-.wall-input { display: flex; gap: 0.7rem; margin-bottom: 1.8rem; }
-.wall-input textarea {
-  flex: 1; resize: none; height: 56px; padding: 0.7rem 0.9rem;
-  font-family: var(--sans); font-size: 0.87rem; border: 1px solid rgba(43,71,64,0.16);
-  border-radius: 2px; background: var(--white); outline: none; color: var(--text);
-}
-.wall-input textarea:focus { border-color: var(--accent); }
-.wall-input button { padding: 0 1.3rem; background: var(--deep); color: #fff; border: none; border-radius: 2px; font-family: var(--sans); font-size: 0.82rem; cursor: pointer; }
-.wall-input button:hover { background: var(--mid); }
-.wall-msg { padding: 0.9rem 0; border-bottom: 1px solid rgba(43,71,64,0.07); font-size: 0.86rem; }
-.wall-msg .w-meta { font-size: 0.72rem; color: var(--soft); letter-spacing: 0.04em; margin-bottom: 0.3rem; }
-.wall-empty { font-size: 0.84rem; color: var(--soft); font-style: italic; }
-</style>
-</head>
-<body>
-
-<div class="demo-banner">
-  這一版用<strong>真正的後端</strong>：登入身分由 Firebase 驗證，班級資料由 Firestore 依身分決定要不要給，瀏覽器不會預先拿到不屬於自己的資料。需要先完成 Firebase 專案設定，並把下方 <code>FIREBASE_CONFIG</code> 換成你自己的設定值。
-</div>
-
-<div id="gate">
-  <div class="gate-box">
-    <p class="gate-kicker">IRC Space</p>
-    <h1 class="gate-title" id="gateTitle">請輸入 Email 登入</h1>
-    <p class="gate-sub" id="gateSub">我們會寄一封登入連結到你的信箱，點擊後即可進入。</p>
-    <input type="email" id="emailInput" class="gate-input" placeholder="your@email.com" autocomplete="email">
-    <button class="gate-btn" id="gateBtn" onclick="sendLoginLink()">寄送登入連結</button>
-    <p class="gate-msg" id="gateMsg"></p>
-  </div>
-</div>
-
-<div id="space">
-  <nav class="space-nav">
-    <span class="logo">IRC Space</span>
-    <button onclick="logout()">← 登出</button>
-  </nav>
-
-  <div class="space-hero">
-    <p class="kicker" id="spaceCohort">—</p>
-    <h1 id="spaceClassName">—</h1>
-    <p id="spaceWelcome">—</p>
-  </div>
-
-  <div class="space-section">
-    <p class="sec-label">This Week</p>
-    <h2 class="sec-title">本次練習</h2>
-    <div class="exercise-card">
-      <h3 id="exTitle">—</h3>
-      <p id="exDesc">—</p>
-    </div>
-  </div>
-
-  <div class="space-section alt">
-    <p class="sec-label">Latest</p>
-    <h2 class="sec-title">最新消息</h2>
-    <div id="announceList"></div>
-  </div>
-
-  <div class="space-section">
-    <p class="sec-label">Practice Wall</p>
-    <h2 class="sec-title">同班留言</h2>
-    <div class="wall-box">
-      <div class="wall-input">
-        <textarea id="wallText" placeholder="留下這週練習後的感覺或想法…"></textarea>
-        <button onclick="postMsg()">送出</button>
-      </div>
-      <div id="wallList"></div>
-    </div>
-  </div>
-</div>
-
-<!--
-  ══════════════════════════════════════════════════════
-  以下是程式邏輯。非工程背景不需要每一行都懂，
-  只要知道：唯一需要你自己填的地方是 FIREBASE_CONFIG。
-  ══════════════════════════════════════════════════════
--->
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
-import {
-  getAuth, sendSignInLinkToEmail, isSignInWithEmailLink,
-  signInWithEmailLink, onAuthStateChanged, signOut
-} from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
-import {
-  getFirestore, doc, getDoc, collection, addDoc,
-  query, orderBy, onSnapshot, serverTimestamp
-} from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
-
-// ── 唯一需要你填的地方：把 Firebase 專案設定貼在這裡 ──
-const FIREBASE_CONFIG = {
-  apiKey: "AIzaSyCSChAPNQX5fNv8kudpxDzq7m0OSuaWIrI",
-  authDomain: "irc-space.firebaseapp.com",
-  projectId: "irc-space",
-  storageBucket: "irc-space.firebasestorage.app",
-  messagingSenderId: "814017165127",
-  appId: "1:814017165127:web:d7266a3d51cf7c2db87e62"
-};
-// ────────────────────────────────────────────────
-
-const app = initializeApp(FIREBASE_CONFIG);
-const auth = getAuth(app);
-const db = getFirestore(app);
-
-const actionCodeSettings = {
-  url: window.location.href.split('?')[0],
-  handleCodeInApp: true
-};
-
-window.sendLoginLink = async function () {
-  const email = document.getElementById('emailInput').value.trim();
-  const msg = document.getElementById('gateMsg');
-  const btn = document.getElementById('gateBtn');
-  if (!email) { msg.textContent = '請輸入 Email。'; msg.className = 'gate-msg error'; return; }
-  btn.disabled = true;
-  try {
-    await sendSignInLinkToEmail(auth, email, actionCodeSettings);
-    window.localStorage.setItem('irc_email_for_signin', email);
-    msg.textContent = `登入連結已寄到 ${email}，請到信箱點擊連結完成登入。`;
-    msg.className = 'gate-msg';
-  } catch (e) {
-    msg.textContent = '寄送失敗：' + e.message;
-    msg.className = 'gate-msg error';
-    btn.disabled = false;
-  }
-};
-
-window.logout = function () { signOut(auth); };
-
-// 若網址帶有登入連結參數，代表使用者剛點了信箱裡的連結
-async function completeSignInIfNeeded() {
-  if (isSignInWithEmailLink(auth, window.location.href)) {
-    let email = window.localStorage.getItem('irc_email_for_signin');
-    if (!email) {
-      email = window.prompt('請再輸入一次你的 Email 以完成登入');
-    }
-    try {
-      await signInWithEmailLink(auth, email, window.location.href);
-      window.localStorage.removeItem('irc_email_for_signin');
-      window.history.replaceState({}, document.title, window.location.pathname);
-    } catch (e) {
-      document.getElementById('gateMsg').textContent = '登入連結無效或已過期，請重新申請。';
-      document.getElementById('gateMsg').className = 'gate-msg error';
-    }
-  }
-}
-completeSignInIfNeeded();
-
-let currentGroupCode = null;
-let unsubWall = null;
-
-onAuthStateChanged(auth, async (user) => {
-  if (!user) {
-    document.getElementById('space').style.display = 'none';
-    document.getElementById('gate').style.display = 'flex';
-    if (unsubWall) { unsubWall(); unsubWall = null; }
-    return;
-  }
-
-  // 這一步是關鍵：先問後端「這個 email 屬於哪一班」，
-  // 不屬於任何班的人，這裡就會查不到，看不到任何練習內容。
-  const mapRef = doc(db, 'participantGroups', user.email);
-  const mapSnap = await getDoc(mapRef);
-
-  if (!mapSnap.exists()) {
-    document.getElementById('gate').style.display = 'flex';
-    document.getElementById('space').style.display = 'none';
-    document.getElementById('gateTitle').textContent = '尚未找到你的班級';
-    document.getElementById('gateSub').textContent = `${user.email} 目前還沒被加入任何班級，請聯繫 IRC 確認。`;
-    return;
-  }
-
-  currentGroupCode = mapSnap.data().groupCode;
-
-  // 只有在確認過使用者屬於這一班之後，才去讀這一班的資料。
-  const groupRef = doc(db, 'groups', currentGroupCode);
-  const groupSnap = await getDoc(groupRef);
-  if (!groupSnap.exists()) return;
-  const cls = groupSnap.data();
-
-  document.getElementById('gate').style.display = 'none';
-  document.getElementById('space').style.display = 'block';
-
-  document.getElementById('spaceCohort').textContent = cls.cohort || '';
-  document.getElementById('spaceClassName').textContent = cls.name || '';
-  document.getElementById('spaceWelcome').textContent = `歡迎回來，${user.email}。`;
-  document.getElementById('exTitle').textContent = cls.exercise?.title || '';
-  document.getElementById('exDesc').textContent = cls.exercise?.desc || '';
+  // 老師分享的影片：改放在公開的 Members 頁面（不需登入即可看到），這裡不再重複顯示。
 
   const aList = document.getElementById('announceList');
   aList.innerHTML = (cls.announcements || []).map(a =>
     `<div class="announce-item"><span class="a-date">${a.date}</span>${a.text}</div>`
   ).join('') || '<p class="wall-empty">目前沒有新消息。</p>';
 
-  // 留言板：即時監聽這一班的留言（規則會擋掉其他班）
   if (unsubWall) unsubWall();
   const wallQ = query(collection(db, 'groups', currentGroupCode, 'wall'), orderBy('createdAt', 'desc'));
   unsubWall = onSnapshot(wallQ, (snap) => {
