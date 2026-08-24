@@ -376,8 +376,20 @@ onAuthStateChanged(auth, async (user) => {
     return;
   }
 
-  const mapRef = doc(db, 'participantGroups', user.email);
-  const mapSnap = await getDoc(mapRef);
+  let mapSnap;
+  try {
+    const mapRef = doc(db, 'participantGroups', user.email);
+    mapSnap = await getDoc(mapRef);
+  } catch (e) {
+    console.error('讀取 participantGroups/' + user.email + ' 失敗：', e);
+    document.getElementById('gate').style.display = 'flex';
+    document.getElementById('classPicker').style.display = 'none';
+    document.getElementById('space').style.display = 'none';
+    document.getElementById('gateTitle').textContent = '讀取班級資料失敗';
+    document.getElementById('gateSub').textContent =
+      `錯誤代碼：${e.code || e.message}。很可能是 Firestore 安全規則沒有開放讀取權限，請聯繫管理者確認。`;
+    return;
+  }
 
   if (!mapSnap.exists()) {
     showNotFound(user.email);
@@ -423,14 +435,32 @@ async function showClassPicker() {
   listEl.innerHTML = '<p class="wall-empty">載入班級中…</p>';
 
   const groups = [];
+  const errors = [];
   for (const code of userGroupCodes) {
-    const gSnap = await getDoc(doc(db, 'groups', code));
-    if (gSnap.exists()) groups.push({ code, ...gSnap.data() });
+    try {
+      const gSnap = await getDoc(doc(db, 'groups', code));
+      if (gSnap.exists()) {
+        groups.push({ code, ...gSnap.data() });
+      } else {
+        errors.push(`「${code}」這個班級在 groups 集合裡找不到對應文件`);
+      }
+    } catch (e) {
+      console.error('讀取 groups/' + code + ' 失敗：', e);
+      errors.push(`「${code}」讀取失敗：${e.code || e.message}`);
+    }
   }
 
   if (!groups.length) {
-    listEl.innerHTML = '<p class="wall-empty">找不到對應的班級資料，請聯繫 IRC 確認。</p>';
+    listEl.innerHTML = '<p class="wall-empty">' +
+      (errors.length
+        ? '無法載入班級資料：<br>' + errors.map(escapeHtml).join('<br>')
+        : '找不到對應的班級資料，請聯繫 IRC 確認。') +
+      '</p>';
     return;
+  }
+
+  if (errors.length) {
+    console.warn('部分班級載入失敗：', errors);
   }
 
   listEl.innerHTML = '';
