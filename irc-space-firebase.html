@@ -361,48 +361,155 @@ completeSignInIfNeeded();
 
 let currentGroupCode = null;
 let unsubWall = null;
+let userGroupCodes = [];
 
 onAuthStateChanged(auth, async (user) => {
   if (!user) {
     document.getElementById('space').style.display = 'none';
+    document.getElementById('classPicker').style.display = 'none';
     document.getElementById('gate').style.display = 'flex';
+    document.getElementById('gateTitle').textContent = '請輸入 Email 登入';
+    document.getElementById('gateSub').textContent = '我們會寄一封登入連結到你的信箱，點擊後即可進入。';
     if (unsubWall) { unsubWall(); unsubWall = null; }
+    currentGroupCode = null;
+    userGroupCodes = [];
     return;
   }
 
-  const mapRef = doc(db, 'participantGroups', user.email);
-  const mapSnap = await getDoc(mapRef);
+  let mapSnap;
+  try {
+    const mapRef = doc(db, 'participantGroups', user.email);
+    mapSnap = await getDoc(mapRef);
+  } catch (e) {
+    console.error('讀取 participantGroups/' + user.email + ' 失敗：', e);
+    document.getElementById('gate').style.display = 'flex';
+    document.getElementById('classPicker').style.display = 'none';
+    document.getElementById('space').style.display = 'none';
+    document.getElementById('gateTitle').textContent = '讀取班級資料失敗';
+    document.getElementById('gateSub').textContent =
+      `錯誤代碼：${e.code || e.message}。很可能是 Firestore 安全規則沒有開放讀取權限，請聯繫管理者確認。`;
+    return;
+  }
 
   if (!mapSnap.exists()) {
-    document.getElementById('gate').style.display = 'flex';
-    document.getElementById('space').style.display = 'none';
-    document.getElementById('gateTitle').textContent = '尚未找到你的班級';
-    document.getElementById('gateSub').textContent = `${user.email} 目前還沒被加入任何班級，請聯繫 IRC 確認。`;
+    showNotFound(user.email);
     return;
   }
 
-  currentGroupCode = mapSnap.data().groupCode;
+  const data = mapSnap.data();
+  // 相容舊資料：如果還是單一 groupCode 字串欄位，就包成陣列處理；
+  // 新資料建議直接存 groupCodes 陣列，例如 ["CII_PLUS", "A4"]
+  userGroupCodes = Array.isArray(data.groupCodes) && data.groupCodes.length
+    ? data.groupCodes
+    : (data.groupCode ? [data.groupCode] : []);
 
-  const groupRef = doc(db, 'groups', currentGroupCode);
+  if (!userGroupCodes.length) {
+    showNotFound(user.email);
+    return;
+  }
+
+  if (userGroupCodes.length === 1) {
+    await enterClass(userGroupCodes[0]);
+  } else {
+    await showClassPicker();
+  }
+});
+
+function showNotFound(email) {
+  document.getElementById('gate').style.display = 'flex';
+  document.getElementById('classPicker').style.display = 'none';
+  document.getElementById('space').style.display = 'none';
+  document.getElementById('gateTitle').textContent = '尚未找到你的班級';
+  document.getElementById('gateSub').textContent = `${email} 目前還沒被加入任何班級，請聯繫 IRC 確認。`;
+}
+
+async function showClassPicker() {
+  if (unsubWall) { unsubWall(); unsubWall = null; }
+  currentGroupCode = null;
+
+  document.getElementById('gate').style.display = 'none';
+  document.getElementById('space').style.display = 'none';
+  document.getElementById('classPicker').style.display = 'flex';
+
+  const listEl = document.getElementById('classPickerList');
+  listEl.innerHTML = '<p class="wall-empty">載入班級中…</p>';
+
+  const groups = [];
+  const errors = [];
+  for (const code of userGroupCodes) {
+    try {
+      const gSnap = await getDoc(doc(db, 'groups', code));
+      if (gSnap.exists()) {
+        groups.push({ code, ...gSnap.data() });
+      } else {
+        errors.push(`「${code}」這個班級在 groups 集合裡找不到對應文件`);
+      }
+    } catch (e) {
+      console.error('讀取 groups/' + code + ' 失敗：', e);
+      errors.push(`「${code}」讀取失敗：${e.code || e.message}`);
+    }
+  }
+
+  if (!groups.length) {
+    listEl.innerHTML = '<p class="wall-empty">' +
+      (errors.length
+        ? '無法載入班級資料：<br>' + errors.map(escapeHtml).join('<br>')
+        : '找不到對應的班級資料，請聯繫 IRC 確認。') +
+      '</p>';
+    return;
+  }
+
+  if (errors.length) {
+    console.warn('部分班級載入失敗：', errors);
+  }
+
+  listEl.innerHTML = '';
+  groups.forEach(g => {
+    const btn = document.createElement('button');
+    btn.className = 'class-pick-btn';
+    btn.innerHTML = `<strong style="font-family:var(--serif);font-weight:400;">${g.name || g.code}</strong>` +
+      (g.cohort ? `<br><span style="font-size:0.78rem;color:var(--muted);">${g.cohort}</span>` : '');
+    btn.onclick = () => enterClass(g.code);
+    listEl.appendChild(btn);
+  });
+}
+
+window.switchClass = function () {
+  if (userGroupCodes.length > 1) {
+    showClassPicker();
+  }
+};
+
+async function enterClass(groupCode) {
+  currentGroupCode = groupCode;
+
+  const groupRef = doc(db, 'groups', groupCode);
   const groupSnap = await getDoc(groupRef);
-  if (!groupSnap.exists()) return;
+  if (!groupSnap.exists()) {
+    // 選到的班級不存在了，退回選班畫面（或找不到頁面）
+    if (userGroupCodes.length > 1) { showClassPicker(); } else { showNotFound(auth.currentUser.email); }
+    return;
+  }
   const cls = groupSnap.data();
 
   document.getElementById('gate').style.display = 'none';
+  document.getElementById('classPicker').style.display = 'none';
   document.getElementById('space').style.display = 'block';
+
+  document.getElementById('switchClassBtn').style.display = userGroupCodes.length > 1 ? 'inline' : 'none';
 
   document.getElementById('spaceCohort').textContent = cls.cohort || '';
   document.getElementById('spaceClassName').textContent = cls.name || '';
-  document.getElementById('spaceWelcome').textContent = cls.tagline || `歡迎回來，${user.email}。`;
+  document.getElementById('spaceWelcome').textContent = cls.tagline || `歡迎回來，${auth.currentUser.email}。`;
 
   // 課程介紹（HTML 內容，只有管理者能寫入這份文件，來源可信）
-  if (cls.introHtml) {
-    document.getElementById('introArea').innerHTML = cls.introHtml;
-  }
+  document.getElementById('introArea').innerHTML = cls.introHtml
+    || '<p class="wall-empty">尚未提供課程介紹內容。</p>';
 
   // 六堂課練習內容 + 自動產生目錄
+  const lessonsArea = document.getElementById('lessonsArea');
+  const tocSection = document.getElementById('tocSection');
   if (cls.lessonsHtml) {
-    const lessonsArea = document.getElementById('lessonsArea');
     lessonsArea.innerHTML = cls.lessonsHtml;
 
     const blocks = lessonsArea.querySelectorAll('.lesson-block');
@@ -420,14 +527,22 @@ onAuthStateChanged(auth, async (user) => {
         a.innerHTML = `<span class="toc-num">${i + 1}</span>${title}`;
         tocGrid.appendChild(a);
       });
-      document.getElementById('tocSection').style.display = 'block';
+      tocSection.style.display = 'block';
+    } else {
+      tocSection.style.display = 'none';
     }
+  } else {
+    lessonsArea.innerHTML = '<p class="wall-empty">尚未提供練習內容。</p>';
+    tocSection.style.display = 'none';
   }
 
   // 結語（選填）
+  const closingArea = document.getElementById('closingArea');
   if (cls.closingText) {
     document.getElementById('closingText').textContent = cls.closingText;
-    document.getElementById('closingArea').style.display = 'block';
+    closingArea.style.display = 'block';
+  } else {
+    closingArea.style.display = 'none';
   }
 
   // 老師分享的影片：改放在公開的 Members 頁面（不需登入即可看到），這裡不再重複顯示。
@@ -450,7 +565,7 @@ onAuthStateChanged(auth, async (user) => {
       return `<div class="wall-msg"><div class="w-meta">${m.authorEmail}</div>${escapeHtml(m.text)}</div>`;
     }).join('');
   });
-});
+}
 
 window.postMsg = async function () {
   const ta = document.getElementById('wallText');
