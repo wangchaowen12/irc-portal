@@ -706,6 +706,8 @@ footer a:hover { color: var(--accent); }
 .ss-inner {
   max-width: 680px;
   width: 100%;
+  position: relative;
+  z-index: 1;
 }
 .ss-inner--split {
   display: grid;
@@ -839,10 +841,22 @@ footer a:hover { color: var(--accent); }
 .ss-beat::before {
   content: '';
   position: absolute;
-  left: 0; top: 0.7em;
-  width: 4px; height: 4px;
+  left: 0; top: 0.65em;
+  width: 6px; height: 6px;
   border-radius: 50%;
   background: var(--soft);
+}
+.ss-beat:nth-child(1)::before { background: var(--mid); }
+.ss-beat:nth-child(2)::before { background: var(--accent); }
+.ss-beat:nth-child(3)::before { background: var(--soft); box-shadow: 0 0 0 3px rgba(169,120,96,0.08); }
+
+/* Party scatter (幕二專用) */
+.party-scatter {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
 }
 
 /* Symbol */
@@ -1093,6 +1107,26 @@ footer a:hover { color: var(--accent); }
   .ss-pos-between { max-width: 100px; }
 }
 
+/* ══════════════════════════════
+   DECORATIVE BLOBS
+   （呼應 PDF 簡報中的模糊圓形背景元素）
+══════════════════════════════ */
+.decor-blobs {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+.decor-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(46px);
+}
+@media (max-width: 620px) {
+  .decor-blob { filter: blur(30px); }
+}
+
 </style>
 </head>
 <body>
@@ -1131,6 +1165,9 @@ footer a:hover { color: var(--accent); }
   <div style="position:absolute;inset:0;pointer-events:none;z-index:0;">
     <img src="" alt="" style="width:100%;height:100%;object-fit:cover;opacity:0.28;display:block;">
     <div style="position:absolute;inset:0;background:linear-gradient(to bottom, rgba(203,215,219,0.75) 0%, rgba(180,199,204,0.55) 45%, rgba(237,238,233,0.95) 100%);"></div>
+    <div class="decor-blob" style="width:260px;height:260px;top:-80px;left:-60px;background:var(--mid);opacity:0.22;"></div>
+    <div class="decor-blob" style="width:180px;height:180px;top:12%;right:-40px;background:var(--accent);opacity:0.18;"></div>
+    <div class="decor-blob" style="width:140px;height:140px;bottom:8%;left:8%;background:var(--soft);opacity:0.28;"></div>
   </div>
 <main id="page-portal-main" style="position:relative;z-index:1;">
     <p class="portal-kicker">Inner Reality Circle</p>
@@ -1150,6 +1187,10 @@ footer a:hover { color: var(--accent); }
 
     <!-- 幕一：標題 -->
     <div class="ss-scene ss-scene--center" data-scene="1">
+      <div class="decor-blobs">
+        <div class="decor-blob" style="width:200px;height:200px;top:-40px;left:6%;background:var(--mid);opacity:0.14;"></div>
+        <div class="decor-blob" style="width:160px;height:160px;bottom:-30px;right:8%;background:var(--accent);opacity:0.13;"></div>
+      </div>
       <div class="ss-inner">
         <div class="ss-symbol" aria-hidden="true">
           <svg viewBox="0 0 160 100" width="160" height="100">
@@ -1165,6 +1206,30 @@ footer a:hover { color: var(--accent); }
 
     <!-- 幕二：關係裡的疲憊 -->
     <div class="ss-scene" data-scene="2">
+      <div class="party-scatter" aria-hidden="true">
+        <svg viewBox="0 0 1000 700" preserveAspectRatio="xMidYMid slice" style="position:absolute;inset:0;width:100%;height:100%;">
+          <defs>
+            <filter id="partyBlur" x="-60%" y="-60%" width="220%" height="220%">
+              <feGaussianBlur stdDeviation="22"/>
+            </filter>
+          </defs>
+          <!-- 大而模糊的色塊：氛圍底層 -->
+          <circle cx="120" cy="90" r="90" fill="var(--deep)" opacity="0.08" filter="url(#partyBlur)"/>
+          <circle cx="880" cy="140" r="70" fill="var(--mid)" opacity="0.10" filter="url(#partyBlur)"/>
+          <circle cx="70" cy="560" r="60" fill="var(--accent)" opacity="0.09" filter="url(#partyBlur)"/>
+          <circle cx="910" cy="580" r="100" fill="var(--soft)" opacity="0.16" filter="url(#partyBlur)"/>
+          <circle cx="500" cy="40" r="40" fill="var(--mid)" opacity="0.07" filter="url(#partyBlur)"/>
+          <!-- 小而清晰的色球：人們 -->
+          <circle cx="830" cy="90" r="7" fill="var(--mid)" opacity="0.32"/>
+          <circle cx="770" cy="230" r="4" fill="var(--accent)" opacity="0.4"/>
+          <circle cx="60" cy="180" r="9" fill="var(--soft)" opacity="0.4"/>
+          <circle cx="150" cy="280" r="5" fill="var(--deep)" opacity="0.22"/>
+          <circle cx="920" cy="380" r="6" fill="var(--accent)" opacity="0.3"/>
+          <circle cx="860" cy="500" r="4" fill="var(--mid)" opacity="0.35"/>
+          <circle cx="40" cy="440" r="6" fill="var(--accent)" opacity="0.28"/>
+          <circle cx="180" cy="620" r="8" fill="var(--soft)" opacity="0.35"/>
+        </svg>
+      </div>
       <div class="ss-inner">
         <p class="ss-lead">在人際關係裡，<br>我們其實都在參加一場<br><em>看不見的 party。</em></p>
         <div class="ss-beats">
@@ -1177,6 +1242,9 @@ footer a:hover { color: var(--accent); }
 
     <!-- 幕三：太快了 -->
     <div class="ss-scene ss-scene--quiet" data-scene="3">
+      <div class="decor-blobs">
+        <div class="decor-blob" style="width:190px;height:190px;bottom:-15%;left:-6%;background:var(--mid);opacity:0.16;"></div>
+      </div>
       <div class="ss-inner">
         <h2 class="ss-title ss-title--lg">這些動作往往發生得太快，<br>快到我們來不及感覺。</h2>
         <div class="ss-notes">
@@ -1189,6 +1257,10 @@ footer a:hover { color: var(--accent); }
 
     <!-- 幕四：SOF 是什麼 -->
     <div class="ss-scene ss-scene--split" data-scene="4">
+      <div class="decor-blobs">
+        <div class="decor-blob" style="width:200px;height:200px;top:-8%;left:-4%;background:var(--mid);opacity:0.09;"></div>
+        <div class="decor-blob" style="width:150px;height:150px;bottom:-10%;right:4%;background:var(--soft);opacity:0.16;"></div>
+      </div>
       <div class="ss-inner ss-inner--split">
         <div class="ss-split-text">
           <p class="ss-overline">Social Oriented Focusing</p>
@@ -1199,6 +1271,16 @@ footer a:hover { color: var(--accent); }
         </div>
         <div class="ss-split-visual" aria-hidden="true">
           <svg viewBox="0 0 120 180" width="120" height="180">
+            <defs>
+              <radialGradient id="coreGlow" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="rgba(169,120,96,0.35)"/>
+                <stop offset="100%" stop-color="rgba(169,120,96,0)"/>
+              </radialGradient>
+            </defs>
+            <!-- 周遭：淡淡的環境色球 -->
+            <circle cx="18" cy="150" r="14" fill="var(--mid)" opacity="0.08"/>
+            <circle cx="100" cy="20" r="10" fill="var(--accent)" opacity="0.1"/>
+            <circle cx="102" cy="140" r="6" fill="var(--soft)" opacity="0.3"/>
             <!-- 人形輪廓 -->
             <circle cx="60" cy="28" r="16" fill="none" stroke="rgba(74,107,93,0.3)" stroke-width="1.2"/>
             <line x1="60" y1="44" x2="60" y2="110" stroke="rgba(74,107,93,0.3)" stroke-width="1.2"/>
@@ -1206,7 +1288,8 @@ footer a:hover { color: var(--accent); }
             <line x1="60" y1="65" x2="90" y2="88" stroke="rgba(74,107,93,0.3)" stroke-width="1.2"/>
             <line x1="60" y1="110" x2="40" y2="160" stroke="rgba(74,107,93,0.3)" stroke-width="1.2"/>
             <line x1="60" y1="110" x2="80" y2="160" stroke="rgba(74,107,93,0.3)" stroke-width="1.2"/>
-            <!-- 核心光點 -->
+            <!-- 核心光暈與光點 -->
+            <circle cx="60" cy="72" r="24" fill="url(#coreGlow)"/>
             <circle cx="60" cy="72" r="8" fill="rgba(169,120,96,0.25)" stroke="rgba(169,120,96,0.4)" stroke-width="0.8"/>
           </svg>
         </div>
@@ -1215,6 +1298,9 @@ footer a:hover { color: var(--accent); }
 
     <!-- 幕五：四個空間 -->
     <div class="ss-scene ss-scene--spaces" data-scene="5">
+      <div class="decor-blobs">
+        <div class="decor-blob" style="width:170px;height:170px;top:6%;left:-4%;background:var(--accent);opacity:0.13;"></div>
+      </div>
       <div class="ss-inner">
         <p class="ss-overline">我們會探索的四個空間</p>
         <div class="ss-spaces-grid">
@@ -1244,6 +1330,9 @@ footer a:hover { color: var(--accent); }
 
     <!-- 幕六：三個位置 -->
     <div class="ss-scene ss-scene--quiet" data-scene="6">
+      <div class="decor-blobs">
+        <div class="decor-blob" style="width:200px;height:200px;bottom:-10%;right:-4%;background:var(--mid);opacity:0.15;"></div>
+      </div>
       <div class="ss-inner">
         <p class="ss-overline">我們會探索的三個位置</p>
         <div class="ss-positions" aria-hidden="true">
@@ -1263,6 +1352,9 @@ footer a:hover { color: var(--accent); }
 
     <!-- 幕七：不是討論，是練習 -->
     <div class="ss-scene ss-scene--dark" data-scene="7">
+      <div class="decor-blobs">
+        <div class="decor-blob" style="width:220px;height:220px;top:-8%;left:10%;background:var(--soft);opacity:0.08;"></div>
+      </div>
       <div class="ss-inner">
         <h2 class="ss-title ss-title--light">這不是討論。<br>而是練習。</h2>
         <p class="ss-body ss-body--light">每一次都會有一個具體練習結構，讓身體直接參與理解。</p>
@@ -1293,6 +1385,9 @@ footer a:hover { color: var(--accent); }
 
     <!-- 幕九：給誰的 -->
     <div class="ss-scene" data-scene="9">
+      <div class="decor-blobs">
+        <div class="decor-blob" style="width:180px;height:180px;top:10%;right:-5%;background:var(--accent);opacity:0.14;"></div>
+      </div>
       <div class="ss-inner">
         <p class="ss-overline">這是一個給誰的團體？</p>
         <div class="ss-checklist">
@@ -1318,6 +1413,10 @@ footer a:hover { color: var(--accent); }
 
     <!-- 幕十：結尾 CTA -->
     <div class="ss-scene ss-scene--cta" data-scene="10">
+      <div class="decor-blobs">
+        <div class="decor-blob" style="width:240px;height:240px;top:-15%;left:-6%;background:var(--mid);opacity:0.1;"></div>
+        <div class="decor-blob" style="width:200px;height:200px;bottom:-12%;right:-4%;background:var(--accent);opacity:0.1;"></div>
+      </div>
       <div class="ss-inner">
         <div class="ss-symbol" aria-hidden="true">
           <svg viewBox="0 0 160 100" width="120" height="75">
@@ -1376,8 +1475,12 @@ footer a:hover { color: var(--accent); }
 <!-- ══ PAGE 2：SOF 介紹 ══ -->
 <div class="page" id="page-sof">
 
-  <div class="sof-hero" style="display:grid;grid-template-columns:1fr 400px;gap:4vw;align-items:center;">
-    <div>
+  <div class="sof-hero" style="display:grid;grid-template-columns:1fr 400px;gap:4vw;align-items:center;position:relative;overflow:hidden;">
+    <div class="decor-blobs">
+      <div class="decor-blob" style="width:220px;height:220px;top:-60px;left:-40px;background:var(--mid);opacity:0.1;"></div>
+      <div class="decor-blob" style="width:160px;height:160px;bottom:-40px;left:35%;background:var(--accent);opacity:0.08;"></div>
+    </div>
+    <div style="position:relative;z-index:1;">
       <p class="kicker">Social Oriented Focusing</p>
       <h1>認識自在邊界學<br>與 SOF 練習方式</h1>
       <p class="lead">
@@ -1385,7 +1488,7 @@ footer a:hover { color: var(--accent); }
         先在這裡慢慢認識，看看有沒有什麼讓你想靠近的東西。
       </p>
     </div>
-    <div style="border-radius:2px;overflow:hidden;height:280px;background:#2B4740;display:flex;align-items:center;justify-content:center;">
+    <div style="position:relative;z-index:1;border-radius:2px;overflow:hidden;height:280px;background:#2B4740;display:flex;align-items:center;justify-content:center;">
       <svg viewBox="0 0 280 280" width="280" height="280" xmlns="http://www.w3.org/2000/svg">
         <!-- 三個交疊的圓，象徵 I / We / Beyond -->
         <circle cx="110" cy="130" r="70" fill="none" stroke="rgba(201,189,182,0.25)" stroke-width="1.5"/>
@@ -1406,7 +1509,37 @@ footer a:hover { color: var(--accent); }
   </div>
 
   <!-- 什麼是 SOF -->
-  <div class="sof-section">
+  <div class="sof-section" style="position:relative;overflow:hidden;">
+    <div class="decor-blobs">
+      <div class="decor-blob" style="width:200px;height:200px;top:0;right:-60px;background:var(--soft);opacity:0.3;"></div>
+    </div>
+    <!-- 人形與色球：核心與周遭，作為安靜的浮水印 -->
+    <div class="decor-blobs" aria-hidden="true">
+      <svg viewBox="0 0 260 420" style="position:absolute;top:50%;right:-2vw;width:min(260px,26vw);height:auto;transform:translateY(-50%);opacity:0.55;" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <radialGradient id="sofCoreGlow" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="rgba(169,120,96,0.28)"/>
+            <stop offset="100%" stop-color="rgba(169,120,96,0)"/>
+          </radialGradient>
+        </defs>
+        <!-- 周遭：淡淡散落的色球 -->
+        <circle cx="30" cy="70" r="16" fill="var(--mid)" opacity="0.08"/>
+        <circle cx="225" cy="120" r="10" fill="var(--accent)" opacity="0.1"/>
+        <circle cx="215" cy="330" r="20" fill="var(--soft)" opacity="0.18"/>
+        <circle cx="40" cy="360" r="7" fill="var(--mid)" opacity="0.12"/>
+        <!-- 人形輪廓 -->
+        <circle cx="130" cy="70" r="34" fill="none" stroke="rgba(43,71,64,0.14)" stroke-width="1.4"/>
+        <line x1="130" y1="104" x2="130" y2="250" stroke="rgba(43,71,64,0.14)" stroke-width="1.4"/>
+        <line x1="130" y1="150" x2="66" y2="205" stroke="rgba(43,71,64,0.14)" stroke-width="1.4"/>
+        <line x1="130" y1="150" x2="194" y2="205" stroke="rgba(43,71,64,0.14)" stroke-width="1.4"/>
+        <line x1="130" y1="250" x2="86" y2="368" stroke="rgba(43,71,64,0.14)" stroke-width="1.4"/>
+        <line x1="130" y1="250" x2="174" y2="368" stroke="rgba(43,71,64,0.14)" stroke-width="1.4"/>
+        <!-- 核心光暈與光點 -->
+        <circle cx="130" cy="164" r="46" fill="url(#sofCoreGlow)"/>
+        <circle cx="130" cy="164" r="15" fill="rgba(169,120,96,0.22)" stroke="rgba(169,120,96,0.35)" stroke-width="1"/>
+      </svg>
+    </div>
+    <div style="position:relative;z-index:1;">
     <p class="sec-label">What is SOF</p>
     <h2 class="sec-title">SOF 是什麼？</h2>
     <div class="sec-body">
@@ -1442,10 +1575,16 @@ footer a:hover { color: var(--accent); }
         <p>看見個人的內在感受如何與關係、處境、文化相互交織，而不只是「我自己的問題」。</p>
       </div>
     </div>
+    </div>
   </div>
 
   <!-- 課程 -->
-  <div class="sof-section alt">
+  <div class="sof-section alt" style="position:relative;overflow:hidden;">
+    <div class="decor-blobs">
+      <div class="decor-blob" style="width:240px;height:240px;bottom:-80px;left:-60px;background:var(--mid);opacity:0.09;"></div>
+      <div class="decor-blob" style="width:150px;height:150px;top:10%;right:6%;background:var(--accent);opacity:0.1;"></div>
+    </div>
+    <div style="position:relative;z-index:1;">
     <p class="sec-label">Courses</p>
     <h2 class="sec-title">自在邊界學</h2>
     <div class="sec-body">
@@ -1514,6 +1653,7 @@ footer a:hover { color: var(--accent); }
         <span class="course-link" style="cursor:pointer;">了解課程內容 →</span>
       </div>
 
+    </div>
     </div>
   </div>
 
@@ -1594,10 +1734,15 @@ footer a:hover { color: var(--accent); }
 <!-- ══ PAGE 3：班級入口 ══ -->
 <div class="page" id="page-members">
 
-  <div class="members-hero">
+  <div class="members-hero" style="position:relative;overflow:hidden;">
+    <div class="decor-blobs">
+      <div class="decor-blob" style="width:200px;height:200px;top:-50px;right:-40px;background:var(--mid);opacity:0.1;"></div>
+    </div>
+    <div style="position:relative;z-index:1;">
     <p class="kicker">Members</p>
     <h1>歡迎回來</h1>
     <p>從這裡進入你的班級頁面，或到練習牆與不同班的夥伴相遇。</p>
+    </div>
   </div>
 
   <!-- 老師的分享：不分班級，任何人一進來就看得到，不需要登入 -->
@@ -1668,6 +1813,9 @@ footer a:hover { color: var(--accent); }
 
   <div class="course-hero" style="position:relative;overflow:hidden;">
     <div style="position:absolute;inset:0;background:linear-gradient(135deg, rgba(169,120,96,0.35) 0%, transparent 60%);pointer-events:none;"></div>
+    <div class="decor-blobs">
+      <div class="decor-blob" style="width:220px;height:220px;bottom:-70px;right:6%;background:var(--soft);opacity:0.14;"></div>
+    </div>
     <div style="position:relative;z-index:1;">
       <span class="stage-tag">第一階段｜四堂課</span>
       <h1>自在邊界學 I<br>用 SOF 探索你想要的邊界</h1>
