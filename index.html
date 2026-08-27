@@ -1164,7 +1164,7 @@ footer a:hover { color: var(--accent); }
 <div class="page active" id="page-portal">
   <div style="position:absolute;inset:0;pointer-events:none;z-index:0;">
     <img src="" alt="" style="width:100%;height:100%;object-fit:cover;opacity:0.28;display:block;">
-    <div style="position:absolute;inset:0;background:linear-gradient(to bottom, rgba(203,215,219,0.75) 0%, rgba(180,199,204,0.55) 45%, rgba(237,238,233,0.95) 100%);"></div>
+    <div style="position:absolute;inset:0;background:linear-gradient(to bottom, rgba(237,238,233,0.3) 0%, rgba(237,238,233,0.75) 100%);"></div>
     <div class="decor-blob" style="width:260px;height:260px;top:-80px;left:-60px;background:var(--mid);opacity:0.22;"></div>
     <div class="decor-blob" style="width:180px;height:180px;top:12%;right:-40px;background:var(--accent);opacity:0.18;"></div>
     <div class="decor-blob" style="width:140px;height:140px;bottom:8%;left:8%;background:var(--soft);opacity:0.28;"></div>
@@ -2446,6 +2446,13 @@ function goPageCourse(id, title) {
   navBack.textContent = '← 認識課程';
   
 }
+
+// ── 深連結：從 Space 頁面點「← 班級入口」回來時，帶 #members 直接落在班級入口分頁
+(function () {
+  if (window.location.hash === '#members') {
+    goPage('page-members');
+  }
+})();
 
 // ── Scroll Story Observer
 (function() {
