@@ -428,6 +428,163 @@ nav {
   color: var(--soft); font-style: italic;
 }
 
+/* ══════════════════════════════
+   PAGE — 互動工具｜最近生活地圖
+══════════════════════════════ */
+
+/* 邀請卡片（放在 page-sof／個別諮商 hero 之後） */
+.lifemap-invite-wrap {
+  background: var(--white);
+  padding: 0 8vw 3.4rem;
+  border-bottom: 1px solid rgba(43,71,64,0.07);
+}
+.lifemap-invite {
+  max-width: 900px;
+  margin: 0 auto;
+  background: var(--surface);
+  border: 1px solid rgba(43,71,64,0.09);
+  border-radius: 3px;
+  padding: 1.8rem 2.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+.lifemap-invite-label {
+  font-size: 0.7rem; letter-spacing: 0.2em;
+  text-transform: uppercase; color: var(--accent);
+  margin-bottom: 0.6rem;
+}
+.lifemap-invite-text h3 {
+  font-family: var(--serif);
+  font-size: 1.05rem; font-weight: 400; color: var(--deep);
+  margin-bottom: 0.5rem;
+}
+.lifemap-invite-text p {
+  font-size: 0.87rem; color: var(--muted); line-height: 1.9;
+  max-width: 34em;
+}
+.lifemap-invite-btn {
+  flex-shrink: 0;
+  padding: 0.8rem 1.6rem;
+  border: 1px solid rgba(43,71,64,0.25);
+  background: none; color: var(--deep);
+  font-family: var(--sans); font-size: 0.84rem; font-weight: 300;
+  letter-spacing: 0.04em; border-radius: 2px; cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.2s, border-color 0.2s;
+}
+.lifemap-invite-btn:hover { background: rgba(43,71,64,0.05); border-color: var(--mid); }
+
+@media (max-width: 620px) {
+  .lifemap-invite { flex-direction: column; align-items: flex-start; }
+  .lifemap-invite-btn { width: 100%; text-align: center; }
+}
+
+.lifemap-hero {
+  padding: calc(56px + 5vh) 8vw 4vh;
+  background: var(--white);
+  border-bottom: 1px solid rgba(43,71,64,0.07);
+}
+.lifemap-hero .kicker {
+  font-size: 0.72rem; letter-spacing: 0.28em;
+  text-transform: uppercase; color: var(--accent);
+  margin-bottom: 1.2rem;
+}
+.lifemap-hero h1 {
+  font-family: var(--serif);
+  font-size: clamp(1.6rem, 3.5vw, 2.5rem);
+  font-weight: 300; color: var(--deep);
+  line-height: 1.45; margin-bottom: 1rem;
+}
+.lifemap-hero p {
+  font-size: 0.93rem; color: var(--muted); max-width: 32em; line-height: 2;
+}
+
+.lifemap-section { padding: 4rem 8vw 6rem; }
+
+.lifemap-wrap { max-width: 560px; margin: 2.6rem auto 0; }
+
+.lifemap-hint {
+  font-size: 0.85rem; color: var(--muted);
+  letter-spacing: 0.02em; text-align: center;
+  margin-bottom: 1.2rem;
+}
+
+.lifemap-canvas-box {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  touch-action: none;
+}
+.lifemap-canvas-box canvas { display: block; cursor: crosshair; }
+
+.lifemap-actions {
+  display: flex; justify-content: center; gap: 1rem;
+  margin-top: 2.2rem; flex-wrap: wrap;
+}
+.lifemap-btn-clear {
+  padding: 0.75rem 1.8rem;
+  border: 1px solid rgba(43,71,64,0.25);
+  background: none; color: var(--deep);
+  font-size: 0.84rem; letter-spacing: 0.06em;
+  font-family: var(--sans); font-weight: 300;
+  border-radius: 2px; cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+}
+.lifemap-btn-clear:hover { background: rgba(43,71,64,0.05); border-color: var(--mid); }
+.lifemap-btn-save {
+  padding: 0.75rem 1.8rem;
+  border: none; background: var(--deep); color: #fff;
+  font-size: 0.84rem; letter-spacing: 0.06em;
+  font-family: var(--sans); font-weight: 400;
+  border-radius: 2px; cursor: pointer;
+  transition: background 0.2s;
+}
+.lifemap-btn-save:hover { background: var(--mid); }
+
+.lifemap-popup { position: absolute; z-index: 60; width: 220px; }
+.lifemap-popup-inner {
+  background: var(--white);
+  border: 1px solid rgba(43,71,64,0.14);
+  border-radius: 3px;
+  padding: 1rem 1.1rem;
+  box-shadow: 0 10px 32px rgba(43,71,64,0.14);
+}
+.lifemap-popup-label {
+  font-family: var(--serif); font-size: 0.82rem;
+  color: var(--deep); font-weight: 400; margin-bottom: 0.6rem;
+}
+.lifemap-popup-textarea {
+  width: 100%; min-height: 64px; resize: none;
+  border: 1px solid rgba(43,71,64,0.15); border-radius: 2px;
+  padding: 0.5rem 0.6rem;
+  font-family: var(--sans); font-size: 0.83rem;
+  color: var(--text); background: var(--bg); line-height: 1.7;
+}
+.lifemap-popup-textarea:focus { outline: none; border-color: var(--accent); }
+.lifemap-popup-btnrow {
+  display: flex; justify-content: flex-end; gap: 0.6rem; margin-top: 0.8rem;
+}
+.lifemap-popup-cancel, .lifemap-popup-del {
+  background: none; border: none;
+  font-family: var(--sans); font-size: 0.78rem; color: var(--muted);
+  cursor: pointer; padding: 0.4rem 0.2rem;
+}
+.lifemap-popup-cancel:hover, .lifemap-popup-del:hover { color: var(--accent); }
+.lifemap-popup-save {
+  background: var(--deep); border: none; color: #fff;
+  font-family: var(--sans); font-size: 0.78rem;
+  padding: 0.45rem 1rem; border-radius: 2px;
+  cursor: pointer; transition: background 0.2s;
+}
+.lifemap-popup-save:hover { background: var(--mid); }
+
+@media (max-width: 480px) {
+  .lifemap-popup { width: 188px; }
+}
+
 /* ── FOOTER ── */
 footer {
   padding: 2.5rem 8vw;
@@ -1484,7 +1641,6 @@ footer a:hover { color: var(--accent); }
       <p class="kicker">Social Oriented Focusing</p>
       <h1>認識自在邊界學<br>與 SOF 練習方式</h1>
       <p class="lead">
-        你不需要馬上決定要不要參加課程。<br>
         先在這裡慢慢認識，看看有沒有什麼讓你想靠近的東西。
       </p>
     </div>
@@ -1505,6 +1661,18 @@ footer a:hover { color: var(--accent); }
         <text x="161" y="175" font-size="9" fill="rgba(201,189,182,0.5)" font-family="serif" letter-spacing="1">We</text>
         <text x="118" y="38" font-size="9" fill="rgba(201,189,182,0.5)" font-family="serif" letter-spacing="1">Beyond</text>
       </svg>
+    </div>
+  </div>
+
+  <!-- 最近生活地圖：個別諮商會談前的暖身入口 -->
+  <div class="lifemap-invite-wrap">
+    <div class="lifemap-invite">
+      <div class="lifemap-invite-text">
+        <p class="lifemap-invite-label">在進來之前，可以先做的一件小事</p>
+        <h3>🌿 最近生活地圖</h3>
+        <p>找一點時間，把最近讓你留下印象的幾件事，安靜地看一遍——像是進入會談前的一段暖身，不需要急著找到答案。</p>
+      </div>
+      <button type="button" class="lifemap-invite-btn" onclick="goLifeMap()">打開最近生活地圖 →</button>
     </div>
   </div>
 
@@ -1798,6 +1966,42 @@ footer a:hover { color: var(--accent); }
       <div class="concept-item">
         <h3>同班成員的留言</h3>
         <p>在課堂之外與同學繼續連結，讓彼此的陪伴延伸下去。</p>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <span>© IRC｜Inner Reality Circle</span>
+    <span><a href="mailto:jowwen@mygrace.com.tw">jowwen@mygrace.com.tw</a></span>
+  </footer>
+</div>
+
+<!-- ══ PAGE：互動工具｜最近生活地圖 ══ -->
+<div class="page" id="page-life-map">
+
+  <div class="lifemap-hero">
+    <p class="kicker">Interactive Tool</p>
+    <h1>🌿 最近生活地圖</h1>
+    <p>留一點時間，看看自己。<br>
+    有時候，不需要急著找到答案，只需要先看看，最近的自己正在經歷什麼。</p>
+  </div>
+
+  <div class="lifemap-section">
+    <p class="sec-label">互動工具</p>
+    <h2 class="sec-title">最近生活地圖</h2>
+    <div class="sec-body" style="margin-bottom:0;">
+      <p>在圖上點一下，寫下幾件最近發生、且讓你留下印象的事——一次談話、一個互動、一件剛開始的事，都可以。之後也能拖曳調整它的位置。</p>
+    </div>
+
+    <div class="lifemap-wrap">
+      <p class="lifemap-hint">看看這些事情現在都落在哪裡。</p>
+      <div class="lifemap-canvas-box">
+        <canvas id="lifemapCanvas" aria-label="最近生活地圖互動圖表"></canvas>
+        <div id="lifemapPopup" class="lifemap-popup" style="display:none;"></div>
+      </div>
+      <div class="lifemap-actions">
+        <button type="button" class="lifemap-btn-clear" id="lifemapClear">清除全部</button>
+        <button type="button" class="lifemap-btn-save" id="lifemapSave">保存這張圖</button>
       </div>
     </div>
   </div>
@@ -2446,11 +2650,30 @@ function goPageCourse(id, title) {
   navBack.textContent = '← 認識課程';
   
 }
+function goLifeMap() {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  var el = document.getElementById('page-life-map');
+  el.classList.add('active');
+  el.scrollTop = 0;
+  var sc = document.getElementById('nav-shortcuts');
+  if(sc) sc.style.display = 'none';
+  var navBack = document.getElementById('nav-back');
+  document.getElementById('nc-home').style.display = 'inline';
+  document.getElementById('nc-sof').style.display = 'none';
+  document.getElementById('nc-sep').style.display = 'none';
+  document.getElementById('nc-course').style.display = 'none';
+  navBack.style.display = 'inline';
+  navBack.onclick = function(){ goPage('page-sof'); };
+  navBack.textContent = '← 回到個別諮商頁面';
+}
 
 // ── 深連結：從 Space 頁面點「← 班級入口」回來時，帶 #members 直接落在班級入口分頁
+// 也支援 #life-map，方便直接把「最近生活地圖」連結分享給個別諮商的個案
 (function () {
   if (window.location.hash === '#members') {
     goPage('page-members');
+  } else if (window.location.hash === '#life-map') {
+    goLifeMap();
   }
 })();
 
@@ -2473,6 +2696,335 @@ function goPageCourse(id, title) {
   scenes.forEach(function(scene) {
     observer.observe(scene);
   });
+})();
+
+// ── 互動工具｜最近生活地圖
+(function () {
+  var canvas = document.getElementById('lifemapCanvas');
+  if (!canvas) return;
+
+  var ctx = canvas.getContext('2d');
+  var box = canvas.closest('.lifemap-canvas-box');
+  var popup = document.getElementById('lifemapPopup');
+  var clearBtn = document.getElementById('lifemapClear');
+  var saveBtn = document.getElementById('lifemapSave');
+
+  var PAD = 54;                 // 圖表四周留給軸標籤的空間（CSS px）
+  var HIT_RADIUS = 15;           // 點擊命中半徑
+  var CLICK_TOLERANCE = 4;       // 判定為「點一下」而非拖曳的位移容忍值
+
+  var points = [];               // { x, y (0~1，相對於圖表內框), text }
+  var downPos = null;
+  var lastPos = null;
+  var dragIndex = -1;
+  var dragMoved = false;
+  var editIndex = -1;
+
+  function cssSize() {
+    return box.clientWidth;
+  }
+
+  function plotRect() {
+    var size = cssSize();
+    return { left: PAD, top: PAD, size: Math.max(0, size - PAD * 2) };
+  }
+
+  function normToPx(nx, ny) {
+    var r = plotRect();
+    return { x: r.left + nx * r.size, y: r.top + ny * r.size };
+  }
+  function pxToNorm(px, py) {
+    var r = plotRect();
+    if (r.size <= 0) return { x: 0.5, y: 0.5 };
+    return {
+      x: Math.min(1, Math.max(0, (px - r.left) / r.size)),
+      y: Math.min(1, Math.max(0, (py - r.top) / r.size))
+    };
+  }
+
+  function roundRect(c, x, y, w, h, rad) {
+    c.beginPath();
+    c.moveTo(x + rad, y);
+    c.arcTo(x + w, y, x + w, y + h, rad);
+    c.arcTo(x + w, y + h, x, y + h, rad);
+    c.arcTo(x, y + h, x, y, rad);
+    c.arcTo(x, y, x + w, y, rad);
+    c.closePath();
+  }
+
+  function resizeCanvas() {
+    var size = cssSize();
+    var dpr = window.devicePixelRatio || 1;
+    canvas.width = size * dpr;
+    canvas.height = size * dpr;
+    canvas.style.width = size + 'px';
+    canvas.style.height = size + 'px';
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    draw();
+  }
+
+  function draw() {
+    var size = cssSize();
+    var r = plotRect();
+
+    ctx.clearRect(0, 0, size, size);
+
+    // 外圍底色，與網站背景呼應
+    ctx.fillStyle = '#EDEEE9';
+    ctx.fillRect(0, 0, size, size);
+
+    // 圖表內框
+    ctx.fillStyle = '#FDFCFA';
+    roundRect(ctx, r.left, r.top, r.size, r.size, 2);
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(43,71,64,0.1)';
+    ctx.lineWidth = 1;
+    roundRect(ctx, r.left + 0.5, r.top + 0.5, r.size - 1, r.size - 1, 2);
+    ctx.stroke();
+
+    // 中心十字虛線
+    ctx.save();
+    ctx.strokeStyle = 'rgba(43,71,64,0.16)';
+    ctx.setLineDash([3, 5]);
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(r.left, r.top + r.size / 2);
+    ctx.lineTo(r.left + r.size, r.top + r.size / 2);
+    ctx.moveTo(r.left + r.size / 2, r.top);
+    ctx.lineTo(r.left + r.size / 2, r.top + r.size);
+    ctx.stroke();
+    ctx.restore();
+
+    // 軸標籤
+    ctx.fillStyle = '#787870';
+    ctx.font = '300 12px "Noto Sans TC", sans-serif';
+    ctx.textBaseline = 'middle';
+
+    ctx.textAlign = 'right';
+    ctx.fillText('比較向內 ←', r.left - 10, r.top + r.size / 2);
+    ctx.textAlign = 'left';
+    ctx.fillText('→ 比較向外', r.left + r.size + 10, r.top + r.size / 2);
+
+    ctx.textAlign = 'center';
+    ctx.fillText('事情（事）↑', r.left + r.size / 2, r.top - 22);
+    ctx.fillText('↓ 關係（人）', r.left + r.size / 2, r.top + r.size + 22);
+
+    // 事件點
+    points.forEach(function (p) {
+      var pos = normToPx(p.x, p.y);
+
+      ctx.beginPath();
+      ctx.arc(pos.x, pos.y, 7, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(169,120,96,0.78)';
+      ctx.fill();
+      ctx.lineWidth = 1.4;
+      ctx.strokeStyle = '#2B4740';
+      ctx.stroke();
+
+      var label = p.text.length > 12 ? p.text.slice(0, 12) + '…' : p.text;
+      ctx.fillStyle = '#2A2A27';
+      ctx.font = '300 11px "Noto Sans TC", sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'top';
+      ctx.fillText(label, pos.x, pos.y + 11);
+    });
+  }
+
+  function hitTest(px, py) {
+    for (var i = points.length - 1; i >= 0; i--) {
+      var pos = normToPx(points[i].x, points[i].y);
+      var dx = px - pos.x, dy = py - pos.y;
+      if (Math.sqrt(dx * dx + dy * dy) < HIT_RADIUS) return i;
+    }
+    return -1;
+  }
+
+  function getEventPos(e) {
+    var rect = canvas.getBoundingClientRect();
+    var t = e.touches && e.touches.length ? e.touches[0] : e;
+    return { x: t.clientX - rect.left, y: t.clientY - rect.top };
+  }
+
+  function hidePopup() {
+    popup.style.display = 'none';
+    popup.innerHTML = '';
+    editIndex = -1;
+  }
+
+  function showPopup(pxPos, text, isEdit) {
+    popup.innerHTML = '';
+
+    var inner = document.createElement('div');
+    inner.className = 'lifemap-popup-inner';
+
+    var label = document.createElement('p');
+    label.className = 'lifemap-popup-label';
+    label.textContent = isEdit ? '調整這件事' : '最近發生的事';
+    inner.appendChild(label);
+
+    var ta = document.createElement('textarea');
+    ta.className = 'lifemap-popup-textarea';
+    ta.placeholder = '例如：和同事的一次談話';
+    ta.maxLength = 60;
+    ta.value = text || '';
+    inner.appendChild(ta);
+
+    var row = document.createElement('div');
+    row.className = 'lifemap-popup-btnrow';
+
+    if (isEdit) {
+      var delBtn = document.createElement('button');
+      delBtn.type = 'button';
+      delBtn.className = 'lifemap-popup-del';
+      delBtn.textContent = '刪除';
+      delBtn.onclick = function () {
+        points.splice(editIndex, 1);
+        hidePopup();
+        draw();
+      };
+      row.appendChild(delBtn);
+    } else {
+      var cancelBtn = document.createElement('button');
+      cancelBtn.type = 'button';
+      cancelBtn.className = 'lifemap-popup-cancel';
+      cancelBtn.textContent = '取消';
+      cancelBtn.onclick = hidePopup;
+      row.appendChild(cancelBtn);
+    }
+
+    var saveBtnEl = document.createElement('button');
+    saveBtnEl.type = 'button';
+    saveBtnEl.className = 'lifemap-popup-save';
+    saveBtnEl.textContent = isEdit ? '儲存' : '新增';
+    saveBtnEl.onclick = function () {
+      var v = ta.value.trim();
+      if (!v) { hidePopup(); return; }
+      if (isEdit) {
+        points[editIndex].text = v;
+      } else {
+        var n = pxToNorm(pxPos.x, pxPos.y);
+        points.push({ x: n.x, y: n.y, text: v });
+      }
+      hidePopup();
+      draw();
+    };
+    row.appendChild(saveBtnEl);
+    inner.appendChild(row);
+    popup.appendChild(inner);
+
+    var popupW = box.clientWidth <= 340 ? 188 : 220;
+    var left = pxPos.x + 16;
+    if (left + popupW > box.clientWidth) left = pxPos.x - popupW - 16;
+    if (left < 4) left = 4;
+    var top = Math.min(Math.max(8, pxPos.y - 20), box.clientHeight - 8);
+
+    popup.style.left = left + 'px';
+    popup.style.top = top + 'px';
+    popup.style.display = 'block';
+
+    setTimeout(function () { ta.focus(); }, 30);
+  }
+
+  function onDown(e) {
+    hidePopup();
+    var pos = getEventPos(e);
+    downPos = pos;
+    lastPos = pos;
+    dragMoved = false;
+    dragIndex = hitTest(pos.x, pos.y);
+  }
+
+  function onMove(e) {
+    if (!downPos) return;
+    var pos = getEventPos(e);
+    lastPos = pos;
+    var dx = pos.x - downPos.x, dy = pos.y - downPos.y;
+    if (Math.sqrt(dx * dx + dy * dy) > CLICK_TOLERANCE) dragMoved = true;
+
+    if (dragIndex >= 0 && dragMoved) {
+      if (e.cancelable) e.preventDefault();
+      var n = pxToNorm(pos.x, pos.y);
+      points[dragIndex].x = n.x;
+      points[dragIndex].y = n.y;
+      draw();
+    }
+  }
+
+  function onUp() {
+    if (!downPos) return;
+
+    if (dragIndex >= 0) {
+      if (!dragMoved) openEditPopup(dragIndex);
+    } else if (!dragMoved) {
+      var r = plotRect();
+      if (lastPos.x >= r.left && lastPos.x <= r.left + r.size &&
+          lastPos.y >= r.top && lastPos.y <= r.top + r.size) {
+        editIndex = -1;
+        showPopup(lastPos, '', false);
+      }
+    }
+
+    downPos = null;
+    dragIndex = -1;
+    dragMoved = false;
+  }
+
+  function openEditPopup(idx) {
+    editIndex = idx;
+    var pos = normToPx(points[idx].x, points[idx].y);
+    showPopup(pos, points[idx].text, true);
+  }
+
+  canvas.addEventListener('mousedown', onDown);
+  canvas.addEventListener('touchstart', onDown, { passive: true });
+  window.addEventListener('mousemove', onMove);
+  window.addEventListener('touchmove', onMove, { passive: false });
+  window.addEventListener('mouseup', onUp);
+  window.addEventListener('touchend', onUp);
+
+  clearBtn.addEventListener('click', function () {
+    if (points.length === 0) return;
+    if (window.confirm('確定要清除所有的點嗎？這個動作無法復原。')) {
+      points = [];
+      hidePopup();
+      draw();
+    }
+  });
+
+  saveBtn.addEventListener('click', function () {
+    hidePopup();
+    draw();
+    var link = document.createElement('a');
+    link.download = '最近生活地圖.png';
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+  });
+
+  var resizeTimer;
+  window.addEventListener('resize', function () {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(resizeCanvas, 150);
+  });
+
+  // 這個區塊所在的頁面預設是隱藏的（display:none），初次載入網站時量到的寬度會是 0，
+  // 導致圖表整個看不到、也點不到。改用 ResizeObserver 監看容器，
+  // 只要頁面被切換成顯示、容器出現實際尺寸，就重新畫一次。
+  if (window.ResizeObserver) {
+    var ro = new ResizeObserver(function () {
+      if (box.clientWidth > 0) resizeCanvas();
+    });
+    ro.observe(box);
+  } else {
+    // 沒有 ResizeObserver 支援時的退路：切換頁面時常會觸發 resize 或至少可手動觸發
+    setInterval(function () {
+      if (box.clientWidth > 0 && canvas.width === 0) resizeCanvas();
+    }, 400);
+  }
+
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(resizeCanvas);
+  }
+  resizeCanvas();
 })();
 
 </script>
