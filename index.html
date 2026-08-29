@@ -2709,7 +2709,7 @@ function goLifeMap() {
   var clearBtn = document.getElementById('lifemapClear');
   var saveBtn = document.getElementById('lifemapSave');
 
-  var PAD = 54;                 // 圖表四周留給軸標籤的空間（CSS px）
+  var PAD = 60;                 // 圖表四周留給軸標籤的空間（CSS px）
   var HIT_RADIUS = 15;           // 點擊命中半徑
   var CLICK_TOLERANCE = 4;       // 判定為「點一下」而非拖曳的位移容忍值
 
@@ -2801,9 +2801,9 @@ function goLifeMap() {
     ctx.textBaseline = 'middle';
 
     ctx.textAlign = 'right';
-    ctx.fillText('比較向內 ←', r.left - 10, r.top + r.size / 2);
+    ctx.fillText('內在 ←', r.left - 10, r.top + r.size / 2);
     ctx.textAlign = 'left';
-    ctx.fillText('→ 比較向外', r.left + r.size + 10, r.top + r.size / 2);
+    ctx.fillText('→ 外在', r.left + r.size + 10, r.top + r.size / 2);
 
     ctx.textAlign = 'center';
     ctx.fillText('事情（事）↑', r.left + r.size / 2, r.top - 22);
