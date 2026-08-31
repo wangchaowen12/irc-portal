@@ -1290,7 +1290,7 @@ footer a:hover { color: var(--accent); }
 
 <!-- NAV -->
 <nav>
-  <button class="nav-logo" onclick="goHome()">IRC</button>
+  <button class="nav-logo" onclick="goIrcAbout()">IRC</button>
   <div style="display:flex;align-items:center;gap:0.5rem;" id="nav-right">
     <div id="nav-shortcuts" style="display:flex;gap:0.6rem;margin-right:0.8rem;">
       <button onclick="goPage('page-sof')"
@@ -1884,7 +1884,7 @@ footer a:hover { color: var(--accent); }
     如對課程內容有任何問題，歡迎來信詢問：<a href="mailto:jowwen@mygrace.com.tw" style="color:var(--accent);text-decoration:none;">jowwen@mygrace.com.tw</a>
   </div>
 
-  <div class="irc-block">
+  <div class="irc-block" id="irc-block">
     <p class="sec-label">About</p>
     <h2 class="sec-title">IRC 是什麼？</h2>
     <div class="sec-body">
@@ -2631,6 +2631,16 @@ function goPage(id) {
   navBack.onclick = function(){ goHome(); };
   navBack.textContent = '← 回到入口';
   
+}
+function goIrcAbout() {
+  goPage('page-sof');
+  var target = document.getElementById('irc-block');
+  if (target) {
+    // 等頁面切換完成、版面確定後再捲動，避免位置算錯
+    requestAnimationFrame(function () {
+      target.scrollIntoView({ block: 'start' });
+    });
+  }
 }
 function goPageCourse(id, title) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
