@@ -429,6 +429,73 @@ nav {
 }
 
 /* ══════════════════════════════
+   SEARCH — 站內搜尋
+══════════════════════════════ */
+.nav-search-btn {
+  background: none; border: none; cursor: pointer;
+  color: var(--muted); padding: 0.4rem 0.5rem;
+  display: flex; align-items: center;
+  transition: color 0.2s;
+}
+.nav-search-btn:hover, .nav-search-btn.active { color: var(--accent); }
+
+.search-panel {
+  position: absolute; top: 100%; left: 0; right: 0;
+  background: var(--white);
+  border-bottom: 1px solid rgba(43,71,64,0.1);
+  box-shadow: 0 16px 32px rgba(43,71,64,0.1);
+  max-height: 72vh;
+  overflow-y: auto;
+}
+.search-panel-inner {
+  max-width: 640px; margin: 0 auto;
+  display: flex; align-items: center; gap: 0.8rem;
+  padding: 1.3rem 6vw 0.9rem;
+  border-bottom: 1px solid rgba(43,71,64,0.06);
+}
+.search-input {
+  flex: 1; min-width: 0;
+  border: none; border-bottom: 1px solid rgba(43,71,64,0.2);
+  background: none; padding: 0.5rem 0.1rem;
+  font-family: var(--sans); font-size: 0.95rem; font-weight: 300;
+  color: var(--text); letter-spacing: 0.02em;
+}
+.search-input:focus { outline: none; border-color: var(--accent); }
+.search-input::placeholder { color: var(--soft); }
+.search-close {
+  background: none; border: none; color: var(--muted);
+  font-size: 0.95rem; cursor: pointer; padding: 0.3rem; flex-shrink: 0;
+  transition: color 0.2s;
+}
+.search-close:hover { color: var(--accent); }
+
+.search-results { max-width: 640px; margin: 0 auto; padding: 0.3rem 6vw 1.8rem; }
+.search-result-item {
+  display: block; width: 100%; text-align: left;
+  background: none; border: none; border-bottom: 1px solid rgba(43,71,64,0.06);
+  padding: 1rem 0.1rem; cursor: pointer; transition: background 0.15s;
+}
+.search-result-item:last-child { border-bottom: none; }
+.search-result-item:hover { background: rgba(43,71,64,0.035); }
+.search-result-crumb {
+  font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--accent); margin-bottom: 0.4rem;
+}
+.search-result-snippet {
+  font-size: 0.88rem; color: var(--text); line-height: 1.85; font-weight: 300;
+}
+.search-result-snippet mark {
+  background: none; color: var(--deep); font-weight: 600;
+}
+.search-hint, .search-empty {
+  font-size: 0.85rem; color: var(--muted); padding: 1.2rem 0.1rem;
+}
+
+@media (max-width: 620px) {
+  .search-panel-inner, .search-results { padding-left: 6vw; padding-right: 6vw; }
+}
+
+/* ══════════════════════════════
    PAGE — 互動工具｜最近生活地圖
 ══════════════════════════════ */
 
@@ -1292,6 +1359,12 @@ footer a:hover { color: var(--accent); }
 <nav>
   <button class="nav-logo" onclick="goIrcAbout()">IRC</button>
   <div style="display:flex;align-items:center;gap:0.5rem;" id="nav-right">
+    <button class="nav-search-btn" id="navSearchBtn" onclick="toggleSearch()" aria-label="搜尋網站內容">
+      <svg width="15" height="15" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="7" cy="7" r="5.2" stroke="currentColor" stroke-width="1.3"/>
+        <line x1="11.1" y1="11.1" x2="15" y2="15" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+      </svg>
+    </button>
     <div id="nav-shortcuts" style="display:flex;gap:0.6rem;margin-right:0.8rem;">
       <button onclick="goPage('page-sof')"
         style="background:none;border:1px solid rgba(43,71,64,0.2);font-family:var(--sans);font-size:0.75rem;font-weight:300;color:var(--mid);cursor:pointer;padding:0.4rem 0.9rem;border-radius:2px;letter-spacing:0.04em;transition:background 0.2s,color 0.2s;"
@@ -1314,6 +1387,17 @@ footer a:hover { color: var(--accent); }
       <span id="nc-course" style="display:none;font-size:0.78rem;color:var(--text);"></span>
     </span>
     <button class="nav-back" id="nav-back" style="display:none;" onclick="navBack()">← 返回</button>
+  </div>
+
+  <!-- 搜尋面板 -->
+  <div class="search-panel" id="searchPanel" style="display:none;">
+    <div class="search-panel-inner">
+      <input type="text" id="searchInput" class="search-input" placeholder="搜尋網站內容…" autocomplete="off">
+      <button type="button" class="search-close" id="searchClose" aria-label="關閉搜尋">✕</button>
+    </div>
+    <div class="search-results" id="searchResults">
+      <p class="search-hint">輸入關鍵字，找找網站裡的內容。</p>
+    </div>
   </div>
 </nav>
 
@@ -3035,6 +3119,170 @@ function goLifeMap() {
     document.fonts.ready.then(resizeCanvas);
   }
   resizeCanvas();
+})();
+
+// ── 站內搜尋
+(function () {
+  var navBtn = document.getElementById('navSearchBtn');
+  var panel = document.getElementById('searchPanel');
+  var input = document.getElementById('searchInput');
+  var closeBtn = document.getElementById('searchClose');
+  var resultsEl = document.getElementById('searchResults');
+  if (!navBtn || !panel) return;
+
+  // 各頁面的簡短名稱，用於搜尋結果的麵包屑；沒列到的頁面會自動抓該頁的 h1 當標題
+  var PAGE_LABELS = {
+    'page-portal': '首頁',
+    'page-sof': '個別諮商｜認識 SOF',
+    'page-members': '已在課程',
+    'page-life-map': '互動工具｜最近生活地圖',
+    'page-course-1': '課程介紹',
+    'page-course-2': '課程介紹',
+    'page-course-3': '課程介紹',
+    'page-course-4': '課程介紹',
+    'page-course-intro': '課程介紹',
+    'page-course-2plus': '課程介紹'
+  };
+
+  var INDEX_SELECTOR = 'h1, h2, h3, .sec-label, p';
+  var index = [];
+
+  function collapse(s) {
+    return s.replace(/\s+/g, ' ').trim();
+  }
+
+  function buildIndex() {
+    index = [];
+    document.querySelectorAll('.page').forEach(function (page) {
+      var pageId = page.id;
+      var label = PAGE_LABELS[pageId];
+      if (!label) {
+        var h1 = page.querySelector('h1');
+        label = h1 ? collapse(h1.textContent).slice(0, 20) : pageId;
+      }
+      page.querySelectorAll(INDEX_SELECTOR).forEach(function (el) {
+        if (el.closest('footer')) return;
+        var text = collapse(el.textContent);
+        if (text.length < 2) return;
+        index.push({ pageId: pageId, label: label, text: text, el: el });
+      });
+    });
+  }
+
+  function escapeHtml(s) {
+    return s.replace(/[&<>"]/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
+    });
+  }
+
+  function makeSnippet(text, idx, qLen) {
+    var radius = 34;
+    var start = Math.max(0, idx - radius);
+    var end = Math.min(text.length, idx + qLen + radius);
+    var s = text.slice(start, end);
+    if (start > 0) s = '…' + s;
+    if (end < text.length) s = s + '…';
+    return s;
+  }
+
+  function highlight(snippet, query) {
+    var idx = snippet.toLowerCase().indexOf(query.toLowerCase());
+    if (idx < 0) return escapeHtml(snippet);
+    return escapeHtml(snippet.slice(0, idx)) +
+      '<mark>' + escapeHtml(snippet.slice(idx, idx + query.length)) + '</mark>' +
+      escapeHtml(snippet.slice(idx + query.length));
+  }
+
+  function renderResults(query) {
+    resultsEl.innerHTML = '';
+    var q = query.trim();
+    if (!q) {
+      resultsEl.innerHTML = '<p class="search-hint">輸入關鍵字，找找網站裡的內容。</p>';
+      return;
+    }
+    var qLower = q.toLowerCase();
+    var matches = [];
+    for (var i = 0; i < index.length; i++) {
+      var pos = index[i].text.toLowerCase().indexOf(qLower);
+      if (pos >= 0) matches.push({ entry: index[i], pos: pos });
+      if (matches.length >= 30) break;
+    }
+
+    if (matches.length === 0) {
+      resultsEl.innerHTML = '<p class="search-empty">沒有找到「' + escapeHtml(q) + '」相關的內容。</p>';
+      return;
+    }
+
+    matches.forEach(function (m) {
+      var item = document.createElement('button');
+      item.type = 'button';
+      item.className = 'search-result-item';
+
+      var crumb = document.createElement('div');
+      crumb.className = 'search-result-crumb';
+      crumb.textContent = m.entry.label;
+      item.appendChild(crumb);
+
+      var snippet = document.createElement('div');
+      snippet.className = 'search-result-snippet';
+      snippet.innerHTML = highlight(makeSnippet(m.entry.text, m.pos, q.length), q);
+      item.appendChild(snippet);
+
+      item.addEventListener('click', function () {
+        goToSearchResult(m.entry.pageId, m.entry.el, m.entry.label);
+      });
+
+      resultsEl.appendChild(item);
+    });
+  }
+
+  function openSearch() {
+    panel.style.display = 'block';
+    navBtn.classList.add('active');
+    setTimeout(function () { input.focus(); }, 30);
+  }
+  function closeSearch() {
+    panel.style.display = 'none';
+    navBtn.classList.remove('active');
+  }
+
+  window.toggleSearch = function () {
+    if (panel.style.display === 'block') closeSearch();
+    else openSearch();
+  };
+
+  window.goToSearchResult = function (pageId, el, title) {
+    closeSearch();
+    if (pageId === 'page-portal') {
+      goHome();
+    } else if (pageId === 'page-life-map') {
+      goLifeMap();
+    } else if (pageId.indexOf('page-course-') === 0) {
+      goPageCourse(pageId, title || '');
+    } else {
+      goPage(pageId);
+    }
+    requestAnimationFrame(function () {
+      if (el) el.scrollIntoView({ block: 'center' });
+    });
+  };
+
+  input.addEventListener('input', function () { renderResults(input.value); });
+  closeBtn.addEventListener('click', closeSearch);
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') closeSearch();
+  });
+  document.addEventListener('click', function (e) {
+    if (panel.style.display !== 'block') return;
+    if (panel.contains(e.target) || navBtn.contains(e.target)) return;
+    closeSearch();
+  });
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', buildIndex);
+  } else {
+    buildIndex();
+  }
 })();
 
 </script>
