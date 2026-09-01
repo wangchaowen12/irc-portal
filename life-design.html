@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>我的生活地圖｜IRC</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@300;400;600&family=Noto+Sans+TC:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/react@18.2.0/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone@7.23.10/babel.min.js"></script>
+<style>
+  :root{
+    --bg:#EFF2E5; --surface:#FBF6ED; --white:#FFFDF8;
+    --deep:#175B4A; --mid:#338260; --accent:#DC662D;
+    --soft:#D6BAA9; --text:#2C2C25; --muted:#7E7E6A;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body,#root{height:100%}
+  body{font-family:'Noto Sans TC','PingFang TC',system-ui,sans-serif;background:var(--bg);color:var(--text);font-weight:300;overflow:hidden}
+  .app{display:flex;flex-direction:column;height:100vh;height:100dvh}
+  .topbar{display:flex;align-items:center;justify-content:space-between;padding:1rem 6vw;border-bottom:1px solid rgba(23,91,74,0.09);background:rgba(239,242,229,0.92);backdrop-filter:blur(8px);flex-shrink:0}
+  .brand{font-family:'Noto Serif TC',serif;font-size:0.92rem;color:var(--deep);letter-spacing:0.12em}
+  .tabs{display:flex;gap:0.4rem}
+  .tab{background:none;border:none;font-family:'Noto Sans TC',sans-serif;font-size:0.8rem;color:var(--muted);padding:0.4rem 0.9rem;border-radius:2px;cursor:pointer;letter-spacing:0.02em;transition:all .15s}
+  .tab.active{color:var(--deep);background:rgba(23,91,74,0.07);font-weight:500}
+  .page-scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
+
+  /* ── HOME ── */
+  .home-wrap{padding:2.4rem 6vw 4rem;max-width:760px;margin:0 auto}
+  .home-date{font-size:0.7rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--accent);margin-bottom:0.5rem}
+  .home-title{font-family:'Noto Serif TC',serif;font-size:1.5rem;font-weight:300;color:var(--deep);margin-bottom:2.2rem;line-height:1.6}
+  .status-card{background:var(--white);border:1px solid rgba(23,91,74,0.09);border-radius:3px;padding:1.6rem 1.8rem;margin-bottom:2.2rem}
+  .status-label{font-size:0.7rem;letter-spacing:0.16em;text-transform:uppercase;color:var(--muted);margin-bottom:0.9rem}
+  .status-row{display:flex;gap:0.6rem;flex-wrap:wrap}
+  .status-chip{font-size:0.82rem;padding:0.5rem 1rem;border-radius:2px;border:1px solid rgba(23,91,74,0.16);background:none;color:var(--muted);cursor:pointer;transition:all .15s;font-family:inherit}
+  .status-chip.active{background:var(--deep);color:#fff;border-color:var(--deep)}
+
+  .section-label{font-size:0.7rem;letter-spacing:0.16em;text-transform:uppercase;color:var(--muted);margin-bottom:1rem}
+  .domain-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:0.9rem;margin-bottom:2.4rem}
+  .domain-card{background:var(--white);border:1px solid rgba(23,91,74,0.08);border-radius:2px;padding:1.3rem 1.4rem;cursor:pointer;transition:transform .18s,box-shadow .18s}
+  .domain-card:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(23,91,74,0.08)}
+  .domain-name{font-family:'Noto Serif TC',serif;font-size:0.98rem;color:var(--deep);margin-bottom:0.7rem}
+  .domain-progress-row{display:flex;align-items:center;gap:0.6rem}
+  .domain-bar{flex:1;height:3px;background:rgba(23,91,74,0.12);border-radius:2px;overflow:hidden}
+  .domain-bar-fill{height:100%;background:var(--accent);border-radius:2px}
+  .domain-pct{font-size:0.72rem;color:var(--muted);flex-shrink:0}
+
+  .enter-map-btn{display:flex;align-items:center;justify-content:space-between;width:100%;background:var(--deep);border:none;border-radius:3px;padding:1.2rem 1.6rem;cursor:pointer;color:#fff;transition:background .15s;margin-bottom:0.9rem}
+  .enter-map-btn:hover{background:var(--mid)}
+  .enter-map-btn.alt{background:var(--white);color:var(--deep);border:1px solid rgba(23,91,74,0.16)}
+  .enter-map-btn.alt:hover{background:var(--surface)}
+  .enter-map-btn.alt .enter-map-sub{color:var(--muted)}
+  .enter-map-title{font-family:'Noto Serif TC',serif;font-size:0.95rem;text-align:left}
+  .enter-map-sub{font-size:0.76rem;color:rgba(255,255,255,0.6);margin-top:0.2rem;text-align:left}
+
+  /* ── DREAM MAP ── */
+  .map-wrap{flex:1;position:relative;overflow:hidden;display:flex;flex-direction:column}
+  .map-crumbs{padding:1.4rem 6vw 0;display:flex;align-items:center;gap:0.5rem;min-height:40px;flex-shrink:0}
+  .crumb-btn{background:none;border:none;font-family:inherit;font-size:0.85rem;color:var(--muted);cursor:pointer;padding:2px 4px}
+  .crumb-btn.current{color:var(--text);font-weight:500;cursor:default}
+  .crumb-sep{color:var(--soft);font-size:0.8rem}
+  .map-canvas{flex:1;position:relative}
+  .node-center{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%)}
+  .node-orbit{position:absolute;transform:translate(-50%,-50%)}
+  .center-circle{width:150px;height:150px;border-radius:50%;background:linear-gradient(135deg,var(--deep),var(--mid));display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 10px 34px rgba(23,91,74,0.22)}
+  .center-circle span{font-family:'Noto Serif TC',serif;font-size:0.92rem;color:#fff;text-align:center;line-height:1.6;padding:0 1.2rem}
+  .orbit-node{width:104px;height:104px;border-radius:50%;background:var(--white);border:1.5px solid rgba(23,91,74,0.2);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer;transition:all .2s;padding:0 8px;position:relative}
+  .orbit-node:hover{transform:scale(1.06);border-color:var(--deep);box-shadow:0 8px 22px rgba(23,91,74,0.14)}
+  .orbit-node.done{background:var(--deep);border-color:var(--deep)}
+  .orbit-node.done .orbit-title,.orbit-node.done .orbit-pct{color:#fff}
+  .orbit-title{font-size:0.76rem;color:var(--text);text-align:center;line-height:1.4;font-weight:500}
+  .orbit-pct{font-size:0.66rem;color:var(--muted)}
+  .orbit-placeholder{width:80px;height:80px;border-radius:50%;border:1.5px dashed rgba(23,91,74,0.25);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--soft);font-size:1.1rem;transition:all .15s}
+  .orbit-placeholder:hover{border-color:var(--deep);color:var(--deep)}
+  .svg-lines{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+  .map-hint{padding:0 0 1.2rem;text-align:center;font-size:0.76rem;color:var(--soft);letter-spacing:0.04em;flex-shrink:0}
+
+  /* ── MEMORY WALL (flower) ── */
+  .wall-wrap{flex:1;display:flex;flex-direction:column;overflow:hidden}
+  .wall-head{padding:1.6rem 6vw 0;flex-shrink:0}
+  .wall-title{font-family:'Noto Serif TC',serif;font-size:1.15rem;color:var(--deep);margin-bottom:0.3rem}
+  .wall-sub{font-size:0.8rem;color:var(--muted)}
+  .wall-canvas{flex:1;position:relative}
+  .flower-center{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:86px;height:86px;border-radius:50%;background:linear-gradient(135deg,#F4C24A,#E88A2E);display:flex;align-items:center;justify-content:center;box-shadow:0 8px 26px rgba(232,138,46,0.35);z-index:3}
+  .flower-center span{font-size:1.3rem}
+  .petal{position:absolute;transform:translate(-50%,-50%);width:58px;height:58px;border-radius:50%;display:flex;align-items:center;justify-content:center;z-index:2;border-width:1.5px;border-style:solid;cursor:pointer;transition:all .2s}
+  .petal-label{font-size:0.62rem;text-align:center;line-height:1.25;padding:0 4px;transition:color .2s}
+  .action-dot{position:absolute;transform:translate(-50%,-50%);width:22px;height:22px;border-radius:50%;border-width:1.4px;border-style:solid;cursor:default;transition:all .2s;z-index:1}
+  .wall-legend{padding:1rem 6vw 1.4rem;text-align:center;font-size:0.76rem;color:var(--soft);flex-shrink:0}
+
+  /* ── DIALOG ── */
+  .overlay{position:fixed;inset:0;background:rgba(23,20,15,0.28);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;padding:16px;z-index:100}
+  .dialog{background:var(--white);border-radius:4px;width:100%;max-width:400px;padding:1.8rem;box-shadow:0 20px 50px rgba(23,20,15,0.18)}
+  .dialog label{display:block;font-size:0.68rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:0.5rem}
+  .dialog input{width:100%;font-family:inherit;font-size:0.9rem;padding:0.6rem 0.7rem;border:1.4px solid rgba(23,91,74,0.18);border-radius:2px;color:var(--text);background:var(--bg);margin-bottom:1rem}
+  .dialog-row{display:flex;justify-content:space-between;align-items:center;margin-top:0.4rem}
+  .btn-primary{background:var(--deep);color:#fff;border:none;border-radius:2px;padding:0.55rem 1.3rem;font-size:0.84rem;cursor:pointer;font-family:inherit}
+  .btn-primary:hover{background:var(--mid)}
+  .btn-ghost{background:none;border:1.4px solid rgba(23,91,74,0.18);border-radius:2px;padding:0.55rem 1rem;font-size:0.84rem;color:var(--muted);cursor:pointer;font-family:inherit}
+  .btn-text{background:none;border:none;font-size:0.8rem;color:var(--accent);cursor:pointer;font-family:inherit}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel" data-presets="react">
+const { useState, useEffect, useMemo, useCallback } = React;
+
+const LS_KEY = 'irc-life-design-v1';
+function load(){ try{ const s=localStorage.getItem(LS_KEY); return s?JSON.parse(s):null; }catch(e){ return null; } }
+function save(state){ try{ localStorage.setItem(LS_KEY, JSON.stringify(state)); }catch(e){} }
+
+const MAX_DOMAINS = 5;
+const MAX_ACTIONS = 5;
+
+function uid(){ return Math.random().toString(36).slice(2,9); }
+function makeAction(title){ return { id:uid(), title, status:'todo' }; }
+function makeDomain(title){ return { id:uid(), title, actions:[] }; }
+
+function buildDefault(){
+  return {
+    dreamTitle: '我想過的生活',
+    domains: [
+      { ...makeDomain('工作與事業'), actions:[makeAction('釐清下一步方向'), makeAction('整理作品／履歷')] },
+      { ...makeDomain('身心健康'), actions:[makeAction('固定運動習慣'), makeAction('睡眠品質'), makeAction('好好吃飯')] },
+      { ...makeDomain('關係與連結'), actions:[makeAction('主動聯繫一位朋友')] },
+      { ...makeDomain('學習與成長'), actions:[] },
+      { ...makeDomain('生活空間'), actions:[] },
+    ],
+    todayStatus: 'normal',
+  };
+}
+
+function orbitPositions(n, rx=38, ry=34){
+  return Array.from({length:n},(_,i)=>{ const a=(i/n)*2*Math.PI - Math.PI/2; return { x:50+rx*Math.cos(a), y:50+ry*Math.sin(a) }; });
+}
+
+/* ── Edit dialog ── */
+function EditDialog({ node, kind, onSave, onDelete, onClose }){
+  const [title,setTitle] = useState(node.title);
+  const ref = React.useRef();
+  useEffect(()=>{ ref.current?.focus(); ref.current?.select(); },[]);
+  return (
+    <div className="overlay" onClick={onClose}>
+      <div className="dialog" onClick={e=>e.stopPropagation()}>
+        <label>{kind==='domain' ? '生活領域名稱' : '行動名稱'}</label>
+        <input ref={ref} value={title} onChange={e=>setTitle(e.target.value)} onKeyDown={e=>e.key==='Enter'&&title.trim()&&onSave(title.trim())} />
+        <div className="dialog-row">
+          {onDelete ? <button className="btn-text" onClick={onDelete}>刪除</button> : <span/>}
+          <div style={{display:'flex',gap:8}}>
+            <button className="btn-ghost" onClick={onClose}>取消</button>
+            <button className="btn-primary" onClick={()=>title.trim()&&onSave(title.trim())}>儲存</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ── Dream Map (working view — 5 domains, 5 actions each) ── */
+function DreamMap({ data, setData }){
+  const [stack,setStack] = useState([{ level:'dream', title:data.dreamTitle }]);
+  const [editing,setEditing] = useState(null);
+  const current = stack[stack.length-1];
+
+  const children = useMemo(()=>{
+    if (current.level==='dream') return data.domains;
+    const dom = data.domains.find(d=>d.id===current.domainId);
+    return dom ? dom.actions : [];
+  },[current,data]);
+
+  const cap = current.level==='dream' ? MAX_DOMAINS : MAX_ACTIONS;
+  const slots = [...children, ...Array(Math.max(0,cap-children.length)).fill(null)].slice(0,cap);
+  const positions = orbitPositions(slots.length);
+
+  function zoomIn(node){
+    if (current.level==='dream') setStack([...stack,{ level:'domain', domainId:node.id, title:node.title }]);
+  }
+  function zoomTo(idx){ setStack(stack.slice(0,idx+1)); }
+
+  function toggleAction(domainId, actionId){
+    setData(d=>({ ...d, domains:d.domains.map(dom=>dom.id!==domainId?dom:{
+      ...dom, actions:dom.actions.map(a=>a.id!==actionId?a:{ ...a, status:a.status==='done'?'todo':'done' })
+    })}));
+  }
+  function addNode(){
+    if (current.level==='dream'){
+      if (data.domains.length>=MAX_DOMAINS) return;
+      const n = makeDomain('新的領域');
+      setData(d=>({ ...d, domains:[...d.domains, n] }));
+      setEditing({ kind:'domain', node:n });
+    } else {
+      const dom = data.domains.find(d=>d.id===current.domainId);
+      if (dom.actions.length>=MAX_ACTIONS) return;
+      const n = makeAction('新的行動');
+      setData(d=>({ ...d, domains:d.domains.map(x=>x.id!==current.domainId?x:{ ...x, actions:[...x.actions,n] }) }));
+      setEditing({ kind:'action', node:n, domainId:current.domainId });
+    }
+  }
+  function saveEdit(newTitle){
+    const { kind, node, domainId } = editing;
+    if (kind==='domain'){
+      setData(d=>({ ...d, domains:d.domains.map(x=>x.id===node.id?{...x,title:newTitle}:x) }));
+      setStack(s=>s.map(item=>item.domainId===node.id?{...item,title:newTitle}:item));
+    } else {
+      setData(d=>({ ...d, domains:d.domains.map(dom=>dom.id!==domainId?dom:{ ...dom, actions:dom.actions.map(a=>a.id===node.id?{...a,title:newTitle}:a) }) }));
+    }
+    setEditing(null);
+  }
+  function deleteEdit(){
+    const { kind, node, domainId } = editing;
+    if (kind==='domain'){
+      setData(d=>({ ...d, domains:d.domains.filter(x=>x.id!==node.id) }));
+      setStack(s=>{ const i=s.findIndex(item=>item.domainId===node.id); return i>-1?s.slice(0,i):s; });
+    } else {
+      setData(d=>({ ...d, domains:d.domains.map(dom=>dom.id!==domainId?dom:{ ...dom, actions:dom.actions.filter(a=>a.id!==node.id) }) }));
+    }
+    setEditing(null);
+  }
+
+  return (
+    <div className="map-wrap">
+      <div className="map-crumbs">
+        {stack.map((s,i)=>(
+          <span key={i} style={{display:'flex',alignItems:'center',gap:6}}>
+            {i>0 && <span className="crumb-sep">›</span>}
+            <button className={`crumb-btn${i===stack.length-1?' current':''}`} onClick={()=>zoomTo(i)}>{s.title}</button>
+          </span>
+        ))}
+      </div>
+      <div className="map-canvas">
+        <svg className="svg-lines" viewBox="0 0 100 100" preserveAspectRatio="none">
+          {slots.map((node,i)=>{
+            const pos = positions[i];
+            const mx=(50+pos.x)/2+(pos.y-50)*0.12, my=(50+pos.y)/2-(pos.x-50)*0.12;
+            return <path key={i} d={`M 50 50 Q ${mx} ${my} ${pos.x} ${pos.y}`} stroke={node?'rgba(23,91,74,0.3)':'rgba(23,91,74,0.12)'} strokeWidth={node?'0.6':'0.35'} fill="none" strokeDasharray={node?'none':'2 6'} />;
+          })}
+        </svg>
+        <div className="node-center">
+          <div className="center-circle" onClick={()=>stack.length>1 && zoomTo(stack.length-2)} style={{cursor:stack.length>1?'pointer':'default'}}>
+            <span>{current.title}</span>
+          </div>
+        </div>
+        {slots.map((node,i)=>{
+          const pos = positions[i];
+          if (!node) return (
+            <div key={'e'+i} className="node-orbit" style={{left:`${pos.x}%`,top:`${pos.y}%`}}>
+              <div className="orbit-placeholder" onClick={addNode}>＋</div>
+            </div>
+          );
+          const isDomain = current.level==='dream';
+          const total = isDomain ? node.actions.length : 0;
+          const done = isDomain ? node.actions.filter(a=>a.status==='done').length : 0;
+          const pct = total>0 ? Math.round(done/total*100) : null;
+          const isDone = !isDomain && node.status==='done';
+          return (
+            <div key={node.id} className="node-orbit" style={{left:`${pos.x}%`,top:`${pos.y}%`}}>
+              <div className={`orbit-node${isDone?' done':''}`}
+                onClick={()=> isDomain ? zoomIn(node) : toggleAction(current.domainId, node.id)}
+                onDoubleClick={e=>{ e.stopPropagation(); setEditing({ kind:isDomain?'domain':'action', node, domainId: isDomain?undefined:current.domainId }); }}
+                title="點一下：領域進入 / 行動打勾；雙擊：編輯">
+                <span className="orbit-title">{node.title}</span>
+                {pct!==null && <span className="orbit-pct">{done}/{total} · {pct}%</span>}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+      <p className="map-hint">
+        {current.level==='dream'
+          ? `點擊領域展開 · 雙擊編輯 · 最多 ${MAX_DOMAINS} 個領域`
+          : `點擊行動打勾完成 · 雙擊編輯 · 每個領域最多 ${MAX_ACTIONS} 個行動`}
+      </p>
+      {editing && <EditDialog node={editing.node} kind={editing.kind} onSave={saveEdit} onDelete={deleteEdit} onClose={()=>setEditing(null)} />}
+    </div>
+  );
+}
+
+// Vivid, distinct colours per petal — this is the one place in the app that's meant to look
+// like an actual flower rather than the neutral IRC palette used everywhere else.
+const PETAL_COLORS = ['#E8607A', '#F2994A', '#F6C445', '#8E7CC3', '#4FB8C9'];
+
+// Offsets (not absolute positions) for a ring of n points around radius r — used to place each
+// petal's 5 action-dots around ITS OWN centre, not the flower's centre.
+function ringOffsets(n, r){
+  return Array.from({length:n},(_,i)=>{ const a=(i/n)*2*Math.PI - Math.PI/2; return { dx:r*Math.cos(a), dy:r*Math.sin(a) }; });
+}
+
+/* ── Memory Wall — flower/mandala: 1 center + 5 petals + 25 outer circles ── */
+function MemoryWall({ data }){
+  const [selected,setSelected] = useState(null);
+
+  // 5 petals (domains) around the centre
+  const petalR = 30;
+  const petalPositions = orbitPositions(5, petalR, petalR);
+
+  // Each petal's own 5 action-dots orbit around THAT PETAL at this radius (percent of canvas) —
+  // this is what makes the outer ring read as "25 small circles", one cluster of 5 per petal.
+  const actionR = 10;
+
+  return (
+    <div className="wall-wrap">
+      <div className="wall-head">
+        <h2 className="wall-title">生活曼陀羅</h2>
+        <p className="wall-sub">花心是你的夢想，5 片花瓣是你的生活領域，每片花瓣周圍的 5 個小圓，是那個領域裡的行動——完成的會亮起來。</p>
+      </div>
+      <div className="wall-canvas">
+        {/* connecting lines: centre→petal, petal→its own action dots */}
+        <svg className="svg-lines" viewBox="0 0 100 100" preserveAspectRatio="none">
+          {data.domains.map((dom,i)=>{
+            const p = petalPositions[i];
+            return <path key={'c'+i} d={`M 50 50 L ${p.x} ${p.y}`} stroke="rgba(23,91,74,0.22)" strokeWidth="0.5" fill="none" />;
+          })}
+        </svg>
+        {/* centre */}
+        <div className="flower-center" title={data.dreamTitle}><span>✦</span></div>
+
+        {data.domains.map((dom,i)=>{
+          const p = petalPositions[i];
+          const color = PETAL_COLORS[i % PETAL_COLORS.length];
+          const total = dom.actions.length;
+          const done = dom.actions.filter(a=>a.status==='done').length;
+          const complete = total>0 && done===total;
+          const actionSlots = [...dom.actions, ...Array(Math.max(0,5-dom.actions.length)).fill(null)].slice(0,5);
+          const offsets = ringOffsets(5, actionR);
+          return (
+            <React.Fragment key={dom.id}>
+              {actionSlots.map((a,j)=>{
+                const off = offsets[j];
+                const absX = p.x + off.dx;
+                const absY = p.y + off.dy;
+                const dotStyle = !a
+                  ? { background:'rgba(23,91,74,0.05)', borderColor:'rgba(23,91,74,0.18)', borderStyle:'dashed' }
+                  : a.status==='done'
+                    ? { background:color, borderColor:color, boxShadow:`0 3px 10px ${color}66` }
+                    : { background:color+'26', borderColor:color+'90' };
+                return (
+                  <div key={j} className="action-dot"
+                    style={{ left:`${absX}%`, top:`${absY}%`, ...dotStyle }}
+                    title={a ? a.title : ''}
+                    onClick={()=> a && setSelected({ domain:dom.title, action:a })} />
+                );
+              })}
+              <div className="petal"
+                style={{
+                  left:`${p.x}%`, top:`${p.y}%`,
+                  background: complete ? color : color+'30',
+                  borderColor: color,
+                  boxShadow: complete ? `0 6px 18px ${color}55` : 'none',
+                }}
+                onClick={()=>setSelected({ domain:dom.title, summary:`${done}/${total} 個行動完成` })}>
+                <span className="petal-label" style={{ color: complete ? '#fff' : 'var(--text)' }}>{dom.title}</span>
+              </div>
+            </React.Fragment>
+          );
+        })}
+      </div>
+      <p className="wall-legend">共 1 個花心 · 5 片花瓣 · 25 個外圍圓（尚未使用的行動位置先留白）</p>
+      {selected && (
+        <div className="overlay" onClick={()=>setSelected(null)}>
+          <div className="dialog" onClick={e=>e.stopPropagation()}>
+            <label>{selected.domain}</label>
+            <p style={{fontSize:'0.95rem',color:'var(--text)',marginBottom:'1.2rem'}}>{selected.action ? selected.action.title : selected.summary}</p>
+            {selected.action && <p style={{fontSize:'0.8rem',color:'var(--muted)',marginBottom:'1.2rem'}}>狀態：{selected.action.status==='done' ? '已完成' : '進行中'}</p>}
+            <div className="dialog-row" style={{justifyContent:'flex-end'}}>
+              <button className="btn-primary" onClick={()=>setSelected(null)}>關閉</button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ── Home ── */
+function Home({ data, setData, goMap, goWall }){
+  const today = new Date();
+  const wd = ['日','一','二','三','四','五','六'];
+  const label = `${today.getFullYear()} 年 ${today.getMonth()+1} 月 ${today.getDate()} 日 · 星期${wd[today.getDay()]}`;
+  const statusOptions = [
+    { key:'steady', label:'穩定' },
+    { key:'normal', label:'一般' },
+    { key:'tired', label:'疲憊' },
+  ];
+  return (
+    <div className="page-scroll">
+      <div className="home-wrap">
+        <p className="home-date">{label}</p>
+        <h1 className="home-title">今天的你，過得如何？</h1>
+
+        <div className="status-card">
+          <p className="status-label">此刻的狀態</p>
+          <div className="status-row">
+            {statusOptions.map(o=>(
+              <button key={o.key} className={`status-chip${data.todayStatus===o.key?' active':''}`}
+                onClick={()=>setData(d=>({...d,todayStatus:o.key}))}>{o.label}</button>
+            ))}
+          </div>
+        </div>
+
+        <p className="section-label">你正在經營的 5 個生活領域</p>
+        <div className="domain-grid">
+          {data.domains.map(dom=>{
+            const total = dom.actions.length;
+            const done = dom.actions.filter(a=>a.status==='done').length;
+            const pct = total>0 ? Math.round(done/total*100) : 0;
+            return (
+              <div key={dom.id} className="domain-card" onClick={goMap}>
+                <p className="domain-name">{dom.title}</p>
+                <div className="domain-progress-row">
+                  <div className="domain-bar"><div className="domain-bar-fill" style={{width:`${pct}%`}}/></div>
+                  <span className="domain-pct">{done}/{total}</span>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        <button className="enter-map-btn" onClick={goMap}>
+          <div>
+            <p className="enter-map-title">打開我的生活地圖</p>
+            <p className="enter-map-sub">{data.domains.length} 個生活領域 · 資料只留在這台裝置上</p>
+          </div>
+          <span style={{fontSize:18,color:'rgba(255,255,255,0.7)'}}>→</span>
+        </button>
+        <button className="enter-map-btn alt" onClick={goWall}>
+          <div>
+            <p className="enter-map-title">看看生活曼陀羅</p>
+            <p className="enter-map-sub">花心 · 5 片花瓣 · 25 個行動圓</p>
+          </div>
+          <span style={{fontSize:18,color:'var(--muted)'}}>→</span>
+        </button>
+        <p style={{fontSize:'0.74rem',color:'var(--soft)',textAlign:'center',marginTop:'1.6rem',lineHeight:1.8}}>
+          這裡的一切只存在你目前使用的這個瀏覽器裡，不會被上傳、也不會被任何人看到。<br/>
+          換一台裝置或清除瀏覽器資料，內容也會跟著清空——如果想留住它，建議自己截圖保存。
+        </p>
+      </div>
+    </div>
+  );
+}
+
+function App(){
+  const [page,setPage] = useState('home');
+  const [data,setDataRaw] = useState(()=> load() || buildDefault());
+  const setData = useCallback((updater)=>{ setDataRaw(d=> typeof updater==='function' ? updater(d) : updater); },[]);
+  useEffect(()=>{ save(data); },[data]);
+
+  return (
+    <div className="app">
+      <div className="topbar">
+        <span className="brand">我的生活地圖</span>
+        <div className="tabs">
+          <button className={`tab${page==='home'?' active':''}`} onClick={()=>setPage('home')}>首頁</button>
+          <button className={`tab${page==='map'?' active':''}`} onClick={()=>setPage('map')}>地圖</button>
+          <button className={`tab${page==='wall'?' active':''}`} onClick={()=>setPage('wall')}>曼陀羅</button>
+        </div>
+      </div>
+      {page==='home' && <Home data={data} setData={setData} goMap={()=>setPage('map')} goWall={()=>setPage('wall')} />}
+      {page==='map' && <DreamMap data={data} setData={setData} />}
+      {page==='wall' && <MemoryWall data={data} />}
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>
