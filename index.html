@@ -1773,15 +1773,14 @@ footer a:hover { color: var(--accent); }
     </div>
   </div>
 
-  <!-- 最近生活地圖：個別諮商會談前的暖身入口 -->
+  <!-- 探索工具箱：單一入口，點進去才看到裡面的工具（未來會陸續增加） -->
   <div class="lifemap-invite-wrap">
-    <div class="lifemap-invite">
-      <div class="lifemap-invite-text">
-        <p class="lifemap-invite-label">在進來之前，可以先做的一件小事</p>
-        <h3>🌿 最近生活地圖</h3>
-        <p>找一點時間，把最近讓你留下印象的幾件事，安靜地看一遍——像是進入會談前的一段暖身，不需要急著找到答案。</p>
+    <div class="lifemap-invite" style="justify-content:flex-start;gap:1.4rem;">
+      <div class="lifemap-invite-text" style="flex:none;">
+        <p class="lifemap-invite-label">給正在／曾經個別諮商的你</p>
+        <h3>🧰 探索工具箱</h3>
       </div>
-      <button type="button" class="lifemap-invite-btn" onclick="goLifeMap()">打開最近生活地圖 →</button>
+      <button type="button" class="lifemap-invite-btn" style="margin-left:auto;" onclick="goToolbox()">打開工具箱 →</button>
     </div>
   </div>
 
@@ -2091,6 +2090,44 @@ footer a:hover { color: var(--accent); }
       <div class="concept-item">
         <h3>同班成員的留言</h3>
         <p>在課堂之外與同學繼續連結，讓彼此的陪伴延伸下去。</p>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <span>© IRC｜Inner Reality Circle</span>
+    <span><a href="mailto:jowwen@mygrace.com.tw">jowwen@mygrace.com.tw</a></span>
+  </footer>
+</div>
+
+<!-- ══ PAGE：探索工具箱 ══ -->
+<div class="page" id="page-toolbox">
+
+  <div class="lifemap-hero">
+    <p class="kicker">Exploration Toolbox</p>
+    <h1>🧰 探索工具箱</h1>
+    <p>幾個可以自己使用的小工具，陪你在會談之前、之間，慢慢看見自己。<br>
+    這裡會陸續增加新的工具。</p>
+  </div>
+
+  <div class="lifemap-section">
+    <div class="lifemap-wrap" style="max-width:640px;">
+      <div class="lifemap-invite" style="margin-bottom:1.2rem;">
+        <div class="lifemap-invite-text">
+          <p class="lifemap-invite-label">在進來之前，可以先做的一件小事</p>
+          <h3>🌿 最近生活地圖</h3>
+          <p>找一點時間，把最近讓你留下印象的幾件事，安靜地看一遍——像是進入會談前的一段暖身，不需要急著找到答案。</p>
+        </div>
+        <button type="button" class="lifemap-invite-btn" onclick="goLifeMap()">打開 →</button>
+      </div>
+
+      <div class="lifemap-invite">
+        <div class="lifemap-invite-text">
+          <p class="lifemap-invite-label">在會談之間，持續陪伴自己</p>
+          <h3>🌱 我的生活地圖</h3>
+          <p>把你正在經營的生活領域攤開來看看——哪些正在推進、哪些暫時停著。內容只留在你自己的裝置上，不會被看到。</p>
+        </div>
+        <a href="life-design.html" target="_blank" class="lifemap-invite-btn" style="display:inline-block;text-decoration:none;">打開 →</a>
       </div>
     </div>
   </div>
@@ -2785,9 +2822,9 @@ function goPageCourse(id, title) {
   navBack.textContent = '← 認識課程';
   
 }
-function goLifeMap() {
+function goToolbox() {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  var el = document.getElementById('page-life-map');
+  var el = document.getElementById('page-toolbox');
   el.classList.add('active');
   el.scrollTop = 0;
   var sc = document.getElementById('nav-shortcuts');
@@ -2801,14 +2838,32 @@ function goLifeMap() {
   navBack.onclick = function(){ goPage('page-sof'); };
   navBack.textContent = '← 回到個別諮商頁面';
 }
+function goLifeMap() {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  var el = document.getElementById('page-life-map');
+  el.classList.add('active');
+  el.scrollTop = 0;
+  var sc = document.getElementById('nav-shortcuts');
+  if(sc) sc.style.display = 'none';
+  var navBack = document.getElementById('nav-back');
+  document.getElementById('nc-home').style.display = 'inline';
+  document.getElementById('nc-sof').style.display = 'none';
+  document.getElementById('nc-sep').style.display = 'none';
+  document.getElementById('nc-course').style.display = 'none';
+  navBack.style.display = 'inline';
+  navBack.onclick = function(){ goToolbox(); };
+  navBack.textContent = '← 回到探索工具箱';
+}
 
 // ── 深連結：從 Space 頁面點「← 班級入口」回來時，帶 #members 直接落在班級入口分頁
-// 也支援 #life-map，方便直接把「最近生活地圖」連結分享給個別諮商的個案
+// 也支援 #life-map、#toolbox，方便直接把工具連結分享給個別諮商的個案
 (function () {
   if (window.location.hash === '#members') {
     goPage('page-members');
   } else if (window.location.hash === '#life-map') {
     goLifeMap();
+  } else if (window.location.hash === '#toolbox') {
+    goToolbox();
   }
 })();
 
@@ -3176,6 +3231,7 @@ function goLifeMap() {
     'page-portal': '首頁',
     'page-sof': '個別諮商｜認識 SOF',
     'page-members': '已在課程',
+    'page-toolbox': '探索工具箱',
     'page-life-map': '互動工具｜最近生活地圖',
     'page-course-1': '課程介紹',
     'page-course-2': '課程介紹',
