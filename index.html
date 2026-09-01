@@ -10,15 +10,15 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  --bg:       #EDEEE9;
-  --surface:  #F7F5F1;
-  --white:    #FDFCFA;
-  --deep:     #2B4740;
-  --mid:      #4A6B5D;
-  --accent:   #A97860;
-  --soft:     #C9BDB6;
-  --text:     #2A2A27;
-  --muted:    #787870;
+  --bg:       #EFF2E5;
+  --surface:       #FBF6ED;
+  --white:       #FFFDF8;
+  --deep:       #175B4A;
+  --mid:       #338260;
+  --accent:       #DC662D;
+  --soft:       #D6BAA9;
+  --text:       #2C2C25;
+  --muted:       #7E7E6A;
   --serif:    'Noto Serif TC', serif;
   --sans:     'Noto Sans TC', sans-serif;
 }
@@ -342,6 +342,31 @@ nav {
   border-top: 1px solid rgba(43,71,64,0.08);
 }
 .irc-block .sec-body { max-width: 42em; }
+
+.irc-poetic {
+  max-width: 42em;
+  margin-top: 2.3rem;
+}
+.irc-poetic p {
+  font-family: var(--serif);
+  font-size: 1.02rem;
+  font-weight: 300;
+  color: var(--deep);
+  line-height: 2.1;
+}
+.irc-poetic p + p { margin-top: 1.4rem; }
+
+.irc-signature { max-width: 42em; }
+.irc-signature-name {
+  font-size: 0.72rem; letter-spacing: 0.3em;
+  text-transform: uppercase; color: var(--accent);
+  margin-bottom: 0.9rem;
+}
+.irc-signature-line {
+  font-family: var(--serif);
+  font-size: 1.05rem; font-weight: 300;
+  color: var(--muted); line-height: 1.9;
+}
 
 /* ══════════════════════════════
    PAGE 3 — 班級入口（給學員）
@@ -1972,8 +1997,24 @@ footer a:hover { color: var(--accent); }
     <p class="sec-label">About</p>
     <h2 class="sec-title">IRC 是什麼？</h2>
     <div class="sec-body">
-      <p>IRC（Inner Reality Circle）是一個讓「內在真實接觸」發生的練習場域。它以 SOF 為核心方法，讓練習延伸到課堂之外，也延伸到生活裡。</p>
-      <p>在 IRC 裡，人與人之間的互動可以被感覺、被停留，慢慢展開成真實的經驗。它目前仍是起點，但可以想像它慢慢成為一個讓分散的經驗有機會相遇、交換、延伸的共同場域。</p>
+      <p>IRC（Inner Reality Circle）是一個以 SOF（Social Oriented Focusing）為核心方法，讓「內在真實接觸」發生的練習場域。</p>
+      <p>在 IRC 裡，人與人之間的互動被感覺、被停留；透過身體、感受與彼此的聆聽，讓時間慢下來，而可以看見此刻正在發生的事情，然後展開成真實的經驗。</p>
+    </div>
+
+    <div class="irc-poetic">
+      <p>如同折翼之鳥可以復原，<br>
+      在 IRC 中，內在原本就存在的生命力慢慢展開，發現它想往哪裡去。</p>
+      <p>IRC 讓這樣的探索延伸到課堂之外，到生活與關係之中。</p>
+    </div>
+
+    <div class="thin-rule"></div>
+
+    <div class="irc-signature">
+      <p class="irc-signature-name">Inner Reality Circle</p>
+      <p class="irc-signature-line">
+        聽見內在正在發生什麼，<br>
+        發現下一步想往哪裡走。
+      </p>
     </div>
   </div>
 
