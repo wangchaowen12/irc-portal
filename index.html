@@ -1404,11 +1404,13 @@ nav {
    VISIT WIDGET — 瀏覽人數／喜歡
    固定在畫面角落的小徽章，切換分頁時不會消失
 ══════════════════════════════ */
-.visit-widget {
+.irc-corner-badge {
   position: fixed;
-  right: 1rem;
-  bottom: 1rem;
-  z-index: 150;
+  right: max(1rem, env(safe-area-inset-right));
+  bottom: max(1rem, calc(env(safe-area-inset-bottom) + 0.7rem));
+  z-index: 9999;
+  isolation: isolate;
+  pointer-events: auto;
   display: flex;
   align-items: center;
   background: var(--white);
@@ -1422,27 +1424,27 @@ nav {
   opacity: 0.94;
   transition: opacity 0.2s;
 }
-.visit-widget:hover { opacity: 1; }
-.visit-widget-item {
+.irc-corner-badge:hover { opacity: 1; }
+.irc-badge-item {
   display: flex;
   align-items: center;
   gap: 0.35rem;
   padding: 0 0.5rem;
   white-space: nowrap;
 }
-.visit-widget-divider {
+.irc-badge-divider {
   width: 1px;
   height: 14px;
   background: rgba(23,91,74,0.15);
   flex-shrink: 0;
 }
-.visit-widget-count {
+.irc-badge-count {
   color: var(--deep);
   font-weight: 500;
   min-width: 0.6em;
   display: inline-block;
 }
-.like-btn {
+.irc-heart-btn {
   background: none;
   border: none;
   cursor: pointer;
@@ -1450,13 +1452,13 @@ nav {
   font-size: inherit;
   color: inherit;
 }
-.like-btn:active { transform: scale(0.94); }
-.like-icon { display: inline-block; transition: transform 0.15s; }
-.like-btn.liked .like-icon { transform: scale(1.12); }
+.irc-heart-btn:active { transform: scale(0.94); }
+.irc-heart-icon { display: inline-block; transition: transform 0.15s; }
+.irc-heart-btn.is-liked .irc-heart-icon { transform: scale(1.12); }
 
 @media (max-width: 620px) {
-  .visit-widget { right: 0.6rem; bottom: 0.6rem; padding: 0.42rem 0.75rem; font-size: 0.72rem; }
-  .visit-widget-item { padding: 0 0.4rem; gap: 0.25rem; }
+  .irc-corner-badge { right: max(0.6rem, env(safe-area-inset-right)); bottom: max(0.6rem, calc(env(safe-area-inset-bottom) + 0.5rem)); padding: 0.42rem 0.75rem; font-size: 0.72rem; }
+  .irc-badge-item { padding: 0 0.4rem; gap: 0.25rem; }
 }
 
 </style>
@@ -1510,15 +1512,15 @@ nav {
 </nav>
 
 <!-- 瀏覽人數／喜歡 — 固定在角落，切換分頁不會消失 -->
-<div class="visit-widget" id="visitWidget">
-  <span class="visit-widget-item">
+<div class="irc-corner-badge" id="ircCornerBadge">
+  <span class="irc-badge-item">
     <span aria-hidden="true">👁</span>
-    <span class="visit-widget-count" id="visitCount">···</span>
+    <span class="irc-badge-count" id="ircViewCount">···</span>
   </span>
-  <span class="visit-widget-divider"></span>
-  <button type="button" class="visit-widget-item like-btn" id="likeBtn" aria-label="喜歡這個網站">
-    <span class="like-icon" aria-hidden="true">🤍</span>
-    <span class="visit-widget-count" id="likeCount">···</span>
+  <span class="irc-badge-divider"></span>
+  <button type="button" class="irc-badge-item irc-heart-btn" id="ircHeartBtn" aria-label="喜歡這個網站">
+    <span class="irc-heart-icon" aria-hidden="true">🤍</span>
+    <span class="irc-badge-count" id="ircHeartCount">···</span>
   </button>
 </div>
 
@@ -3525,10 +3527,10 @@ function goLifeMap() {
   var LIKE_KEY = 'likes';
   var LOCAL_LIKED_KEY = 'irc-liked-v1';
 
-  var visitCountEl = document.getElementById('visitCount');
-  var likeCountEl = document.getElementById('likeCount');
-  var likeBtn = document.getElementById('likeBtn');
-  var likeIconEl = likeBtn ? likeBtn.querySelector('.like-icon') : null;
+  var ircViewCountEl = document.getElementById('ircViewCount');
+  var ircHeartCountEl = document.getElementById('ircHeartCount');
+  var ircHeartBtn = document.getElementById('ircHeartBtn');
+  var likeIconEl = ircHeartBtn ? ircHeartBtn.querySelector('.irc-heart-icon') : null;
 
   function fmt(n) {
     n = Math.max(0, Math.round(n || 0));
@@ -3538,28 +3540,28 @@ function goLifeMap() {
   // 瀏覽次數：每次有人打開網站就 +1
   fetch('https://api.countapi.xyz/hit/' + NAMESPACE + '/' + VISIT_KEY)
     .then(function (r) { return r.json(); })
-    .then(function (data) { if (visitCountEl) visitCountEl.textContent = fmt(data.value); })
-    .catch(function () { if (visitCountEl) visitCountEl.textContent = '—'; });
+    .then(function (data) { if (ircViewCountEl) ircViewCountEl.textContent = fmt(data.value); })
+    .catch(function () { if (ircViewCountEl) ircViewCountEl.textContent = '—'; });
 
   // 喜歡次數：只讀取，不因為打開網站而增加
   fetch('https://api.countapi.xyz/get/' + NAMESPACE + '/' + LIKE_KEY)
     .then(function (r) { return r.json(); })
-    .then(function (data) { if (likeCountEl) likeCountEl.textContent = fmt(data.value); })
-    .catch(function () { if (likeCountEl) likeCountEl.textContent = '—'; });
+    .then(function (data) { if (ircHeartCountEl) ircHeartCountEl.textContent = fmt(data.value); })
+    .catch(function () { if (ircHeartCountEl) ircHeartCountEl.textContent = '—'; });
 
   var liked = false;
   try { liked = localStorage.getItem(LOCAL_LIKED_KEY) === '1'; } catch (e) {}
 
   function updateLikeUI() {
-    if (!likeBtn) return;
-    likeBtn.classList.toggle('liked', liked);
+    if (!ircHeartBtn) return;
+    ircHeartBtn.classList.toggle('is-liked', liked);
     if (likeIconEl) likeIconEl.textContent = liked ? '❤️' : '🤍';
-    likeBtn.setAttribute('aria-label', liked ? '取消喜歡' : '喜歡這個網站');
+    ircHeartBtn.setAttribute('aria-label', liked ? '取消喜歡' : '喜歡這個網站');
   }
   updateLikeUI();
 
-  if (likeBtn) {
-    likeBtn.addEventListener('click', function () {
+  if (ircHeartBtn) {
+    ircHeartBtn.addEventListener('click', function () {
       var delta = liked ? -1 : 1;
       liked = !liked;
       try { localStorage.setItem(LOCAL_LIKED_KEY, liked ? '1' : '0'); } catch (e) {}
@@ -3567,7 +3569,7 @@ function goLifeMap() {
 
       fetch('https://api.countapi.xyz/update/' + NAMESPACE + '/' + LIKE_KEY + '?amount=' + delta)
         .then(function (r) { return r.json(); })
-        .then(function (data) { if (likeCountEl) likeCountEl.textContent = fmt(data.value); })
+        .then(function (data) { if (ircHeartCountEl) ircHeartCountEl.textContent = fmt(data.value); })
         .catch(function () {});
     });
   }
