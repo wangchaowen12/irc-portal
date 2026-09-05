@@ -305,6 +305,7 @@ body {
 
       <div class="checkin-buttons" id="checkin-buttons"></div>
       <div class="checkin-hint" id="checkin-hint">自己回答就好，不用打字</div>
+      <div class="checkin-hint" id="checkin-debug" style="opacity:0.6;"></div>
 
       <div class="dots">
         <div class="dot" id="dot-1"></div>
@@ -360,8 +361,21 @@ body {
     checkinStep: 0,
     microTimerEndAt: null,
   };
-  var checkinAdvanceTimer = null;
   var wakeLockRef = null;
+
+  // 統一的「限時等待」機制：所有需要等一段時間才自動往下走的地方，
+  // 都只是在這裡登記「幾點幾分要做什麼」，實際執行交給下面那個每秒心跳去檢查、觸發。
+  // 這樣所有等待都走同一條路，不會有各自獨立的計時器互相打架或不小心被清掉的問題。
+  var pendingAutoAt = null;
+  var pendingAutoAction = null;
+  function schedulePending(delayMs, action) {
+    pendingAutoAt = Date.now() + delayMs;
+    pendingAutoAction = action;
+  }
+  function clearPending() {
+    pendingAutoAt = null;
+    pendingAutoAction = null;
+  }
 
   // ---- 畫面 1：設定 ----
   function loadSavedSettings() {
@@ -456,7 +470,7 @@ body {
   }
 
   function endSession() {
-    clearTimeout(checkinAdvanceTimer);
+    clearPending();
     state.status = 'ended';
     releaseWakeLock();
     showScreen('ended');
@@ -486,7 +500,7 @@ body {
   var QUESTIONS = [
     { text: '你現在在做什麼？', hint: '不知道怎麼答？點一下也可以，不點、自己回答也可以。', buttons: ['休息閒晃', '工作任務', '關係連結'], audioSrc: 'audio/pause-notice/q1-doing.m4a', holdMs: 24000, waitFull: true },
     { text: '現在是適合做這件事的時候嗎？', hint: '自己回答就好，不用打字', buttons: null, audioSrc: 'audio/pause-notice/q2-right-time.m4a', holdMs: 4400 },
-    { text: '你需要多久？', hint: '選一個，或自己輸入分鐘數', buttons: ['1分', '3分', '5分', '10分'], custom: true, audioSrc: 'audio/pause-notice/q3-how-long.m4a', holdMs: null },
+    { text: '你需要多久？', hint: '選一個，或自己輸入分鐘數', buttons: ['1分', '3分', '5分', '10分'], custom: true, audioSrc: 'audio/pause-notice/q3-how-long.m4a', holdMs: null, unansweredTimeoutMs: 60000 },
   ];
 
   // 過場用的錄音（不是問句本身），例如選完時間之後的確認語、小倒數結束時的提醒
@@ -524,7 +538,7 @@ body {
   }
 
   function enterCheckin() {
-    clearTimeout(checkinAdvanceTimer);
+    clearPending();
     state.status = 'checkin';
     state.checkinStep = 0;
     showScreen('checkin');
@@ -550,10 +564,11 @@ body {
         b.textContent = label;
         b.addEventListener('click', function () {
           if (q.custom) {
+            clearPending();
             if (q.audio) { q.audio.onended = null; q.audio.pause(); }
             confirmAndBeginMicroTimer(parseDurationLabel(label));
           } else {
-            clearTimeout(checkinAdvanceTimer);
+            clearPending();
             if (q.audio) { q.audio.onended = null; q.audio.pause(); }
             advanceCheckin();
           }
@@ -569,6 +584,7 @@ body {
       input.placeholder = '自訂';
       input.addEventListener('keydown', function (e) {
         if (e.key === 'Enter' && Number(input.value) > 0) {
+          clearPending();
           if (q.audio) { q.audio.onended = null; q.audio.pause(); }
           confirmAndBeginMicroTimer(Number(input.value));
         }
@@ -586,13 +602,23 @@ body {
       var doAdvance = function () {
         if (advanced) return;
         advanced = true;
+        clearPending();
         advanceCheckin();
       };
       if (q.audio && !q.waitFull) {
         q.audio.onended = doAdvance;
       }
-      // 備用機制／固定等待時間：音檔沒能播放，或這題本來就設計成老實等滿，都是靠這個計時器往下走
-      checkinAdvanceTimer = setTimeout(doAdvance, q.holdMs);
+      // 備用機制／固定等待時間：音檔沒能播放，或這題本來就設計成老實等滿，都是靠每秒心跳去觸發
+      schedulePending(q.holdMs, doAdvance);
+    } else if (q.custom && q.unansweredTimeoutMs) {
+      // 「你需要多久？」這一題沒有固定等待時間，因為它需要使用者手動選；
+      // 但如果使用者投入到完全沒空回應，也不該讓整個工具卡住，
+      // 等滿這個時間就放棄這次的小倒數，安靜回到等待畫面，下一輪提醒照樣會再問一次
+      schedulePending(q.unansweredTimeoutMs, function () {
+        scheduleNextCheckin(Date.now());
+        state.status = 'waiting';
+        showScreen('waiting');
+      });
     }
   }
 
@@ -618,7 +644,7 @@ body {
 
   function confirmAndBeginMicroTimer(minutes) {
     if (!(minutes > 0)) return;
-    clearTimeout(checkinAdvanceTimer);
+    clearPending();
 
     // 畫面留在問答卡片上，換成確認文字，把按鈕收起來，避免使用者在等待時重複點擊
     document.getElementById('checkin-question').textContent = '好的，請放心使用這段時間。';
@@ -629,6 +655,7 @@ body {
     var proceed = function () {
       if (advanced) return;
       advanced = true;
+      clearPending();
       beginMicroTimer(minutes);
     };
 
@@ -640,7 +667,7 @@ body {
         var p = confirmAudio.play();
         if (p && p.catch) p.catch(function () { /* 播放被擋下，靠備用等待時間往下走 */ });
       } catch (e) { /* 忽略，靠備用等待時間往下走 */ }
-      checkinAdvanceTimer = setTimeout(proceed, 6200); // 備用時間，比錄音長度留一點餘裕
+      schedulePending(6200, proceed); // 備用時間，比錄音長度留一點餘裕
     } else {
       proceed();
     }
@@ -648,7 +675,7 @@ body {
 
   function beginMicroTimer(minutes) {
     if (!(minutes > 0)) return;
-    clearTimeout(checkinAdvanceTimer);
+    clearPending();
     state.microTimerEndAt = Date.now() + minutes * 60000;
     state.status = 'microTimer';
     showScreen('micro');
@@ -658,11 +685,34 @@ body {
   setInterval(function () {
     var now = Date.now();
 
+    // 整體大時段的判斷不管卡在哪個畫面都要持續算，
+    // 避免使用者忙著沒空回應問答時，整個服務跟著停擺
+    if (state.sessionEndAt && state.status !== 'setup' && state.status !== 'ended' && now >= state.sessionEndAt) {
+      endSession();
+      return;
+    }
+
+    // 【測試用，確認沒問題後會拿掉】在問答畫面上顯示目前登記的等待秒數，
+    // 讓你可以親眼看到這個機制是不是真的有在倒數
+    var debugEl = document.getElementById('checkin-debug');
+    if (debugEl) {
+      debugEl.textContent = (state.status === 'checkin' && pendingAutoAt)
+        ? '（測試中：' + Math.max(0, Math.ceil((pendingAutoAt - now) / 1000)) + ' 秒後自動繼續）'
+        : '';
+    }
+
+    // 所有「等一段時間就自動往下走」的動作，統一在這裡觸發，
+    // 不管卡在問答、確認語、還是時間到的提醒，都逃不出這一關
+    if (pendingAutoAt && now >= pendingAutoAt) {
+      var action = pendingAutoAction;
+      clearPending();
+      if (action) action();
+      return;
+    }
+
     if (state.status === 'waiting') {
       document.getElementById('waiting-time').textContent = formatTime(state.nextCheckinAt - now);
-      if (now >= state.sessionEndAt) {
-        endSession();
-      } else if (now >= state.nextCheckinAt) {
+      if (now >= state.nextCheckinAt) {
         enterCheckin();
       }
     } else if (state.status === 'microTimer') {
@@ -682,6 +732,7 @@ body {
     var resumeWaiting = function () {
       if (advanced) return;
       advanced = true;
+      clearPending();
       document.getElementById('micro-label').textContent = '這段小時間剩下'; // 還原文字，給下一次小倒數用
       scheduleNextCheckin(Date.now());
       state.status = 'waiting';
@@ -696,9 +747,9 @@ body {
         var p = audio.play();
         if (p && p.catch) p.catch(function () { /* 播放被擋下，靠備用等待時間往下走 */ });
       } catch (e) { /* 忽略，靠備用等待時間往下走 */ }
-      setTimeout(resumeWaiting, 9500); // 備用時間，比錄音長度留一點餘裕
+      schedulePending(9500, resumeWaiting); // 備用時間，比錄音長度留一點餘裕
     } else {
-      setTimeout(resumeWaiting, 1500);
+      schedulePending(1500, resumeWaiting);
     }
   }
 
