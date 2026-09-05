@@ -318,7 +318,7 @@ body {
   <section class="screen" id="screen-micro">
     <div class="quiet-wrap">
       <div class="quiet-time" id="micro-time">--:--</div>
-      <div class="quiet-label">這段小時間剩下</div>
+      <div class="quiet-label" id="micro-label">這段小時間剩下</div>
     </div>
     <button class="end-link" data-end>結束</button>
   </section>
@@ -489,11 +489,13 @@ body {
     { text: '你需要多久？', hint: '選一個，或自己輸入分鐘數', buttons: ['1分', '3分', '5分', '10分'], custom: true, audioSrc: 'audio/pause-notice/q3-how-long.m4a', holdMs: null },
   ];
 
-  // 過場用的錄音（不是問句本身），例如選完時間之後的確認語
+  // 過場用的錄音（不是問句本身），例如選完時間之後的確認語、小倒數結束時的提醒
   var TRANSITION_AUDIO = {
     confirm: new Audio('audio/pause-notice/q4-confirm.m4a'),
+    timeUp: new Audio('audio/pause-notice/q5-time-up.m4a'),
   };
   TRANSITION_AUDIO.confirm.preload = 'auto';
+  TRANSITION_AUDIO.timeUp.preload = 'auto';
 
   // 預先建立 audio 物件並試著載入；缺檔或載入失敗都不影響流程，只是回退成純文字+固定等待時間
   QUESTIONS.forEach(function (q) {
@@ -508,7 +510,7 @@ body {
   // 之後由計時器觸發的播放才不會被瀏覽器擋下來。
 
   function unlockCheckinAudio() {
-    var all = QUESTIONS.map(function (q) { return q.audio; }).concat([TRANSITION_AUDIO.confirm]);
+    var all = QUESTIONS.map(function (q) { return q.audio; }).concat([TRANSITION_AUDIO.confirm, TRANSITION_AUDIO.timeUp]);
     all.forEach(function (a) {
       if (!a) return;
       var p = a.play();
@@ -666,13 +668,39 @@ body {
     } else if (state.status === 'microTimer') {
       document.getElementById('micro-time').textContent = formatTime(state.microTimerEndAt - now);
       if (now >= state.microTimerEndAt) {
-        // 小倒數結束，回到安靜等待，提醒節奏從現在重新算
-        scheduleNextCheckin(now);
-        state.status = 'waiting';
-        showScreen('waiting');
+        enterTimeUp();
       }
     }
   }, 1000);
+
+  function enterTimeUp() {
+    state.status = 'timeUp';
+    document.getElementById('micro-time').textContent = '00:00';
+    document.getElementById('micro-label').textContent = '時間到了，我等會兒再來';
+
+    var advanced = false;
+    var resumeWaiting = function () {
+      if (advanced) return;
+      advanced = true;
+      document.getElementById('micro-label').textContent = '這段小時間剩下'; // 還原文字，給下一次小倒數用
+      scheduleNextCheckin(Date.now());
+      state.status = 'waiting';
+      showScreen('waiting');
+    };
+
+    var audio = TRANSITION_AUDIO.timeUp;
+    if (audio) {
+      try {
+        audio.currentTime = 0;
+        audio.onended = resumeWaiting;
+        var p = audio.play();
+        if (p && p.catch) p.catch(function () { /* 播放被擋下，靠備用等待時間往下走 */ });
+      } catch (e) { /* 忽略，靠備用等待時間往下走 */ }
+      setTimeout(resumeWaiting, 9500); // 備用時間，比錄音長度留一點餘裕
+    } else {
+      setTimeout(resumeWaiting, 1500);
+    }
+  }
 
   loadSavedSettings();
 })();
