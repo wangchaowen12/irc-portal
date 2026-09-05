@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>停一下｜IRC</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@300;400;600&family=Noto+Sans+TC:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:         #4E5580;
+  --surface:    #454C74;
+  --white:      #575E88;
+  --deep:       #E8D98A;
+  --mid:        #C9BC6E;
+  --accent:     #E8895A;
+  --soft:       #8B8FA8;
+  --panel-dark: #2B2F52;
+  --text:       #F3F1EA;
+  --muted:      #ADB0C6;
+  --serif:      'Noto Serif TC', serif;
+  --sans:       'Noto Sans TC', sans-serif;
+}
+
+html, body {
+  height: 100%;
+}
+body {
+  font-family: var(--sans);
+  background: var(--bg);
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 24px;
+  font-weight: 300;
+}
+
+.card {
+  width: 100%;
+  max-width: 420px;
+  min-height: 520px;
+  background: var(--panel-dark);
+  border-radius: 18px;
+  padding: 40px 28px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.screen {
+  display: none;
+  flex: 1;
+  flex-direction: column;
+}
+.screen.active { display: flex; }
+
+/* ---------- 共用元件 ---------- */
+
+.eyebrow {
+  font-family: var(--serif);
+  font-size: 1.5rem;
+  font-weight: 400;
+  color: var(--text);
+  text-align: center;
+  margin-bottom: 8px;
+}
+
+.subtext {
+  font-family: var(--sans);
+  font-size: 0.9rem;
+  color: var(--muted);
+  text-align: center;
+  line-height: 1.7;
+  margin-bottom: 28px;
+}
+
+.group-label {
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+
+.pill-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 26px;
+}
+
+.pill {
+  font-family: var(--sans);
+  font-size: 0.88rem;
+  font-weight: 400;
+  color: var(--text);
+  background: transparent;
+  border: 1px solid var(--soft);
+  border-radius: 999px;
+  padding: 9px 18px;
+  cursor: pointer;
+  transition: border-color 0.2s ease, color 0.2s ease;
+}
+.pill:hover { border-color: var(--accent); }
+.pill.selected {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.pill-custom-input {
+  width: 68px;
+  font-family: var(--sans);
+  font-size: 0.88rem;
+  color: var(--text);
+  background: transparent;
+  border: 1px solid var(--soft);
+  border-radius: 999px;
+  padding: 9px 14px;
+  text-align: center;
+}
+.pill-custom-input:focus { outline: none; border-color: var(--accent); }
+.pill-custom-input::placeholder { color: var(--muted); }
+
+.primary-btn {
+  margin-top: auto;
+  font-family: var(--sans);
+  font-size: 1rem;
+  font-weight: 400;
+  color: var(--panel-dark);
+  background: var(--accent);
+  border: none;
+  border-radius: 999px;
+  padding: 14px;
+  cursor: pointer;
+  opacity: 0.4;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+.primary-btn.enabled {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* ---------- 安靜等待 / 小倒數 ---------- */
+
+.quiet-wrap {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.quiet-time {
+  font-family: var(--serif);
+  font-size: 2.6rem;
+  font-weight: 300;
+  color: var(--text);
+  letter-spacing: 0.02em;
+}
+.quiet-label {
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  color: var(--muted);
+  margin-top: 10px;
+}
+
+.end-link {
+  position: absolute;
+  bottom: 20px;
+  right: 24px;
+  font-family: var(--sans);
+  font-size: 0.8rem;
+  color: var(--muted);
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+.end-link:hover { color: var(--accent); }
+
+/* ---------- 當下問答 ---------- */
+
+.checkin-wrap {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+.checkin-question {
+  font-family: var(--serif);
+  font-size: 1.4rem;
+  font-weight: 400;
+  color: var(--text);
+  margin-bottom: 22px;
+  line-height: 1.6;
+}
+.checkin-hint {
+  font-family: var(--sans);
+  font-size: 0.82rem;
+  color: var(--muted);
+  margin-top: 18px;
+}
+.checkin-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+}
+
+.dots {
+  display: flex;
+  gap: 7px;
+  justify-content: center;
+  margin-top: 34px;
+}
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--soft);
+  opacity: 0.5;
+  transition: opacity 0.3s ease, background 0.3s ease;
+}
+.dot.filled {
+  background: var(--accent);
+  opacity: 1;
+}
+
+/* ---------- 結束 ---------- */
+
+.end-wrap {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+.end-text {
+  font-family: var(--serif);
+  font-size: 1.3rem;
+  color: var(--text);
+  margin-bottom: 30px;
+}
+.text-link {
+  font-family: var(--sans);
+  font-size: 0.9rem;
+  color: var(--muted);
+  background: none;
+  border: none;
+  border-bottom: 1px solid var(--soft);
+  padding-bottom: 2px;
+  cursor: pointer;
+}
+.text-link:hover { color: var(--accent); border-color: var(--accent); }
+</style>
+</head>
+<body>
+
+<div class="card" id="card">
+
+  <!-- 畫面 1：設定 -->
+  <section class="screen active" id="screen-setup">
+    <div class="eyebrow">停一下</div>
+    <div class="subtext">接下來這段時間，我陪你。</div>
+
+    <div class="group-label">這段時間大概多久？（分鐘）</div>
+    <div class="pill-row" id="total-row">
+      <button class="pill" data-total="40">40</button>
+      <button class="pill" data-total="60">60</button>
+      <button class="pill" data-total="90">90</button>
+      <button class="pill" data-total="120">120</button>
+      <button class="pill" data-total="180">180</button>
+      <input class="pill-custom-input" id="total-custom" type="number" min="1" placeholder="自訂">
+    </div>
+
+    <div class="group-label">多久提醒一次？（分鐘）</div>
+    <div class="pill-row" id="interval-row">
+      <button class="pill" data-interval="5">5</button>
+      <button class="pill" data-interval="10">10</button>
+      <button class="pill" data-interval="15">15</button>
+      <button class="pill" data-interval="20">20</button>
+    </div>
+
+    <button class="primary-btn" id="start-btn">開始</button>
+  </section>
+
+  <!-- 畫面 2：安靜等待 -->
+  <section class="screen" id="screen-waiting">
+    <div class="quiet-wrap">
+      <div class="quiet-time" id="waiting-time">--:--</div>
+      <div class="quiet-label">距離下一次提醒</div>
+    </div>
+    <button class="end-link" data-end>結束</button>
+  </section>
+
+  <!-- 畫面 3：當下問答 -->
+  <section class="screen" id="screen-checkin">
+    <div class="checkin-wrap">
+      <div class="checkin-question" id="checkin-question">你現在在做什麼？</div>
+
+      <div class="checkin-buttons" id="checkin-buttons"></div>
+      <div class="checkin-hint" id="checkin-hint">自己回答就好，不用打字</div>
+
+      <div class="dots">
+        <div class="dot" id="dot-1"></div>
+        <div class="dot" id="dot-2"></div>
+        <div class="dot" id="dot-3"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 畫面 4：小倒數 -->
+  <section class="screen" id="screen-micro">
+    <div class="quiet-wrap">
+      <div class="quiet-time" id="micro-time">--:--</div>
+      <div class="quiet-label">這段小時間剩下</div>
+    </div>
+    <button class="end-link" data-end>結束</button>
+  </section>
+
+  <!-- 畫面 5：結束 -->
+  <section class="screen" id="screen-ended">
+    <div class="end-wrap">
+      <div class="end-text">這段時間，結束了。</div>
+      <button class="text-link" id="restart-btn">回到設定</button>
+    </div>
+  </section>
+
+</div>
+
+<script>
+(function () {
+  var STORAGE_KEY = 'pause-notice-settings';
+
+  // ---- 畫面切換 ----
+  var screens = {
+    setup:   document.getElementById('screen-setup'),
+    waiting: document.getElementById('screen-waiting'),
+    checkin: document.getElementById('screen-checkin'),
+    micro:   document.getElementById('screen-micro'),
+    ended:   document.getElementById('screen-ended'),
+  };
+  function showScreen(name) {
+    Object.keys(screens).forEach(function (k) {
+      screens[k].classList.toggle('active', k === name);
+    });
+  }
+
+  // ---- 狀態 ----
+  var config = { totalMinutes: null, intervalMinutes: null };
+  var state = {
+    status: 'setup',          // setup | waiting | checkin | microTimer | ended
+    sessionEndAt: null,
+    nextCheckinAt: null,
+    checkinStep: 0,
+    microTimerEndAt: null,
+  };
+  var checkinAdvanceTimer = null;
+  var wakeLockRef = null;
+
+  // ---- 畫面 1：設定 ----
+  function loadSavedSettings() {
+    try {
+      var saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+      if (saved.totalMinutes) selectPill('total-row', 'data-total', saved.totalMinutes);
+      if (saved.intervalMinutes) selectPill('interval-row', 'data-interval', saved.intervalMinutes);
+    } catch (e) { /* 沒有存過設定，忽略 */ }
+  }
+  function selectPill(rowId, attr, value) {
+    var row = document.getElementById(rowId);
+    var btn = row.querySelector('[' + attr + '="' + value + '"]');
+    if (btn) { setSelected(row, btn); }
+    if (attr === 'data-total') config.totalMinutes = Number(value);
+    if (attr === 'data-interval') config.intervalMinutes = Number(value);
+  }
+  function setSelected(row, btn) {
+    Array.prototype.forEach.call(row.querySelectorAll('.pill'), function (p) {
+      p.classList.remove('selected');
+    });
+    btn.classList.add('selected');
+    updateStartButton();
+  }
+  function updateStartButton() {
+    var ok = config.totalMinutes > 0 && config.intervalMinutes > 0;
+    document.getElementById('start-btn').classList.toggle('enabled', ok);
+  }
+
+  document.getElementById('total-row').addEventListener('click', function (e) {
+    var btn = e.target.closest('.pill');
+    if (!btn) return;
+    document.getElementById('total-custom').value = '';
+    config.totalMinutes = Number(btn.getAttribute('data-total'));
+    setSelected(this, btn);
+  });
+  document.getElementById('total-custom').addEventListener('input', function () {
+    var val = Number(this.value);
+    if (val > 0) {
+      config.totalMinutes = val;
+      setSelected(document.getElementById('total-row'), this.parentElement.querySelector('.pill.selected') || this);
+      Array.prototype.forEach.call(document.getElementById('total-row').querySelectorAll('.pill'), function (p) {
+        p.classList.remove('selected');
+      });
+      updateStartButton();
+    }
+  });
+  document.getElementById('interval-row').addEventListener('click', function (e) {
+    var btn = e.target.closest('.pill');
+    if (!btn) return;
+    config.intervalMinutes = Number(btn.getAttribute('data-interval'));
+    setSelected(this, btn);
+  });
+
+  document.getElementById('start-btn').addEventListener('click', function () {
+    if (!(config.totalMinutes > 0 && config.intervalMinutes > 0)) return;
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(config));
+    } catch (e) { /* 存不了就算了，不影響使用 */ }
+    requestWakeLock();
+    unlockCheckinAudio();
+    startSession();
+  });
+
+  // ---- Wake Lock（盡量讓螢幕不熄滅，不支援就略過） ----
+  function requestWakeLock() {
+    if ('wakeLock' in navigator) {
+      navigator.wakeLock.request('screen').then(function (lock) {
+        wakeLockRef = lock;
+      }).catch(function () { /* 使用者裝置不支援或拒絕，略過 */ });
+    }
+  }
+  function releaseWakeLock() {
+    if (wakeLockRef) { wakeLockRef.release(); wakeLockRef = null; }
+  }
+  document.addEventListener('visibilitychange', function () {
+    if (document.visibilityState === 'visible' && (state.status === 'waiting' || state.status === 'microTimer')) {
+      requestWakeLock();
+    }
+  });
+
+  // ---- 主流程 ----
+  function startSession() {
+    var now = Date.now();
+    state.sessionEndAt = now + config.totalMinutes * 60000;
+    scheduleNextCheckin(now);
+    state.status = 'waiting';
+    showScreen('waiting');
+  }
+
+  function scheduleNextCheckin(fromTime) {
+    state.nextCheckinAt = fromTime + config.intervalMinutes * 60000;
+  }
+
+  function endSession() {
+    clearTimeout(checkinAdvanceTimer);
+    state.status = 'ended';
+    releaseWakeLock();
+    showScreen('ended');
+  }
+
+  Array.prototype.forEach.call(document.querySelectorAll('[data-end]'), function (btn) {
+    btn.addEventListener('click', endSession);
+  });
+
+  document.getElementById('restart-btn').addEventListener('click', function () {
+    state.status = 'setup';
+    showScreen('setup');
+  });
+
+  // ---- 畫面 2 / 4：倒數顯示 ----
+  function formatTime(ms) {
+    var totalSec = Math.max(0, Math.round(ms / 1000));
+    var m = Math.floor(totalSec / 60);
+    var s = totalSec % 60;
+    return (m < 10 ? '0' + m : m) + ':' + (s < 10 ? '0' + s : s);
+  }
+
+  // ---- 畫面 3：當下問答 ----
+  // audioSrc 對應你錄好的檔案；holdMs 是「萬一音檔播放失敗」時的備用等待時間
+  var QUESTIONS = [
+    { text: '你現在在做什麼？', hint: '不知道怎麼答？點一下也可以，不點、自己回答也可以。', buttons: ['休息閒晃', '工作任務', '關係連結'], audioSrc: 'audio/pause-notice/q1-doing.m4a', holdMs: 4800 },
+    { text: '現在是適合做這件事的時候嗎？', hint: '自己回答就好，不用打字', buttons: null, audioSrc: 'audio/pause-notice/q2-right-time.m4a', holdMs: 4400 },
+    { text: '你需要多久？', hint: '選一個，或自己輸入分鐘數', buttons: ['1分', '3分', '5分', '10分'], custom: true, audioSrc: 'audio/pause-notice/q3-how-long.m4a', holdMs: null },
+  ];
+
+  // 預先建立 audio 物件並試著載入；缺檔或載入失敗都不影響流程，只是回退成純文字+固定等待時間
+  QUESTIONS.forEach(function (q) {
+    if (!q.audioSrc) return;
+    var a = new Audio(q.audioSrc);
+    a.preload = 'auto';
+    q.audio = a;
+  });
+
+  // 手機瀏覽器通常要求「使用者手勢當下」才能解鎖播放權限；
+  // 藉著使用者按下「開始」這個手勢，把每段錄音都短暫播放又立刻暫停，
+  // 之後由計時器觸發的播放才不會被瀏覽器擋下來。
+  function unlockCheckinAudio() {
+    QUESTIONS.forEach(function (q) {
+      if (!q.audio) return;
+      var p = q.audio.play();
+      if (p && p.catch) {
+        p.then(function () {
+          q.audio.pause();
+          q.audio.currentTime = 0;
+        }).catch(function () { /* 解鎖失敗就算了，播放時會回退成固定等待時間 */ });
+      }
+    });
+  }
+
+  function enterCheckin() {
+    clearTimeout(checkinAdvanceTimer);
+    state.status = 'checkin';
+    state.checkinStep = 0;
+    showScreen('checkin');
+    renderCheckinStep();
+  }
+
+  function renderCheckinStep() {
+    var q = QUESTIONS[state.checkinStep];
+    document.getElementById('checkin-question').textContent = q.text;
+    document.getElementById('checkin-hint').textContent = q.hint;
+
+    for (var i = 1; i <= 3; i++) {
+      document.getElementById('dot-' + i).classList.toggle('filled', i <= state.checkinStep + 1);
+    }
+
+    var buttonsWrap = document.getElementById('checkin-buttons');
+    buttonsWrap.innerHTML = '';
+
+    if (q.buttons) {
+      q.buttons.forEach(function (label) {
+        var b = document.createElement('button');
+        b.className = 'pill';
+        b.textContent = label;
+        b.addEventListener('click', function () {
+          if (q.custom) {
+            beginMicroTimer(parseDurationLabel(label));
+          } else {
+            clearTimeout(checkinAdvanceTimer);
+            if (q.audio) { q.audio.onended = null; q.audio.pause(); }
+            advanceCheckin();
+          }
+        });
+        buttonsWrap.appendChild(b);
+      });
+    }
+    if (q.custom) {
+      var input = document.createElement('input');
+      input.className = 'pill-custom-input';
+      input.type = 'number';
+      input.min = '1';
+      input.placeholder = '自訂';
+      input.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' && Number(input.value) > 0) {
+          beginMicroTimer(Number(input.value));
+        }
+      });
+      buttonsWrap.appendChild(input);
+    }
+
+    playCheckinAudio(q);
+
+    // 沒有按鈕需要等待輸入的題目（第 1、2 句），播完就自動往下走
+    if (q.holdMs) {
+      var advanced = false;
+      var doAdvance = function () {
+        if (advanced) return;
+        advanced = true;
+        advanceCheckin();
+      };
+      if (q.audio) {
+        q.audio.onended = doAdvance;
+      }
+      // 備用機制：如果音檔沒能播放（載入失敗、被瀏覽器擋下），到了備用時間還是會往下走
+      checkinAdvanceTimer = setTimeout(doAdvance, q.holdMs);
+    }
+  }
+
+  function playCheckinAudio(q) {
+    if (!q.audio) return;
+    try {
+      q.audio.currentTime = 0;
+      var p = q.audio.play();
+      if (p && p.catch) p.catch(function () { /* 播放被擋下，靠備用等待時間往下走 */ });
+    } catch (e) { /* 忽略，靠備用等待時間往下走 */ }
+  }
+
+  function parseDurationLabel(label) {
+    return Number(label.replace('分', ''));
+  }
+
+  function advanceCheckin() {
+    if (state.checkinStep < QUESTIONS.length - 1) {
+      state.checkinStep += 1;
+      renderCheckinStep();
+    }
+  }
+
+  function beginMicroTimer(minutes) {
+    if (!(minutes > 0)) return;
+    clearTimeout(checkinAdvanceTimer);
+    state.microTimerEndAt = Date.now() + minutes * 60000;
+    state.status = 'microTimer';
+    showScreen('micro');
+  }
+
+  // ---- 每秒心跳：驅動所有倒數與狀態轉換 ----
+  setInterval(function () {
+    var now = Date.now();
+
+    if (state.status === 'waiting') {
+      document.getElementById('waiting-time').textContent = formatTime(state.nextCheckinAt - now);
+      if (now >= state.sessionEndAt) {
+        endSession();
+      } else if (now >= state.nextCheckinAt) {
+        enterCheckin();
+      }
+    } else if (state.status === 'microTimer') {
+      document.getElementById('micro-time').textContent = formatTime(state.microTimerEndAt - now);
+      if (now >= state.microTimerEndAt) {
+        // 小倒數結束，回到安靜等待，提醒節奏從現在重新算
+        scheduleNextCheckin(now);
+        state.status = 'waiting';
+        showScreen('waiting');
+      }
+    }
+  }, 1000);
+
+  loadSavedSettings();
+})();
+</script>
+
+</body>
+</html>
