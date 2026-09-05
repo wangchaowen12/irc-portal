@@ -3124,7 +3124,7 @@ function goHome() {
   document.getElementById('nc-sep').style.display = 'none';
   document.getElementById('nc-course').style.display = 'none';
   document.getElementById('nav-back').style.display = 'none';
-  
+  pushNav({ page: 'home' }, '');
 }
 function goPage(id) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -3141,7 +3141,7 @@ function goPage(id) {
   navBack.style.display = 'inline';
   navBack.onclick = function(){ goHome(); };
   navBack.textContent = '← 回到入口';
-  
+  pushNav({ page: 'generic', id: id }, id.replace(/^page-/, ''));
 }
 function goIrcAbout() {
   goPage('page-sof');
@@ -3169,7 +3169,7 @@ function goPageCourse(id, title) {
   navBack.style.display = 'inline';
   navBack.onclick = function(){ goPage('page-sof'); };
   navBack.textContent = '← 認識課程';
-  
+  pushNav({ page: 'course', id: id, title: title }, id.replace(/^page-/, ''));
 }
 function goToolbox() {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -3186,6 +3186,7 @@ function goToolbox() {
   navBack.style.display = 'inline';
   navBack.onclick = function(){ goPage('page-sof'); };
   navBack.textContent = '← 回到個別諮商頁面';
+  pushNav({ page: 'toolbox' }, 'toolbox');
 }
 function goLifeMap() {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -3202,6 +3203,7 @@ function goLifeMap() {
   navBack.style.display = 'inline';
   navBack.onclick = function(){ goToolbox(); };
   navBack.textContent = '← 回到探索工具箱';
+  pushNav({ page: 'life-map' }, 'life-map');
 }
 function goRelationMap() {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -3218,7 +3220,56 @@ function goRelationMap() {
   navBack.style.display = 'inline';
   navBack.onclick = function(){ goToolbox(); };
   navBack.textContent = '← 回到探索工具箱';
+  pushNav({ page: 'relation-map' }, 'relation-map');
 }
+
+// ── 讓手機的「返回」鍵留在網站內的分頁切換裡，而不是直接跳出網站 ──
+// 這個網站的每個「分頁」都只是同一個 HTML 裡用 class 切換顯示/隱藏，
+// 瀏覽器原本完全不知道這些切換，所以按返回鍵會直接離開整個網站。
+// 這裡用 History API 補上：每次切換分頁都記一筆歷史紀錄，
+// 使用者按手機的返回鍵時，瀏覽器會觸發 popstate，我們攔截它、
+// 換回上一個分頁，而不是真的離開網站；只有已經回到最一開始的入口頁，
+// 再按一次返回鍵，才會真的離開（這也是使用者會期待的正常行為）。
+var isPopping = false;
+var navHistoryInitialized = false;
+function pushNav(state, hash) {
+  if (isPopping) return; // 這次切換是回應返回／前進鍵造成的，不用再記錄一次
+  var url = location.pathname + (hash ? '#' + hash : '');
+  try {
+    if (!navHistoryInitialized) {
+      // 第一次呼叫：把「目前這一筆」歷史紀錄換成目前狀態，不額外新增一筆，
+      // 這樣使用者按一次返回鍵就能真的離開，不會卡在一筆多餘的紀錄上。
+      history.replaceState(state, '', url);
+      navHistoryInitialized = true;
+    } else {
+      history.pushState(state, '', url);
+    }
+  } catch (e) {}
+}
+
+function applyNavState(state) {
+  state = state || { page: 'home' };
+  switch (state.page) {
+    case 'home': goHome(); break;
+    case 'generic': goPage(state.id); break;
+    case 'course': goPageCourse(state.id, state.title); break;
+    case 'toolbox': goToolbox(); break;
+    case 'life-map': goLifeMap(); break;
+    case 'relation-map': goRelationMap(); break;
+    default: goHome();
+  }
+}
+
+window.addEventListener('popstate', function (e) {
+  isPopping = true;
+  applyNavState(e.state);
+  isPopping = false;
+});
+
+// 頁面一載入就先建立「入口頁」這筆基準歷史紀錄
+// （不管等一下要不要因為網址帶了 #members 之類的深連結而跳轉）
+history.replaceState({ page: 'home' }, '', location.pathname);
+navHistoryInitialized = true;
 
 // ── 深連結：從 Space 頁面點「← 班級入口」回來時，帶 #members 直接落在班級入口分頁
 // 也支援 #life-map、#toolbox、#relation-map，方便直接把工具連結分享給個別諮商的個案
