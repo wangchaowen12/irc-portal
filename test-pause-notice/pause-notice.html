@@ -498,7 +498,7 @@ body {
   // waitFull: true 表示不要一播完錄音就馬上往下走，而是老實等滿 holdMs 這段時間，
   // 讓使用者有空檔可以真的講出答案，而不是被錄音長度追著跑
   var QUESTIONS = [
-    { text: '你現在在做什麼？', hint: '不知道怎麼答？點一下也可以，不點、自己回答也可以。', buttons: ['休息閒晃', '工作任務', '關係連結'], audioSrc: 'audio/pause-notice/q1-doing.m4a', holdMs: 24000, waitFull: true },
+    { text: '你現在在做什麼？', hint: '不知道怎麼答？點一下也可以，不點、自己回答也可以。', buttons: ['休息閒晃', '工作任務', '關係連結'], audioSrc: 'audio/pause-notice/q1-doing.m4a', holdMs: 8000, waitFull: true },
     { text: '現在是適合做這件事的時候嗎？', hint: '自己回答就好，不用打字', buttons: null, audioSrc: 'audio/pause-notice/q2-right-time.m4a', holdMs: 4400 },
     { text: '你需要多久？', hint: '選一個，或自己輸入分鐘數', buttons: ['1分', '3分', '5分', '10分'], custom: true, audioSrc: 'audio/pause-notice/q3-how-long.m4a', holdMs: null, unansweredTimeoutMs: 60000 },
   ];
@@ -613,12 +613,8 @@ body {
     } else if (q.custom && q.unansweredTimeoutMs) {
       // 「你需要多久？」這一題沒有固定等待時間，因為它需要使用者手動選；
       // 但如果使用者投入到完全沒空回應，也不該讓整個工具卡住，
-      // 等滿這個時間就放棄這次的小倒數，安靜回到等待畫面，下一輪提醒照樣會再問一次
-      schedulePending(q.unansweredTimeoutMs, function () {
-        scheduleNextCheckin(Date.now());
-        state.status = 'waiting';
-        showScreen('waiting');
-      });
+      // 等滿這個時間就放棄這次的小倒數，播一句提醒告知已經回頭重新計時，再安靜回到等待畫面
+      schedulePending(q.unansweredTimeoutMs, resumeAfterUnanswered);
     }
   }
 
@@ -633,6 +629,36 @@ body {
 
   function parseDurationLabel(label) {
     return Number(label.replace('分', ''));
+  }
+
+  // 使用者沒回應「你需要多久？」，播一句提醒告知已經回頭重新計時，再回到安靜等待
+  function resumeAfterUnanswered() {
+    document.getElementById('checkin-question').textContent = '好，那我們晚一點再問。';
+    document.getElementById('checkin-hint').textContent = '';
+    document.getElementById('checkin-buttons').innerHTML = '';
+
+    var advanced = false;
+    var resumeWaiting = function () {
+      if (advanced) return;
+      advanced = true;
+      clearPending();
+      scheduleNextCheckin(Date.now());
+      state.status = 'waiting';
+      showScreen('waiting');
+    };
+
+    var audio = TRANSITION_AUDIO.timeUp;
+    if (audio) {
+      try {
+        audio.currentTime = 0;
+        audio.onended = resumeWaiting;
+        var p = audio.play();
+        if (p && p.catch) p.catch(function () { /* 播放被擋下，靠備用等待時間往下走 */ });
+      } catch (e) { /* 忽略，靠備用等待時間往下走 */ }
+      schedulePending(9500, resumeWaiting); // 備用時間，比錄音長度留一點餘裕
+    } else {
+      schedulePending(1500, resumeWaiting);
+    }
   }
 
   function advanceCheckin() {
@@ -686,8 +712,17 @@ body {
     var now = Date.now();
 
     // 整體大時段的判斷不管卡在哪個畫面都要持續算，
-    // 避免使用者忙著沒空回應問答時，整個服務跟著停擺
-    if (state.sessionEndAt && state.status !== 'setup' && state.status !== 'ended' && now >= state.sessionEndAt) {
+    // 避免使用者忙著沒空回應問答時，整個服務跟著停擺。
+    // 但如果使用者正在使用 Q3 選的小倒數（或緊接著的「時間到了」提醒），
+    // 這是已經答應「請放心使用這段時間」的承諾，讓它先跑完，回到安靜等待畫面後才真正結束。
+    if (
+      state.sessionEndAt &&
+      state.status !== 'setup' &&
+      state.status !== 'ended' &&
+      state.status !== 'microTimer' &&
+      state.status !== 'timeUp' &&
+      now >= state.sessionEndAt
+    ) {
       endSession();
       return;
     }
