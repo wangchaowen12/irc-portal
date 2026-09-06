@@ -124,6 +124,21 @@ body {
 .pill-custom-input:focus { outline: none; border-color: var(--accent); }
 .pill-custom-input::placeholder { color: var(--muted); }
 
+.task-input {
+  display: block;
+  width: 100%;
+  font-family: var(--sans);
+  font-size: 0.95rem;
+  color: var(--text);
+  background: transparent;
+  border: 1px solid var(--soft);
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin-bottom: 22px;
+}
+.task-input:focus { outline: none; border-color: var(--accent); }
+.task-input::placeholder { color: var(--muted); }
+
 .primary-btn {
   margin-top: auto;
   font-family: var(--sans);
@@ -266,13 +281,15 @@ body {
   <!-- 畫面 1：設定 -->
   <section class="screen active" id="screen-setup">
     <div class="eyebrow">停一下</div>
-    <div class="subtext">接下來這段時間，我陪你。</div>
+
+    <div class="group-label">這次想專心做什麼？</div>
+    <input class="task-input" id="task-input" type="text" placeholder="例如：寫報告、回覆信件…（可以先不填）">
 
     <div style="text-align:center; margin-bottom: 24px;">
       <button class="text-link" id="intro-btn">聽聽這個工具在做什麼</button>
     </div>
 
-    <div class="group-label">這段時間大概多久？（分鐘）</div>
+    <div class="group-label">專心時間大概多久？（分鐘）</div>
     <div class="pill-row" id="total-row">
       <button class="pill" data-total="40">40</button>
       <button class="pill" data-total="60">60</button>
@@ -298,6 +315,7 @@ body {
     <div class="quiet-wrap">
       <div class="quiet-time" id="waiting-time">--:--</div>
       <div class="quiet-label">距離下一次提醒</div>
+      <div class="quiet-label" id="waiting-task" style="opacity:0.6; margin-top: 6px;"></div>
     </div>
     <button class="end-link" data-end>結束</button>
   </section>
@@ -357,7 +375,7 @@ body {
   }
 
   // ---- 狀態 ----
-  var config = { totalMinutes: null, intervalMinutes: null };
+  var config = { totalMinutes: null, intervalMinutes: null, task: '' };
   var state = {
     status: 'setup',          // setup | waiting | checkin | microTimer | ended
     sessionEndAt: null,
@@ -449,9 +467,12 @@ body {
 
   document.getElementById('start-btn').addEventListener('click', function () {
     if (!(config.totalMinutes > 0 && config.intervalMinutes > 0)) return;
+    config.task = document.getElementById('task-input').value.trim();
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(config));
+      // 只記住時長跟間隔這種習慣性設定，想專心做的事每次多半不一樣，不存起來
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ totalMinutes: config.totalMinutes, intervalMinutes: config.intervalMinutes }));
     } catch (e) { /* 存不了就算了，不影響使用 */ }
+    document.getElementById('waiting-task').textContent = config.task ? '專心在：' + config.task : '';
     if (TRANSITION_AUDIO.intro) { TRANSITION_AUDIO.intro.pause(); }
     requestWakeLock();
     unlockCheckinAudio();
@@ -542,7 +563,7 @@ body {
   // 讓使用者有空檔可以真的講出答案，而不是被錄音長度追著跑
   var QUESTIONS = [
     { text: '你現在在做什麼？', hint: '不知道怎麼答？點一下也可以，不點、自己回答也可以。', buttons: ['休息閒晃', '工作任務', '關係連結'], audioSrc: 'audio/pause-notice/q1-doing.m4a', holdMs: 9000, waitFull: true },
-    { text: '現在是適合做這件事的時候嗎？', hint: '自己回答就好，不用打字', buttons: null, audioSrc: 'audio/pause-notice/q2-right-time.m4a', holdMs: 4000, waitFull: true },
+    { text: '這是現在想做的嗎？', hint: '點一下也可以，不點、自己回答也可以，都不影響接下來的流程', buttons: ['是', '不是'], buttonsAdvance: false, audioSrc: 'audio/pause-notice/q2-right-time.m4a', holdMs: 4000, waitFull: true },
     { text: '你需要多久？', hint: '選一個，或自己輸入分鐘數', buttons: ['1分', '3分', '5分', '10分'], custom: true, audioSrc: 'audio/pause-notice/q3-how-long.m4a', holdMs: null, unansweredTimeoutMs: 60000 },
   ];
 
@@ -602,6 +623,12 @@ body {
             clearPending();
             if (q.audio) { q.audio.onended = null; q.audio.pause(); }
             confirmAndBeginMicroTimer(parseDurationLabel(label));
+          } else if (q.buttonsAdvance === false) {
+            // 純粹讓使用者有東西可以點，不影響時間、不提前跳到下一句
+            Array.prototype.forEach.call(buttonsWrap.querySelectorAll('.pill'), function (p) {
+              p.classList.remove('selected');
+            });
+            b.classList.add('selected');
           } else {
             clearPending();
             if (q.audio) { q.audio.onended = null; q.audio.pause(); }
