@@ -295,16 +295,18 @@ footer a:hover { color: var(--accent); }
     return (m < 10 ? '0' + m : m) + ':' + (s < 10 ? '0' + s : s);
   }
 
-  function unlockAudio() {
-    [audioStart, audioWarning, audioEnd].forEach(function (a) {
-      var p = a.play();
-      if (p && p.then) {
-        p.then(function () { a.pause(); a.currentTime = 0; }).catch(function () {});
-      } else {
-        a.pause();
-        a.currentTime = 0;
-      }
-    });
+  // 讓之後（沒有使用者手勢觸發的）中場提醒、結束音檔，能在手機瀏覽器上自動播放，
+  // 需要先在使用者這次點擊當下，讓瀏覽器「認得」這個音檔已經被允許播放過。
+  // 開始音檔會馬上真正播放，不需要、也不能做這個預先播放的動作，
+  // 否則兩次 play() 會互相打斷，導致開始的聲音播不出來。
+  function primeAudio(a) {
+    var p = a.play();
+    if (p && p.then) {
+      p.then(function () { a.pause(); a.currentTime = 0; }).catch(function () {});
+    } else {
+      a.pause();
+      a.currentTime = 0;
+    }
   }
 
   durationRow.addEventListener('click', function (e) {
@@ -320,13 +322,18 @@ footer a:hover { color: var(--accent); }
 
   startBtn.addEventListener('click', function () {
     if (!selectedMinutes) return;
-    unlockAudio();
+
+    // 先 prime 之後才會播放的兩個音檔（中場提醒、結束）
+    primeAudio(audioWarning);
+    primeAudio(audioEnd);
+
     totalSeconds = selectedMinutes * 60;
     warningFired = false;
     endFired = false;
     isPaused = false;
     endAt = Date.now() + totalSeconds * 1000;
 
+    // 開始音檔直接播放，不經過 prime，避免兩次 play() 互相打斷
     audioStart.currentTime = 0;
     audioStart.play().catch(function () {});
 
