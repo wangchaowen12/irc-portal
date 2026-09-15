@@ -532,9 +532,17 @@ body {
     if (wakeLockRef) { wakeLockRef.release(); wakeLockRef = null; }
   }
   document.addEventListener('visibilitychange', function () {
+    if (document.visibilityState === 'hidden' && state.status !== 'setup' && state.status !== 'ended') {
+      // 分頁被切到背景的當下就立刻存一次進度，
+      // 避免系統剛好在畫面轉換之間把分頁砍掉，沒存到最新狀態
+      persistSession();
+    }
     if (document.visibilityState === 'visible' && (state.status === 'waiting' || state.status === 'microTimer')) {
       requestWakeLock();
     }
+  });
+  window.addEventListener('pagehide', function () {
+    if (state.status !== 'setup' && state.status !== 'ended') persistSession();
   });
 
   // ---- 主流程 ----
