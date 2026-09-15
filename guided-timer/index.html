@@ -297,15 +297,21 @@ footer a:hover { color: var(--accent); }
 
   // 讓之後（沒有使用者手勢觸發的）中場提醒、結束音檔，能在手機瀏覽器上自動播放，
   // 需要先在使用者這次點擊當下，讓瀏覽器「認得」這個音檔已經被允許播放過。
-  // 開始音檔會馬上真正播放，不需要、也不能做這個預先播放的動作，
-  // 否則兩次 play() 會互相打斷，導致開始的聲音播不出來。
+  // 這裡用「靜音播放再暫停」的方式解鎖，靜音是為了避免在手機上跟真正要播的
+  // 「開始」音檔互搶音訊焦點，導致開始的聲音被蓋掉。
   function primeAudio(a) {
-    var p = a.play();
-    if (p && p.then) {
-      p.then(function () { a.pause(); a.currentTime = 0; }).catch(function () {});
-    } else {
+    var wasMuted = a.muted;
+    a.muted = true;
+    function cleanup() {
       a.pause();
       a.currentTime = 0;
+      a.muted = wasMuted;
+    }
+    var p = a.play();
+    if (p && p.then) {
+      p.then(cleanup).catch(cleanup);
+    } else {
+      cleanup();
     }
   }
 
@@ -323,19 +329,19 @@ footer a:hover { color: var(--accent); }
   startBtn.addEventListener('click', function () {
     if (!selectedMinutes) return;
 
-    // 先 prime 之後才會播放的兩個音檔（中場提醒、結束）
-    primeAudio(audioWarning);
-    primeAudio(audioEnd);
-
     totalSeconds = selectedMinutes * 60;
     warningFired = false;
     endFired = false;
     isPaused = false;
     endAt = Date.now() + totalSeconds * 1000;
 
-    // 開始音檔直接播放，不經過 prime，避免兩次 play() 互相打斷
+    // 開始音檔先播放，讓它先拿到音訊焦點
     audioStart.currentTime = 0;
     audioStart.play().catch(function () {});
+
+    // 開始音檔播放之後，再靜音 prime 之後才會播放的兩個音檔（中場提醒、結束）
+    primeAudio(audioWarning);
+    primeAudio(audioEnd);
 
     showScreen(screenRunning);
     pauseBtn.textContent = '暫停';
