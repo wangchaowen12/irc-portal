@@ -399,6 +399,23 @@ body {
   TRANSITION_AUDIO.timeUp.preload = 'auto';
   TRANSITION_AUDIO.ending.preload = 'auto';
 
+  // 從開始持續播到結束的「無聲音軌」：目的不是要被聽到，
+  // 而是讓手機瀏覽器認為這個分頁「正在播放聲音」，藉此降低被系統
+  // 直接凍結/砍掉的機率，讓中場、結束的提醒比較有機會準時真正播出來，
+  // 而不是要等使用者切回畫面才補播。
+  var KEEPALIVE_AUDIO = new Audio('audio/pause-notice/keepalive.m4a');
+  KEEPALIVE_AUDIO.loop = true;
+  KEEPALIVE_AUDIO.preload = 'auto';
+  function startKeepAlive() {
+    try {
+      var p = KEEPALIVE_AUDIO.play();
+      if (p && p.catch) p.catch(function () { /* 播不了就算了，不影響其他功能 */ });
+    } catch (e) { /* 忽略 */ }
+  }
+  function stopKeepAlive() {
+    try { KEEPALIVE_AUDIO.pause(); } catch (e) { /* 忽略 */ }
+  }
+
   // 統一的「限時等待」機制：所有需要等一段時間才自動往下走的地方，
   // 都只是在這裡登記「幾點幾分要做什麼」，實際執行交給下面那個每秒心跳去檢查、觸發。
   // 這樣所有等待都走同一條路，不會有各自獨立的計時器互相打架或不小心被清掉的問題。
@@ -500,6 +517,7 @@ body {
     if (TRANSITION_AUDIO.intro) { TRANSITION_AUDIO.intro.pause(); }
     requestWakeLock();
     unlockCheckinAudio();
+    startKeepAlive();
     startSession();
   });
 
@@ -563,6 +581,7 @@ body {
     clearPending();
     state.status = 'ended';
     releaseWakeLock();
+    stopKeepAlive();
     clearSession();
     showScreen('ended');
     if (TRANSITION_AUDIO.ending) {
@@ -922,6 +941,7 @@ body {
 
     requestWakeLock();
     unlockCheckinAudio();
+    startKeepAlive();
 
     if (snap.status === 'microTimer' && state.microTimerEndAt) {
       if (now >= state.microTimerEndAt) {
