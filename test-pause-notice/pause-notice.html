@@ -413,6 +413,30 @@ body {
     pendingAutoAction = null;
   }
 
+  // ---- 進度存檔：讓手機真的把分頁「砍掉重載」時也能接續 ----
+  // 前面的 Date.now() 寫法已經能抵抗「切到背景時計時器變慢/被節流」，
+  // 但手機瀏覽器有時候會在切到別的 App 一段時間後，直接把分頁的網頁整個
+  // 重新載入（不是暫停，是真的重新跑一次這支程式），這樣所有變數都會歸零、
+  // 畫面看起來就像「停下來、回到設定畫面」。這裡把目前進度存進
+  // localStorage，並在程式一開始檢查有沒有還沒結束的進度，有的話就直接接上，
+  // 而不是每次都回到最初的設定畫面。
+  var SESSION_KEY = 'pause-notice-session';
+  function persistSession() {
+    try {
+      localStorage.setItem(SESSION_KEY, JSON.stringify({
+        status: state.status,
+        sessionEndAt: state.sessionEndAt,
+        nextCheckinAt: state.nextCheckinAt,
+        checkinStep: state.checkinStep,
+        microTimerEndAt: state.microTimerEndAt,
+        config: config,
+      }));
+    } catch (e) { /* 存不了就算了，頂多沒辦法接續 */ }
+  }
+  function clearSession() {
+    try { localStorage.removeItem(SESSION_KEY); } catch (e) { /* 忽略 */ }
+  }
+
   // ---- 畫面 1：設定 ----
   function loadSavedSettings() {
     try {
@@ -520,6 +544,7 @@ body {
     scheduleNextCheckin(now);
     state.status = 'waiting';
     showScreen('waiting');
+    persistSession();
   }
 
   function scheduleNextCheckin(fromTime) {
@@ -530,6 +555,7 @@ body {
     clearPending();
     state.status = 'ended';
     releaseWakeLock();
+    clearSession();
     showScreen('ended');
     if (TRANSITION_AUDIO.ending) {
       try {
@@ -546,6 +572,7 @@ body {
 
   document.getElementById('restart-btn').addEventListener('click', function () {
     state.status = 'setup';
+    clearSession();
     showScreen('setup');
   });
 
@@ -598,6 +625,7 @@ body {
     state.status = 'checkin';
     state.checkinStep = 0;
     showScreen('checkin');
+    persistSession();
     renderCheckinStep();
   }
 
@@ -707,6 +735,7 @@ body {
       scheduleNextCheckin(Date.now());
       state.status = 'waiting';
       showScreen('waiting');
+      persistSession();
     };
 
     var audio = TRANSITION_AUDIO.timeUp;
@@ -726,6 +755,7 @@ body {
   function advanceCheckin() {
     if (state.checkinStep < QUESTIONS.length - 1) {
       state.checkinStep += 1;
+      persistSession();
       renderCheckinStep();
     }
   }
@@ -767,6 +797,7 @@ body {
     state.microTimerEndAt = Date.now() + minutes * 60000;
     state.status = 'microTimer';
     showScreen('micro');
+    persistSession();
   }
 
   // ---- 每秒心跳：驅動所有倒數與狀態轉換 ----
@@ -822,6 +853,7 @@ body {
 
   function enterTimeUp() {
     state.status = 'timeUp';
+    persistSession();
     document.getElementById('micro-time').textContent = '00:00';
     document.getElementById('micro-label').textContent = '時間到了，我等會兒再來';
 
@@ -834,6 +866,7 @@ body {
       scheduleNextCheckin(Date.now());
       state.status = 'waiting';
       showScreen('waiting');
+      persistSession();
     };
 
     var audio = TRANSITION_AUDIO.timeUp;
@@ -850,7 +883,74 @@ body {
     }
   }
 
+  // ---- 啟動時：先看看有沒有還沒結束的進度，有的話直接接上 ----
+  function tryResumeSession() {
+    var snap;
+    try {
+      snap = JSON.parse(localStorage.getItem(SESSION_KEY) || 'null');
+    } catch (e) {
+      snap = null;
+    }
+    if (!snap || !snap.status || snap.status === 'setup' || snap.status === 'ended') return false;
+    if (!(snap.config && snap.config.totalMinutes > 0 && snap.config.intervalMinutes > 0)) return false;
+
+    config.totalMinutes = snap.config.totalMinutes;
+    config.intervalMinutes = snap.config.intervalMinutes;
+    config.task = snap.config.task || '';
+    state.sessionEndAt = snap.sessionEndAt;
+    state.nextCheckinAt = snap.nextCheckinAt;
+    state.checkinStep = snap.checkinStep || 0;
+    state.microTimerEndAt = snap.microTimerEndAt;
+
+    document.getElementById('waiting-task').textContent = config.task ? '專心在：' + config.task : '';
+
+    var now = Date.now();
+
+    // 大時段本身已經過期，直接視為結束，不用再接回任何畫面
+    if (state.sessionEndAt && now >= state.sessionEndAt) {
+      endSession();
+      return true;
+    }
+
+    requestWakeLock();
+    unlockCheckinAudio();
+
+    if (snap.status === 'microTimer' && state.microTimerEndAt) {
+      if (now >= state.microTimerEndAt) {
+        state.status = 'microTimer';
+        enterTimeUp();
+      } else {
+        state.status = 'microTimer';
+        showScreen('micro');
+      }
+      return true;
+    }
+
+    // 問答（checkin）跟「時間到了」提醒中途的音檔／小等待進度沒辦法精準還原，
+    // 保守做法：回到安靜等待畫面，照原本的間隔繼續倒數下一次提醒，
+    // 不強行接回中途講到一半的那句話
+    if (snap.status === 'checkin' || snap.status === 'timeUp') {
+      if (state.nextCheckinAt && now >= state.nextCheckinAt) {
+        scheduleNextCheckin(now);
+      }
+      state.status = 'waiting';
+      showScreen('waiting');
+      persistSession();
+      return true;
+    }
+
+    // status === 'waiting'
+    if (state.nextCheckinAt && now >= state.nextCheckinAt) {
+      enterCheckin();
+    } else {
+      state.status = 'waiting';
+      showScreen('waiting');
+    }
+    return true;
+  }
+
   loadSavedSettings();
+  tryResumeSession();
 })();
 </script>
 
