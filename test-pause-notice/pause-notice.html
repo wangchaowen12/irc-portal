@@ -415,6 +415,13 @@ body {
   function stopKeepAlive() {
     try { KEEPALIVE_AUDIO.pause(); } catch (e) { /* 忽略 */ }
   }
+  // 被系統／別的音訊搶走焦點而暫停時，若工具還在進行中，立刻試著搶回來，
+  // 不用等到下一次心跳（心跳那邊也有同樣的重試，作為保險）。
+  KEEPALIVE_AUDIO.addEventListener('pause', function () {
+    if (state.status !== 'setup' && state.status !== 'ended') {
+      startKeepAlive();
+    }
+  });
 
   // 統一的「限時等待」機制：所有需要等一段時間才自動往下走的地方，
   // 都只是在這裡登記「幾點幾分要做什麼」，實際執行交給下面那個每秒心跳去檢查、觸發。
@@ -830,6 +837,13 @@ body {
   // ---- 每秒心跳：驅動所有倒數與狀態轉換 ----
   setInterval(function () {
     var now = Date.now();
+
+    // 保持音軌如果被別的音訊（例如使用者切去看有聲影片）搶走音訊焦點而暫停，
+    // 只要工具還在進行中，就持續試著要回來；等對方那邊的聲音停掉、放開焦點，
+    // 這裡下一次重試就會自動接上，不需要使用者自己重新操作。
+    if (state.status !== 'setup' && state.status !== 'ended' && KEEPALIVE_AUDIO.paused) {
+      startKeepAlive();
+    }
 
     // 整體大時段的判斷不管卡在哪個畫面都要持續算，
     // 避免使用者忙著沒空回應問答時，整個服務跟著停擺。
