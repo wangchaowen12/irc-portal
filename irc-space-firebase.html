@@ -73,6 +73,12 @@ body {
   cursor: pointer; transition: border-color 0.2s, transform 0.2s;
 }
 .class-pick-btn:hover { border-color: var(--accent); transform: translateY(-1px); }
+.class-pick-btn { position: relative; }
+.class-dot {
+  position: absolute; top: 0.9rem; right: 1rem;
+  width: 9px; height: 9px; border-radius: 50%;
+  background: #3B82C4; box-shadow: 0 0 0 3px rgba(59,130,196,0.15);
+}
 
 /* ── SPACE SHELL ── */
 #space { display: none; }
@@ -298,7 +304,7 @@ import {
   signInWithEmailLink, onAuthStateChanged, signOut
 } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
 import {
-  getFirestore, doc, getDoc, collection, addDoc,
+  getFirestore, doc, getDoc, updateDoc, collection, addDoc,
   query, orderBy, onSnapshot, serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 
@@ -465,10 +471,31 @@ async function showClassPicker() {
     const btn = document.createElement('button');
     btn.className = 'class-pick-btn';
     btn.innerHTML = `<strong style="font-family:var(--serif);font-weight:400;">${g.name || g.code}</strong>` +
-      (g.cohort ? `<br><span style="font-size:0.78rem;color:var(--muted);">${g.cohort}</span>` : '');
+      (g.cohort ? `<br><span style="font-size:0.78rem;color:var(--muted);">${g.cohort}</span>` : '') +
+      (hasUnreadActivity(g) ? '<span class="class-dot" title="有新動態"></span>' : '');
     btn.onclick = () => enterClass(g.code);
     listEl.appendChild(btn);
   });
+}
+
+// 判斷這個班級是否有「上次查看之後」的新動態（留言或內容更新）
+// 讀取狀態存在瀏覽器本機（localStorage），跟著這台裝置、這個帳號登入狀態走
+function hasUnreadActivity(g) {
+  if (!g.lastActivityAt) return false;
+  const activityMs = typeof g.lastActivityAt.toMillis === 'function'
+    ? g.lastActivityAt.toMillis()
+    : new Date(g.lastActivityAt).getTime();
+  const lastSeenMs = Number(window.localStorage.getItem('irc_lastSeen_' + g.code)) || 0;
+  return activityMs > lastSeenMs;
+}
+
+// 留言或內容更新時，把班級文件的 lastActivityAt 往前推一下
+async function bumpActivity(groupCode) {
+  try {
+    await updateDoc(doc(db, 'groups', groupCode), { lastActivityAt: serverTimestamp() });
+  } catch (e) {
+    console.warn('更新 lastActivityAt 失敗（不影響其他功能）：', e);
+  }
 }
 
 window.switchClass = function () {
@@ -488,6 +515,9 @@ async function enterClass(groupCode) {
     return;
   }
   const cls = groupSnap.data();
+
+  // 記錄這個裝置「查看過這個班級」的時間，藍點依此判斷是否已讀
+  window.localStorage.setItem('irc_lastSeen_' + groupCode, String(Date.now()));
 
   document.getElementById('gate').style.display = 'none';
   document.getElementById('classPicker').style.display = 'none';
@@ -573,6 +603,7 @@ window.postMsg = async function () {
     authorEmail: auth.currentUser.email,
     createdAt: serverTimestamp()
   });
+  bumpActivity(currentGroupCode);
   ta.value = '';
 };
 
