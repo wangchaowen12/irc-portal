@@ -1592,6 +1592,34 @@ nav {
   .gallery-caption { padding: 1.4rem 1.3rem 1.7rem; }
 }
 
+
+/* ── 人際生活地圖：分享卡／來源卡 ── */
+.rshare-card { margin-top: 3rem; max-width: 34rem; padding: 1.8rem 1.6rem; background: var(--panel-dark); color: var(--text); border-radius: 2px; opacity: 0; transform: translateY(10px); transition: opacity .4s ease, transform .4s ease; }
+.rshare-card.show { opacity: 1; transform: none; }
+.rshare-card[hidden] { display: none; }
+.rshare-card h3 { font-family: var(--serif); font-weight: 600; font-size: 1.15rem; margin: 0 0 .6rem; color: var(--text); }
+.rshare-card p { font-size: .88rem; line-height: 1.95; color: var(--muted); margin: 0 0 1.2rem; }
+.rshare-btn { display: block; width: 100%; min-height: 48px; padding: .7rem 1.2rem; border: 1px solid transparent; border-radius: 2px; background: var(--deep); color: var(--panel-dark); font: 400 .95rem var(--sans); letter-spacing: .06em; cursor: pointer; }
+.rshare-btn.ghost { background: transparent; border-color: rgba(243,241,234,.4); color: var(--text); }
+.rshare-btn + .rshare-btn { margin-top: .7rem; }
+.rshare-text { display: block; margin: .5rem auto 0; min-height: 44px; padding: .3rem .8rem; background: none; border: 0; color: var(--muted); font: 300 .85rem var(--sans); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+.rshare-third { display: block; width: 100%; margin-top: 1rem; padding: 1rem .2rem .2rem; background: none; border: 0; border-top: 1px solid rgba(243,241,234,.16); color: var(--text); text-align: left; font: 400 .95rem var(--sans); cursor: pointer; }
+.rshare-third small { display: block; margin-top: .15rem; color: var(--muted); font: 300 .82rem var(--sans); }
+.rshare-card button:focus-visible, .rshare-panel button:focus-visible, .rshare-panel textarea:focus-visible { outline: 2px solid var(--deep); outline-offset: 2px; }
+.rshare-sheet { position: fixed; inset: 0; z-index: 9999; display: flex; align-items: flex-end; justify-content: center; }
+.rshare-sheet[hidden] { display: none; }
+.rshare-scrim { position: absolute; inset: 0; background: rgba(20,22,46,.6); }
+.rshare-panel { position: relative; width: min(100%, 480px); padding: 1.4rem 1.4rem 1.5rem; background: #F3F1EA; color: #2B2F52; border-radius: 20px 20px 0 0; }
+.rshare-panel h3 { font-family: var(--serif); font-weight: 600; font-size: 1.1rem; margin: 0 0 .7rem; }
+.rshare-panel label { display: block; margin-bottom: .3rem; font-size: .8rem; color: #5D6285; }
+.rshare-panel textarea { width: 100%; padding: .65rem .8rem; border: 1px solid #CFCBE0; border-radius: 10px; background: #fff; color: #2B2F52; font: 300 .9rem/1.7 var(--sans); resize: none; }
+.rshare-link { margin: .5rem 0 1rem; font-size: .78rem; color: #5D6285; word-break: break-all; }
+.rshare-row { display: grid; grid-template-columns: 1fr 1fr; gap: .7rem; margin-top: .7rem; }
+.rshare-panel .rshare-btn { background: #E8D98A; color: #2B2F52; }
+.rshare-panel .rshare-btn.ghost { background: transparent; border-color: #B9B4D0; color: #2B2F52; }
+.rshare-panel .rshare-text { color: #5D6285; }
+.rshare-done { min-height: 1.4em; margin: .4rem 0 0; font-size: .82rem; color: #2B2F52; text-align: center; }
+@media (prefers-reduced-motion: reduce) { .rshare-card { transition: none; } }
 </style>
 </head>
 <body>
@@ -2518,6 +2546,47 @@ nav {
         </div>
       </div>
     </div>
+
+    <!-- 分享卡：自己用完工具後出現 -->
+    <div class="rshare-card" id="rshareCard" hidden>
+      <div id="rshareMain">
+        <h3>覺得有幫助嗎？</h3>
+        <p>如果你想到誰也用得上，可以把這個工具傳給他。只會傳出工具的連結，你的圖和內容不會被傳送。</p>
+        <button type="button" class="rshare-btn" id="rshareOpen">傳給一位朋友</button>
+        <button type="button" class="rshare-text" id="rshareSkip">先不用</button>
+      </div>
+      <div id="rshareThanks" hidden>
+        <h3>已傳出</h3>
+        <p style="margin:0">謝謝你把它帶給身邊的人。這張圖仍然只留在你的裝置上。</p>
+      </div>
+    </div>
+
+    <!-- 來源卡：朋友從分享連結進來，用完工具後出現 -->
+    <div class="rshare-card" id="rbridgeCard" hidden>
+      <h3>這個小工具，來自 IRC</h3>
+      <p>IRC 是一個讓內在真實有機會被接觸的練習場域。我們用身體感知與人際空間的練習，陪人慢慢看見關係裡正在發生什麼。</p>
+      <button type="button" class="rshare-btn" onclick="goToolbox()">看看其他小工具</button>
+      <button type="button" class="rshare-btn ghost" onclick="goPage('page-sof')">認識課程：自在邊界學</button>
+      <button type="button" class="rshare-third" onclick="goPageCourse('page-course-intro','入門｜從感覺到空間')">一對一入門體驗，一小時<small>第一次接觸的人，可以從這裡開始</small></button>
+    </div>
+
+    <!-- 分享面板 -->
+    <div class="rshare-sheet" id="rshareSheet" hidden role="dialog" aria-modal="true" aria-labelledby="rshareSheetT">
+      <div class="rshare-scrim" id="rshareScrim"></div>
+      <div class="rshare-panel">
+        <h3 id="rshareSheetT">傳給一位朋友</h3>
+        <label for="rshareMsg">訊息（可以自己改）</label>
+        <textarea id="rshareMsg" rows="4"></textarea>
+        <p class="rshare-link" id="rshareLink"></p>
+        <button type="button" class="rshare-btn" id="rshareLine">傳到 LINE</button>
+        <div class="rshare-row">
+          <button type="button" class="rshare-btn ghost" id="rshareCopy">複製訊息</button>
+          <button type="button" class="rshare-btn ghost" id="rshareNative" hidden>用其他 App 傳</button>
+        </div>
+        <button type="button" class="rshare-text" id="rshareClose">取消</button>
+        <p class="rshare-done" id="rshareDone" aria-live="polite"></p>
+      </div>
+    </div>
   </div>
 
   <footer>
@@ -3295,19 +3364,23 @@ window.addEventListener('popstate', function (e) {
 
 // 頁面一載入就先建立「入口頁」這筆基準歷史紀錄
 // （不管等一下要不要因為網址帶了 #members 之類的深連結而跳轉）
+// 先記下網址上的 #錨點 與 ?參數：下面這行 replaceState 會把它們從網址列清掉，
+// 不先記下的話，#relation-map 之類的深連結就讀不到了。
+var __ircInitHash = window.location.hash;
+var __ircInitSearch = window.location.search;
 history.replaceState({ page: 'home' }, '', location.pathname);
 navHistoryInitialized = true;
 
 // ── 深連結：從 Space 頁面點「← 班級入口」回來時，帶 #members 直接落在班級入口分頁
 // 也支援 #life-map、#toolbox、#relation-map，方便直接把工具連結分享給個別諮商的個案
 (function () {
-  if (window.location.hash === '#members') {
+  if (__ircInitHash === '#members') {
     goPage('page-members');
-  } else if (window.location.hash === '#life-map') {
+  } else if (__ircInitHash === '#life-map') {
     goLifeMap();
-  } else if (window.location.hash === '#relation-map') {
+  } else if (__ircInitHash === '#relation-map') {
     goRelationMap();
-  } else if (window.location.hash === '#toolbox') {
+  } else if (__ircInitHash === '#toolbox') {
     goToolbox();
   }
 })();
@@ -4314,5 +4387,86 @@ navHistoryInitialized = true;
 })();
 </script>
 
+
+<script>
+// ── 人際生活地圖：分享給朋友／朋友的來源卡 ──
+(function () {
+  var SHARE_URL = 'https://wangchaowen12.github.io/irc-portal/relation-map.html';
+  var DEFAULT_MSG = '我最近在用一個小工具：把身邊的人放進三個圈，看看今天的心力可以陪誰。不用註冊，幾分鐘就好，覺得你可能也用得上。';
+
+  var dial = document.getElementById('rmapDial');
+  var shareCard = document.getElementById('rshareCard');
+  var bridgeCard = document.getElementById('rbridgeCard');
+  var sheet = document.getElementById('rshareSheet');
+  if (!dial || !shareCard || !bridgeCard || !sheet) return;
+
+  var msgEl = document.getElementById('rshareMsg');
+  var doneEl = document.getElementById('rshareDone');
+  var nativeBtn = document.getElementById('rshareNative');
+  var lastFocus = null;
+  var revealed = false;
+
+  // 從分享連結（relation-map.html → ?ref=friend）進來的，是朋友；其餘是自己在用
+  var isFriend = /[?&]ref=friend(&|$)/.test(window.__ircInitSearch || '');
+
+  msgEl.value = DEFAULT_MSG;
+  document.getElementById('rshareLink').textContent = SHARE_URL.replace('https://', '');
+  if (navigator.share) nativeBtn.hidden = false;
+
+  function reveal(card) {
+    card.hidden = false;
+    requestAnimationFrame(function () { requestAnimationFrame(function () { card.classList.add('show'); }); });
+  }
+  // 撥動心力燈之後才出現——這時候最有感覺
+  dial.addEventListener('input', function () {
+    if (revealed) return;
+    revealed = true;
+    reveal(isFriend ? bridgeCard : shareCard);
+  });
+
+  function fullText() { return msgEl.value.replace(/\s+$/, '') + '\n' + SHARE_URL; }
+  function openSheet() { lastFocus = document.activeElement; doneEl.textContent = ''; sheet.hidden = false; document.getElementById('rshareLine').focus(); }
+  function closeSheet() { sheet.hidden = true; if (lastFocus && lastFocus.focus) lastFocus.focus(); }
+  function markSent() {
+    sheet.hidden = true;
+    document.getElementById('rshareMain').hidden = true;
+    document.getElementById('rshareThanks').hidden = false;
+  }
+  function copyText(t) {
+    if (navigator.clipboard && navigator.clipboard.writeText) return navigator.clipboard.writeText(t);
+    return new Promise(function (res, rej) {
+      try {
+        var ta = document.createElement('textarea');
+        ta.value = t; ta.style.position = 'fixed'; ta.style.opacity = '0';
+        document.body.appendChild(ta); ta.select();
+        var ok = document.execCommand('copy');
+        document.body.removeChild(ta);
+        ok ? res() : rej();
+      } catch (e) { rej(e); }
+    });
+  }
+
+  document.getElementById('rshareOpen').addEventListener('click', openSheet);
+  document.getElementById('rshareSkip').addEventListener('click', function () { shareCard.hidden = true; });
+  document.getElementById('rshareClose').addEventListener('click', closeSheet);
+  document.getElementById('rshareScrim').addEventListener('click', closeSheet);
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !sheet.hidden) closeSheet(); });
+
+  document.getElementById('rshareLine').addEventListener('click', function () {
+    window.open('https://line.me/R/msg/text/?' + encodeURIComponent(fullText()), '_blank', 'noopener');
+    markSent();
+  });
+  document.getElementById('rshareCopy').addEventListener('click', function () {
+    copyText(fullText()).then(function () {
+      doneEl.textContent = '已複製，可以貼給朋友。';
+    }, function () {
+      doneEl.textContent = '沒有複製成功，請直接選取上面的訊息來複製。';
+    });
+  });
+  nativeBtn.addEventListener('click', function () {
+    navigator.share({ title: '人際生活地圖｜IRC', text: msgEl.value, url: SHARE_URL }).then(markSent, function () {});
+  });
+})();
+</script>
 </body>
 </html>
