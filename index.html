@@ -1623,10 +1623,10 @@ nav {
 .rshare-third { display: block; width: 100%; margin-top: 1rem; padding: 1rem .2rem .2rem; background: none; border: 0; border-top: 1px solid rgba(243,241,234,.16); color: var(--text); text-align: left; font: 400 .95rem var(--sans); cursor: pointer; }
 .rshare-third small { display: block; margin-top: .15rem; color: var(--muted); font: 300 .82rem var(--sans); }
 .rshare-card button:focus-visible, .rshare-panel button:focus-visible, .rshare-panel textarea:focus-visible { outline: 2px solid var(--deep); outline-offset: 2px; }
-.rshare-sheet { position: fixed; inset: 0; z-index: 9999; display: flex; align-items: flex-end; justify-content: center; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+.rshare-sheet { position: fixed; inset: 0; z-index: 9999; display: flex; flex-direction: column; align-items: center; overflow-y: auto; -webkit-overflow-scrolling: touch; }
 .rshare-sheet[hidden] { display: none; }
 .rshare-scrim { position: absolute; inset: 0; background: rgba(20,22,46,.6); }
-.rshare-panel { position: relative; width: min(100%, 480px); padding: 1.4rem 1.4rem 1.5rem; background: #F3F1EA; color: #2B2F52; border-radius: 20px 20px 0 0; margin-top: 10vh; }
+.rshare-panel { position: relative; width: min(100%, 480px); padding: 1.4rem 1.4rem 1.5rem; background: #F3F1EA; color: #2B2F52; border-radius: 20px 20px 0 0; margin-top: auto; flex-shrink: 0; }
 .rshare-panel h3 { font-family: var(--serif); font-weight: 600; font-size: 1.1rem; margin: 0 0 .7rem; }
 .rshare-panel label { display: block; margin-bottom: .3rem; font-size: .8rem; color: #5D6285; }
 .rshare-panel textarea { width: 100%; padding: .65rem .8rem; border: 1px solid #CFCBE0; border-radius: 10px; background: #fff; color: #2B2F52; font: 300 .9rem/1.7 var(--sans); resize: none; }
