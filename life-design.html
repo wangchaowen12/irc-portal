@@ -126,13 +126,13 @@
   .lshare-text{background:none;border:none;font-size:0.82rem;color:var(--muted);cursor:pointer;font-family:inherit;text-decoration:underline}
   .lshare-third{background:none;border:none;font-size:0.82rem;color:var(--accent);cursor:pointer;font-family:inherit;text-align:left;display:block;margin-top:0.6rem}
   .lshare-third small{display:block;color:var(--muted);font-size:0.74rem;margin-top:0.2rem}
-  .lshare-sheet{position:fixed;inset:0;z-index:120;display:flex;align-items:flex-end;justify-content:center}
+  .lshare-sheet{position:fixed;inset:0;z-index:120;display:flex;align-items:flex-end;justify-content:center;overflow-y:auto;-webkit-overflow-scrolling:touch}
   .lshare-scrim{position:absolute;inset:0;background:rgba(23,20,15,0.32)}
-  .lshare-panel{position:relative;background:var(--white);width:100%;max-width:460px;border-radius:6px 6px 0 0;padding:1.6rem;box-shadow:0 -10px 30px rgba(23,20,15,0.2)}
+  .lshare-panel{position:relative;background:var(--white);width:100%;max-width:460px;border-radius:6px 6px 0 0;padding:1.6rem;box-shadow:0 -10px 30px rgba(23,20,15,0.2);margin-top:10vh}
   .lshare-panel label{display:block;font-size:0.7rem;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);margin:0.8rem 0 0.4rem}
   .lshare-panel textarea{width:100%;font-family:inherit;font-size:0.86rem;padding:0.6rem 0.7rem;border:1.4px solid rgba(23,91,74,0.18);border-radius:2px;color:var(--text);background:var(--bg);resize:vertical}
   .lshare-link{font-size:0.76rem;color:var(--muted);margin:0.6rem 0 1rem;word-break:break-all}
-</style>
+  .lshare-row{display:grid;grid-template-columns:1fr 1fr;gap:0.7rem;margin-top:0.7rem}</style>
 </head>
 <body>
 <div id="root"></div>
@@ -437,6 +437,7 @@ function ShareBridge({ revealed }){
   const [sent,setSent] = useState(false);
   const [doneNote,setDoneNote] = useState('');
   const [skipped,setSkipped] = useState(false);
+  const canNativeShare = typeof navigator !== 'undefined' && !!navigator.share;
 
   if (!revealed || skipped) return null;
 
@@ -453,6 +454,9 @@ function ShareBridge({ revealed }){
       ()=>setDoneNote('已複製，可以貼給朋友。'),
       ()=>setDoneNote('沒有複製成功，請直接選取上面的訊息來複製。')
     );
+  }
+  function shareNative(){
+    navigator.share({ title: '我的生活地圖｜IRC', text: msg, url: SHARE_URL }).then(markSent, ()=>{});
   }
 
   return (
@@ -493,11 +497,22 @@ function ShareBridge({ revealed }){
           <div className="lshare-panel" onClick={e=>e.stopPropagation()}>
             <h3>傳給一位朋友</h3>
             <label htmlFor="lshareMsg">訊息（可以自己改）</label>
-            <textarea id="lshareMsg" rows="4" value={msg} onChange={e=>setMsg(e.target.value)} />
+            <textarea
+              id="lshareMsg"
+              rows="4"
+              value={msg}
+              onChange={e=>setMsg(e.target.value)}
+              onFocus={e=>{ const el=e.target; setTimeout(()=>el.scrollIntoView({block:'center',behavior:'smooth'}), 300); }}
+            />
             <p className="lshare-link">{SHARE_URL.replace('https://','')}</p>
-            <div className="lshare-actions">
-              <button type="button" className="lshare-btn" onClick={shareLine}>傳到 LINE</button>
+            <button type="button" className="lshare-btn" onClick={shareLine} style={{width:'100%'}}>傳到 LINE</button>
+            <div className="lshare-row">
               <button type="button" className="lshare-btn ghost" onClick={shareCopy}>複製訊息</button>
+              {canNativeShare && (
+                <button type="button" className="lshare-btn ghost" onClick={shareNative}>用其他 App 傳</button>
+              )}
+            </div>
+            <div className="lshare-actions" style={{marginTop:'0.7rem'}}>
               <button type="button" className="lshare-text" onClick={closeSheet}>取消</button>
             </div>
             {doneNote && <p style={{fontSize:'0.78rem',color:'var(--muted)',marginTop:'0.6rem'}}>{doneNote}</p>}
