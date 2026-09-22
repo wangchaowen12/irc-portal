@@ -3536,8 +3536,19 @@ history.replaceState({ page: 'home' }, '', location.pathname);
 navHistoryInitialized = true;
 
 // ── 深連結：從 Space 頁面點「← 班級入口」回來時，帶 #members 直接落在班級入口分頁
-// 也支援 #life-map、#toolbox、#relation-map，方便直接把工具連結分享給個別諮商的個案
+// 也支援 #life-map、#toolbox、#relation-map、#counseling，方便直接把工具連結分享給個別諮商的個案
+// 也支援 #course-1／#course-intro／#course-2／#course-2plus／#course-3／#course-4，
+// 讓工具箱裡的分享／來源卡可以直接深連結到對應的課程介紹頁
 (function () {
+  var __courseTitles = {
+    'course-1': '自在邊界學 I',
+    'course-intro': '入門｜從感覺到空間',
+    'course-2': '自在邊界學 II',
+    'course-2plus': '自在邊界學 II＋',
+    'course-3': '自在邊界學 III',
+    'course-4': '自在邊界學 IV'
+  };
+  var __courseKey = __ircInitHash.replace(/^#/, '');
   if (__ircInitHash === '#members') {
     goPage('page-members');
   } else if (__ircInitHash === '#life-map') {
@@ -3550,6 +3561,8 @@ navHistoryInitialized = true;
     goPage('page-counseling');
   } else if (__ircInitHash === '#start') {
     goPage('page-sof');
+  } else if (__courseTitles[__courseKey]) {
+    goPageCourse('page-' + __courseKey, __courseTitles[__courseKey]);
   }
 })();
 
