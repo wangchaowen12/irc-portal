@@ -4,6 +4,19 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>我的生活地圖｜IRC</title>
+<meta name="description" content="把你正在經營的生活領域攤開來看看——哪些正在推進、哪些暫時停著。不用註冊，資料只留在你的裝置上。">
+<link rel="canonical" href="https://wangchaowen12.github.io/irc-portal/life-design.html">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="IRC｜Inner Reality Circle">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:title" content="我的生活地圖｜IRC">
+<meta property="og:description" content="把你正在經營的生活領域攤開來看看——哪些正在推進、哪些暫時停著。不用註冊，資料只留在你的裝置上。">
+<meta property="og:url" content="https://wangchaowen12.github.io/irc-portal/life-design.html">
+<meta property="og:image" content="https://wangchaowen12.github.io/irc-portal/og-home.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@300;400;600&family=Noto+Sans+TC:wght@300;400;500&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/react@18.2.0/umd/react.production.min.js"></script>
@@ -99,6 +112,26 @@
   .btn-primary:hover{background:var(--mid)}
   .btn-ghost{background:none;border:1.4px solid rgba(23,91,74,0.18);border-radius:2px;padding:0.55rem 1rem;font-size:0.84rem;color:var(--muted);cursor:pointer;font-family:inherit}
   .btn-text{background:none;border:none;font-size:0.8rem;color:var(--accent);cursor:pointer;font-family:inherit}
+
+  /* ── 分享卡／來源卡（跟人際生活地圖同一套邏輯） ── */
+  .lshare-card{position:fixed;left:0;right:0;bottom:0;z-index:90;background:var(--white);border-top:1px solid rgba(23,91,74,0.14);padding:1.2rem 6vw 1.4rem;box-shadow:0 -8px 24px rgba(23,20,15,0.08);transform:translateY(100%);transition:transform .35s ease;max-height:70vh;overflow-y:auto}
+  .lshare-card.show{transform:translateY(0)}
+  .lshare-card h3{font-family:'Noto Serif TC',serif;font-size:1rem;color:var(--deep);margin-bottom:0.5rem}
+  .lshare-card p{font-size:0.84rem;color:var(--muted);line-height:1.6;margin-bottom:0.9rem;max-width:520px}
+  .lshare-actions{display:flex;flex-wrap:wrap;gap:0.6rem;align-items:center}
+  .lshare-btn{background:var(--deep);color:#fff;border:none;border-radius:2px;padding:0.6rem 1.2rem;font-size:0.84rem;cursor:pointer;font-family:inherit;text-decoration:none;display:inline-block}
+  .lshare-btn:hover{background:var(--mid)}
+  .lshare-btn.ghost{background:none;border:1.4px solid rgba(23,91,74,0.25);color:var(--deep)}
+  .lshare-btn.ghost:hover{background:rgba(23,91,74,0.06)}
+  .lshare-text{background:none;border:none;font-size:0.82rem;color:var(--muted);cursor:pointer;font-family:inherit;text-decoration:underline}
+  .lshare-third{background:none;border:none;font-size:0.82rem;color:var(--accent);cursor:pointer;font-family:inherit;text-align:left;display:block;margin-top:0.6rem}
+  .lshare-third small{display:block;color:var(--muted);font-size:0.74rem;margin-top:0.2rem}
+  .lshare-sheet{position:fixed;inset:0;z-index:120;display:flex;align-items:flex-end;justify-content:center}
+  .lshare-scrim{position:absolute;inset:0;background:rgba(23,20,15,0.32)}
+  .lshare-panel{position:relative;background:var(--white);width:100%;max-width:460px;border-radius:6px 6px 0 0;padding:1.6rem;box-shadow:0 -10px 30px rgba(23,20,15,0.2)}
+  .lshare-panel label{display:block;font-size:0.7rem;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);margin:0.8rem 0 0.4rem}
+  .lshare-panel textarea{width:100%;font-family:inherit;font-size:0.86rem;padding:0.6rem 0.7rem;border:1.4px solid rgba(23,91,74,0.18);border-radius:2px;color:var(--text);background:var(--bg);resize:vertical}
+  .lshare-link{font-size:0.76rem;color:var(--muted);margin:0.6rem 0 1rem;word-break:break-all}
 </style>
 </head>
 <body>
@@ -109,6 +142,26 @@ const { useState, useEffect, useMemo, useCallback } = React;
 const LS_KEY = 'irc-life-design-v1';
 function load(){ try{ const s=localStorage.getItem(LS_KEY); return s?JSON.parse(s):null; }catch(e){ return null; } }
 function save(state){ try{ localStorage.setItem(LS_KEY, JSON.stringify(state)); }catch(e){} }
+
+// ── 分享給朋友／朋友的來源卡（跟人際生活地圖同一套邏輯） ──
+const SHARE_URL = 'https://wangchaowen12.github.io/irc-portal/life-design.html';
+const DEFAULT_MSG = '我最近在用一個小工具：把生活攤開來看看，哪些正在推進、哪些暫時停著。不用註冊，資料只留在自己的裝置上，覺得你可能也用得上。';
+// 從分享連結（life-design.html → ?ref=friend）進來的，是朋友；其餘是自己在用
+const isFriend = /[?&]ref=friend(&|$)/.test(window.location.search || '');
+
+function copyText(t){
+  if (navigator.clipboard && navigator.clipboard.writeText) return navigator.clipboard.writeText(t);
+  return new Promise((res,rej)=>{
+    try{
+      const ta=document.createElement('textarea');
+      ta.value=t; ta.style.position='fixed'; ta.style.opacity='0';
+      document.body.appendChild(ta); ta.select();
+      const ok=document.execCommand('copy');
+      document.body.removeChild(ta);
+      ok?res():rej();
+    }catch(e){ rej(e); }
+  });
+}
 
 const MAX_DOMAINS = 5;
 const MAX_ACTIONS = 5;
@@ -158,7 +211,7 @@ function EditDialog({ node, kind, onSave, onDelete, onClose }){
 }
 
 /* ── Dream Map (working view — 5 domains, 5 actions each) ── */
-function DreamMap({ data, setData }){
+function DreamMap({ data, setData, onFirstComplete }){
   const [stack,setStack] = useState([{ level:'dream', title:data.dreamTitle }]);
   const [editing,setEditing] = useState(null);
   const current = stack[stack.length-1];
@@ -180,7 +233,12 @@ function DreamMap({ data, setData }){
 
   function toggleAction(domainId, actionId){
     setData(d=>({ ...d, domains:d.domains.map(dom=>dom.id!==domainId?dom:{
-      ...dom, actions:dom.actions.map(a=>a.id!==actionId?a:{ ...a, status:a.status==='done'?'todo':'done' })
+      ...dom, actions:dom.actions.map(a=>{
+        if (a.id!==actionId) return a;
+        const nextStatus = a.status==='done'?'todo':'done';
+        if (nextStatus==='done' && onFirstComplete) onFirstComplete();
+        return { ...a, status:nextStatus };
+      })
     })}));
   }
   function addNode(){
@@ -372,6 +430,84 @@ function MemoryWall({ data }){
   );
 }
 
+/* ── 分享卡／來源卡：撥動出「覺得有幫助」那一刻才出現 ── */
+function ShareBridge({ revealed }){
+  const [sheetOpen,setSheetOpen] = useState(false);
+  const [msg,setMsg] = useState(DEFAULT_MSG);
+  const [sent,setSent] = useState(false);
+  const [doneNote,setDoneNote] = useState('');
+  const [skipped,setSkipped] = useState(false);
+
+  if (!revealed || skipped) return null;
+
+  function fullText(){ return msg.replace(/\s+$/,'') + '\n' + SHARE_URL; }
+  function openSheet(){ setSent(false); setDoneNote(''); setSheetOpen(true); }
+  function closeSheet(){ setSheetOpen(false); }
+  function markSent(){ setSheetOpen(false); setSent(true); }
+  function shareLine(){
+    window.open('https://line.me/R/msg/text/?' + encodeURIComponent(fullText()), '_blank', 'noopener');
+    markSent();
+  }
+  function shareCopy(){
+    copyText(fullText()).then(
+      ()=>setDoneNote('已複製，可以貼給朋友。'),
+      ()=>setDoneNote('沒有複製成功，請直接選取上面的訊息來複製。')
+    );
+  }
+
+  return (
+    <div className="lshare-card show">
+      {isFriend ? (
+        <div>
+          <h3>這個小工具，來自 IRC</h3>
+          <p>IRC 是一個讓內在真實有機會被接觸的練習場域。我們用身體感知與人際空間的練習，陪人慢慢看見關係裡正在發生什麼。</p>
+          <div className="lshare-actions">
+            <a className="lshare-btn" href="https://wangchaowen12.github.io/irc-portal/#toolbox">看看其他小工具</a>
+            <a className="lshare-btn ghost" href="https://wangchaowen12.github.io/irc-portal/#page-course-1">認識課程：自在邊界學 I</a>
+          </div>
+          <p className="lshare-third" style={{marginTop:'0.8rem'}}>
+            <a href="https://wangchaowen12.github.io/irc-portal/#page-counseling" style={{color:'inherit',textDecoration:'none'}}>
+              個別諮商，一對一
+              <small>想先找一位諮商心理師談談，可以從這裡了解</small>
+            </a>
+          </p>
+        </div>
+      ) : sent ? (
+        <div>
+          <h3>已傳出</h3>
+          <p style={{margin:0}}>謝謝你把它帶給身邊的人。這裡的內容仍然只留在你的裝置上。</p>
+        </div>
+      ) : (
+        <div>
+          <h3>覺得有幫助嗎？</h3>
+          <p>如果你想到誰也用得上，可以把這個工具傳給他。只會傳出工具的連結，你的內容不會被傳送。</p>
+          <div className="lshare-actions">
+            <button type="button" className="lshare-btn" onClick={openSheet}>傳給一位朋友</button>
+            <button type="button" className="lshare-text" onClick={()=>setSkipped(true)}>先不用</button>
+          </div>
+        </div>
+      )}
+      {sheetOpen && (
+        <div className="lshare-sheet" role="dialog" aria-modal="true" aria-label="傳給一位朋友">
+          <div className="lshare-scrim" onClick={closeSheet}></div>
+          <div className="lshare-panel" onClick={e=>e.stopPropagation()}>
+            <h3>傳給一位朋友</h3>
+            <label htmlFor="lshareMsg">訊息（可以自己改）</label>
+            <textarea id="lshareMsg" rows="4" value={msg} onChange={e=>setMsg(e.target.value)} />
+            <p className="lshare-link">{SHARE_URL.replace('https://','')}</p>
+            <div className="lshare-actions">
+              <button type="button" className="lshare-btn" onClick={shareLine}>傳到 LINE</button>
+              <button type="button" className="lshare-btn ghost" onClick={shareCopy}>複製訊息</button>
+              <button type="button" className="lshare-text" onClick={closeSheet}>取消</button>
+            </div>
+            {doneNote && <p style={{fontSize:'0.78rem',color:'var(--muted)',marginTop:'0.6rem'}}>{doneNote}</p>}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 /* ── Home ── */
 function Home({ data, setData, goMap, goWall }){
   const today = new Date();
@@ -442,8 +578,13 @@ function Home({ data, setData, goMap, goWall }){
 function App(){
   const [page,setPage] = useState('home');
   const [data,setDataRaw] = useState(()=> load() || buildDefault());
+  const [revealed,setRevealed] = useState(false);
   const setData = useCallback((updater)=>{ setDataRaw(d=> typeof updater==='function' ? updater(d) : updater); },[]);
   useEffect(()=>{ save(data); },[data]);
+
+  // 完成第一個行動、或第一次打開曼陀羅——這時候最有感覺，才出現分享／來源卡
+  const reveal = useCallback(()=>setRevealed(true),[]);
+  function goWall(){ setPage('wall'); reveal(); }
 
   return (
     <div className="app">
@@ -452,12 +593,13 @@ function App(){
         <div className="tabs">
           <button className={`tab${page==='home'?' active':''}`} onClick={()=>setPage('home')}>首頁</button>
           <button className={`tab${page==='map'?' active':''}`} onClick={()=>setPage('map')}>地圖</button>
-          <button className={`tab${page==='wall'?' active':''}`} onClick={()=>setPage('wall')}>曼陀羅</button>
+          <button className={`tab${page==='wall'?' active':''}`} onClick={goWall}>曼陀羅</button>
         </div>
       </div>
-      {page==='home' && <Home data={data} setData={setData} goMap={()=>setPage('map')} goWall={()=>setPage('wall')} />}
-      {page==='map' && <DreamMap data={data} setData={setData} />}
+      {page==='home' && <Home data={data} setData={setData} goMap={()=>setPage('map')} goWall={goWall} />}
+      {page==='map' && <DreamMap data={data} setData={setData} onFirstComplete={reveal} />}
       {page==='wall' && <MemoryWall data={data} />}
+      <ShareBridge revealed={revealed} />
     </div>
   );
 }
