@@ -778,6 +778,40 @@ nav {
   min-height: 1.5em;
 }
 
+.rmap-mode-switch {
+  background: none; border: none; cursor: pointer;
+  font-family: var(--sans); font-size: 0.78rem; color: var(--muted);
+  text-decoration: underline; vertical-align: middle;
+}
+.rmap-mode-switch:hover { color: var(--deep); }
+
+.rmap-mode-picker { margin: 1.6rem 0 2rem; }
+.rmap-mode-question {
+  font-family: var(--serif); font-size: 1rem; color: var(--text);
+  text-align: center; margin-bottom: 1.2rem;
+}
+.rmap-mode-cards {
+  display: flex; flex-wrap: wrap; justify-content: center; gap: 1.2rem;
+}
+.rmap-mode-card {
+  display: flex; flex-direction: column; align-items: flex-start; gap: 0.5rem;
+  width: min(100%, 300px);
+  background: var(--surface);
+  border: 1.4px solid rgba(232, 217, 138, 0.22);
+  border-radius: 10px;
+  padding: 1.4rem 1.5rem;
+  text-align: left;
+  cursor: pointer;
+  font-family: var(--sans);
+  transition: border-color .2s ease, transform .2s ease;
+}
+.rmap-mode-card:hover { border-color: var(--deep); transform: translateY(-2px); }
+.rmap-mode-emoji { font-size: 1.3rem; }
+.rmap-mode-title {
+  font-family: var(--serif); font-size: 1rem; color: var(--deep);
+}
+.rmap-mode-desc { font-size: 0.82rem; color: var(--muted); line-height: 1.6; }
+
 @media (max-width: 700px) {
   .rmap-layout { flex-direction: column; align-items: center; gap: 1.6rem; }
   .rmap-dial-wrap { width: 100%; }
@@ -2645,19 +2679,36 @@ nav {
     <img class="speaker-photo-lone" data-photo="teacher" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" alt="王釗文">
     <p class="kicker">Interactive Tool</p>
     <h1>🫂 人際生活地圖</h1>
-    <p>把最近生活中的人，放進離你或近或遠的三個圈裡。<br>
-    再看看今天的自己，心力可以陪誰走到哪裡。</p>
+    <p>把生活裡重要的人，或是你特別想好好照顧的一段關係，放進由近到遠的三個圈裡。<br>
+    再看看今天的自己，心力可以走到哪裡。</p>
   </div>
 
   <div class="lifemap-section">
     <p class="sec-label">互動工具</p>
-    <h2 class="sec-title">人際生活地圖</h2>
-    <div class="sec-body" style="margin-bottom:0;">
-      <p>在圈裡點一下，寫下一個人的名字或稱呼——把和你比較靠近、相處起來比較自在的人放在核心圈，泛泛之交、比較費力的關係則放在外圈。之後也能拖曳調整他的位置。</p>
-      <p>右側（手機版在下方）的心力燈，代表你今天或最近的心力範圍。撥到最亮，三圈都會亮起，代表你有餘裕，可以多一些人際互動；撥到最暗，就只留核心圈亮著——提醒自己這陣子，先顧好最靠近的幾個人就好。</p>
+    <h2 class="sec-title">人際生活地圖　<button type="button" class="rmap-mode-switch" id="rmapModeSwitch" hidden>🔁 換個用法</button></h2>
+
+    <div class="rmap-mode-picker" id="rmapModePicker">
+      <p class="rmap-mode-question">今天想用這張地圖做什麼？</p>
+      <div class="rmap-mode-cards">
+        <button type="button" class="rmap-mode-card" data-mode="people">
+          <span class="rmap-mode-emoji">🅐</span>
+          <span class="rmap-mode-title">看看身邊不同的人</span>
+          <span class="rmap-mode-desc">把生活中的人放進三個圈，看看今天的心力可以陪誰走到哪裡。</span>
+        </button>
+        <button type="button" class="rmap-mode-card" data-mode="care">
+          <span class="rmap-mode-emoji">🅑</span>
+          <span class="rmap-mode-title">照顧一段特定的關係</span>
+          <span class="rmap-mode-desc">只放一段你在意、卻常常心力不夠的關係，把「不同份量的照顧」分進三個圈。</span>
+        </button>
+      </div>
     </div>
 
-    <div class="rmap-layout" style="margin-top:2.6rem;">
+    <div class="sec-body" id="rmapIntroBody" style="margin-bottom:0;" hidden>
+      <p id="rmapIntroP1"></p>
+      <p id="rmapIntroP2"></p>
+    </div>
+
+    <div class="rmap-layout" id="rmapLayout" style="margin-top:2.6rem;" hidden>
       <div class="lifemap-wrap" style="margin-top:0;">
         <p class="rmap-hint" id="rmapHint">心力燈：核心圈亮著，其餘先安靜著。</p>
         <div class="lifemap-canvas-box">
@@ -3954,19 +4005,45 @@ navHistoryInitialized = true;
   var RING_COLOR = ['#E8895A', '#E8D98A', '#8B8FA8']; // 核心／親近／外圈
   var RING_NAME = ['核心圈', '親近圈', '外圈'];
 
-  var HINT_TEXT = {
-    1: '心力燈：核心圈亮著，其餘先安靜著——這陣子，先顧好最靠近的幾個人。',
-    2: '心力燈：核心圈與親近圈亮著——可以多留一些餘裕給比較近的關係。',
-    3: '心力燈：三圈都亮著——今天心力比較足夠，可以多一些人際互動。'
+  var MODE_TEXT = {
+    people: {
+      intro1: '在圈裡點一下，寫下一個人的名字或稱呼——把和你比較靠近、相處起來比較自在的人放在核心圈，泛泛之交、比較費力的關係則放在外圈。之後也能拖曳調整他的位置。',
+      intro2: '右側（手機版在下方）的心力燈，代表你今天或最近的心力範圍。撥到最亮，三圈都會亮起，代表你有餘裕，可以多一些人際互動；撥到最暗，就只留核心圈亮著——提醒自己這陣子，先顧好最靠近的幾個人就好。',
+      hint: {
+        1: '心力燈：核心圈亮著，其餘先安靜著——這陣子，先顧好最靠近的幾個人。',
+        2: '心力燈：核心圈與親近圈亮著——可以多留一些餘裕給比較近的關係。',
+        3: '心力燈：三圈都亮著——今天心力比較足夠，可以多一些人際互動。'
+      },
+      newLabel: '新增一個人｜',
+      editLabel: '調整這個人｜',
+      placeholder: '例如：媽媽、小陳、隔壁部門的同事',
+      pngName: '人際生活地圖.png'
+    },
+    care: {
+      intro1: '在圈裡點一下，寫下一件對這段關係來說，你想做的事——把無論如何都想做到的最基本的事放在核心圈，心力夠時才想多做一點的，放進親近圈、外圈。之後也能拖曳調整位置。',
+      intro2: '右側（手機版在下方）的心力燈，代表你今天對這段關係能給出多少。撥到最亮，三圈都會亮起，代表可以多照顧一些；撥到最暗，就只留核心圈亮著——提醒自己，先把最基本的一件事做到就好。',
+      hint: {
+        1: '心力燈：核心圈亮著，其餘先安靜著——這陣子，先做到最基本的就好。',
+        2: '心力燈：核心圈與親近圈亮著——可以多留一些心力，多做一點。',
+        3: '心力燈：三圈都亮著——今天心力比較足夠，可以多照顧一些。'
+      },
+      newLabel: '新增一件事｜',
+      editLabel: '調整這件事｜',
+      placeholder: '例如：說一句關心的話、一起吃頓飯、耐心聽他說完',
+      pngName: '關係照顧地圖.png'
+    }
   };
 
   var points = [];                // { x, y (0~1，相對於圖表內框), text }
   var level = 1;                  // 心力燈亮度：1～3
-  var STORAGE_KEY = 'irc-rmap-data-v1';   // 存在使用者自己裝置上的 localStorage key
+  var mode = null;                // 'people' 或 'care'，選好之前維持 null
+  var MODE_KEY = 'irc-rmap-mode';
 
-  function loadData() {
+  function storageKeyFor(m) { return m === 'care' ? 'irc-rmap-data-care-v1' : 'irc-rmap-data-v1'; }
+
+  function loadData(m) {
     try {
-      var raw = localStorage.getItem(STORAGE_KEY);
+      var raw = localStorage.getItem(storageKeyFor(m));
       if (!raw) return { points: [], level: 1 };
       var parsed = JSON.parse(raw);
       return {
@@ -3976,12 +4053,9 @@ navHistoryInitialized = true;
     } catch (e) { return { points: [], level: 1 }; }
   }
   function saveData() {
-    try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ points: points, level: level })); } catch (e) {}
+    if (!mode) return;
+    try { localStorage.setItem(storageKeyFor(mode), JSON.stringify({ points: points, level: level })); } catch (e) {}
   }
-
-  var initialData = loadData();
-  points = initialData.points;
-  level = initialData.level;
 
   var downPos = null;
   var lastPos = null;
@@ -4110,7 +4184,7 @@ navHistoryInitialized = true;
   }
 
   function updateHint() {
-    if (hintEl) hintEl.textContent = HINT_TEXT[level] || '';
+    if (hintEl && mode) hintEl.textContent = MODE_TEXT[mode].hint[level] || '';
   }
 
   function hitTest(px, py) {
@@ -4143,12 +4217,13 @@ navHistoryInitialized = true;
     var label = document.createElement('p');
     label.className = 'lifemap-popup-label';
     var ring = isEdit ? ringIndexOf(normToPx(points[editIndex].x, points[editIndex].y).x, normToPx(points[editIndex].x, points[editIndex].y).y) : ringIndexOf(pxPos.x, pxPos.y);
-    label.textContent = (isEdit ? '調整這個人｜' : '新增一個人｜') + RING_NAME[ring];
+    var t = MODE_TEXT[mode] || MODE_TEXT.people;
+    label.textContent = (isEdit ? t.editLabel : t.newLabel) + RING_NAME[ring];
     inner.appendChild(label);
 
     var ta = document.createElement('textarea');
     ta.className = 'lifemap-popup-textarea';
-    ta.placeholder = '例如：媽媽、小陳、隔壁部門的同事';
+    ta.placeholder = t.placeholder;
     ta.maxLength = 30;
     ta.value = text || '';
     inner.appendChild(ta);
@@ -4294,10 +4369,58 @@ navHistoryInitialized = true;
     hidePopup();
     draw();
     var link = document.createElement('a');
-    link.download = '人際生活地圖.png';
+    link.download = (MODE_TEXT[mode] || MODE_TEXT.people).pngName;
     link.href = canvas.toDataURL('image/png');
     link.click();
   });
+
+  // ── 兩種用法：看多個人的人際圈／照顧一段特定的關係 ──
+  var pickerEl = document.getElementById('rmapModePicker');
+  var introBody = document.getElementById('rmapIntroBody');
+  var introP1 = document.getElementById('rmapIntroP1');
+  var introP2 = document.getElementById('rmapIntroP2');
+  var layoutEl = document.getElementById('rmapLayout');
+  var modeSwitchBtn = document.getElementById('rmapModeSwitch');
+
+  function activateMode(m) {
+    mode = m;
+    try { localStorage.setItem(MODE_KEY, m); } catch (e) {}
+    var data = loadData(m);
+    points = data.points;
+    level = data.level;
+    var t = MODE_TEXT[m];
+    if (introP1) introP1.textContent = t.intro1;
+    if (introP2) introP2.textContent = t.intro2;
+    if (pickerEl) pickerEl.hidden = true;
+    if (introBody) introBody.hidden = false;
+    if (layoutEl) layoutEl.hidden = false;
+    if (modeSwitchBtn) modeSwitchBtn.hidden = false;
+    if (dial) dial.value = level;
+    hidePopup();
+    updateHint();
+    resizeCanvas();
+    draw();
+  }
+
+  document.querySelectorAll('.rmap-mode-card').forEach(function (btn) {
+    btn.addEventListener('click', function () { activateMode(btn.getAttribute('data-mode')); });
+  });
+
+  if (modeSwitchBtn) {
+    modeSwitchBtn.addEventListener('click', function () {
+      hidePopup();
+      if (pickerEl) pickerEl.hidden = false;
+      if (introBody) introBody.hidden = true;
+      if (layoutEl) layoutEl.hidden = true;
+    });
+  }
+
+  // 決定一開始要不要直接進某個模式：分享連結帶 ?mode=，或是曾經選過
+  var modeParamMatch = /[?&]mode=(people|care)(&|$)/.exec(window.__ircInitSearch || '');
+  var savedMode = null;
+  try { savedMode = localStorage.getItem(MODE_KEY); } catch (e) {}
+  var initialMode = (modeParamMatch && modeParamMatch[1]) || ((savedMode === 'people' || savedMode === 'care') ? savedMode : null);
+  if (initialMode) activateMode(initialMode);
 
   var resizeTimer;
   window.addEventListener('resize', function () {
@@ -4581,8 +4704,14 @@ navHistoryInitialized = true;
 // ── 人際生活地圖：分享給朋友／朋友的來源卡 ──
 (function () {
   var SHARE_URL = 'https://wangchaowen12.github.io/irc-portal/relation-map.html';
-  var SHARE_LINK = SHARE_URL + (SHARE_URL.indexOf('?') > -1 ? '&' : '?') + 'ref=friend';
-  var DEFAULT_MSG = '我最近在用一個小工具：把身邊的人放進三個圈，看看今天的心力可以陪誰。不用註冊，幾分鐘就好，覺得你可能也用得上。';
+  var SHARE_MSG = {
+    people: '我最近在用一個小工具：把身邊的人放進三個圈，看看今天的心力可以陪誰。不用註冊，幾分鐘就好，覺得你可能也用得上。',
+    care: '我最近在用一個小工具：把一段我在意的關係，拆成不同份量的照顧——心力夠的時候多做一點，心力不夠時，至少做到最基本的。不用註冊，覺得你可能也用得上。'
+  };
+  function currentMode() {
+    try { var m = localStorage.getItem('irc-rmap-mode'); return (m === 'care') ? 'care' : 'people'; } catch (e) { return 'people'; }
+  }
+  function shareLinkFor(m) { return SHARE_URL + '?mode=' + m + '&ref=friend'; }
 
   var dial = document.getElementById('rmapDial');
   var shareCard = document.getElementById('rshareCard');
@@ -4599,7 +4728,6 @@ navHistoryInitialized = true;
   // 從分享連結（relation-map.html → ?ref=friend）進來的，是朋友；其餘是自己在用
   var isFriend = /[?&]ref=friend(&|$)/.test(window.__ircInitSearch || '');
 
-  msgEl.value = DEFAULT_MSG;
   document.getElementById('rshareLink').textContent = SHARE_URL.replace('https://', '');
   if (navigator.share) nativeBtn.hidden = false;
 
@@ -4616,10 +4744,11 @@ navHistoryInitialized = true;
   dial.addEventListener('input', function () {
     if (revealed) return;
     revealed = true;
+    msgEl.value = SHARE_MSG[currentMode()];
     reveal(isFriend ? bridgeCard : shareCard);
   });
 
-  function fullText() { return msgEl.value.replace(/\s+$/, '') + '\n' + SHARE_LINK; }
+  function fullText() { return msgEl.value.replace(/\s+$/, '') + '\n' + shareLinkFor(currentMode()); }
   function openSheet() { lastFocus = document.activeElement; doneEl.textContent = ''; sheet.hidden = false; document.getElementById('rshareLine').focus(); }
   function closeSheet() { sheet.hidden = true; if (lastFocus && lastFocus.focus) lastFocus.focus(); }
   function markSent() {
@@ -4659,7 +4788,7 @@ navHistoryInitialized = true;
     });
   });
   nativeBtn.addEventListener('click', function () {
-    navigator.share({ title: '人際生活地圖｜IRC', text: msgEl.value, url: SHARE_LINK }).then(markSent, function () {});
+    navigator.share({ title: '人際生活地圖｜IRC', text: msgEl.value, url: shareLinkFor(currentMode()) }).then(markSent, function () {});
   });
 })();
 </script>
