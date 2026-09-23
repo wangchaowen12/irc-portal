@@ -4581,6 +4581,7 @@ navHistoryInitialized = true;
 // ── 人際生活地圖：分享給朋友／朋友的來源卡 ──
 (function () {
   var SHARE_URL = 'https://wangchaowen12.github.io/irc-portal/relation-map.html';
+  var SHARE_LINK = SHARE_URL + (SHARE_URL.indexOf('?') > -1 ? '&' : '?') + 'ref=friend';
   var DEFAULT_MSG = '我最近在用一個小工具：把身邊的人放進三個圈，看看今天的心力可以陪誰。不用註冊，幾分鐘就好，覺得你可能也用得上。';
 
   var dial = document.getElementById('rmapDial');
@@ -4618,7 +4619,7 @@ navHistoryInitialized = true;
     reveal(isFriend ? bridgeCard : shareCard);
   });
 
-  function fullText() { return msgEl.value.replace(/\s+$/, '') + '\n' + SHARE_URL; }
+  function fullText() { return msgEl.value.replace(/\s+$/, '') + '\n' + SHARE_LINK; }
   function openSheet() { lastFocus = document.activeElement; doneEl.textContent = ''; sheet.hidden = false; document.getElementById('rshareLine').focus(); }
   function closeSheet() { sheet.hidden = true; if (lastFocus && lastFocus.focus) lastFocus.focus(); }
   function markSent() {
@@ -4658,7 +4659,7 @@ navHistoryInitialized = true;
     });
   });
   nativeBtn.addEventListener('click', function () {
-    navigator.share({ title: '人際生活地圖｜IRC', text: msgEl.value, url: SHARE_URL }).then(markSent, function () {});
+    navigator.share({ title: '人際生活地圖｜IRC', text: msgEl.value, url: SHARE_LINK }).then(markSent, function () {});
   });
 })();
 </script>

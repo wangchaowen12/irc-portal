@@ -145,6 +145,7 @@ function save(state){ try{ localStorage.setItem(LS_KEY, JSON.stringify(state)); 
 
 // ── 分享給朋友／朋友的來源卡（跟人際生活地圖同一套邏輯） ──
 const SHARE_URL = 'https://wangchaowen12.github.io/irc-portal/life-design.html';
+const SHARE_LINK = SHARE_URL + (SHARE_URL.indexOf('?') > -1 ? '&' : '?') + 'ref=friend';
 const DEFAULT_MSG = '我最近在用一個小工具：把生活攤開來看看，哪些正在推進、哪些暫時停著。不用註冊，資料只留在自己的裝置上，覺得你可能也用得上。';
 // 從分享連結（life-design.html → ?ref=friend）進來的，是朋友；其餘是自己在用
 const isFriend = /[?&]ref=friend(&|$)/.test(window.location.search || '');
@@ -441,7 +442,7 @@ function ShareBridge({ revealed }){
 
   if (!revealed || skipped) return null;
 
-  function fullText(){ return msg.replace(/\s+$/,'') + '\n' + SHARE_URL; }
+  function fullText(){ return msg.replace(/\s+$/,'') + '\n' + SHARE_LINK; }
   function openSheet(){ setSent(false); setDoneNote(''); setSheetOpen(true); }
   function closeSheet(){ setSheetOpen(false); }
   function markSent(){ setSheetOpen(false); setSent(true); }
@@ -456,7 +457,7 @@ function ShareBridge({ revealed }){
     );
   }
   function shareNative(){
-    navigator.share({ title: '我的生活地圖｜IRC', text: msg, url: SHARE_URL }).then(markSent, ()=>{});
+    navigator.share({ title: '我的生活地圖｜IRC', text: msg, url: SHARE_LINK }).then(markSent, ()=>{});
   }
 
   return (
