@@ -1,0 +1,1386 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>六個月復原旅程｜IRC</title>
+<meta name="description" content="陪你走過重大失落後的六個月：自由書寫、預先覺察、救援箱與支持網絡。不用註冊，資料只留在你的裝置上。">
+<link rel="canonical" href="https://wangchaowen12.github.io/irc-portal/recovery-journal.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="IRC｜Inner Reality Circle">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:title" content="六個月復原旅程｜IRC">
+<meta property="og:description" content="陪你走過重大失落後的六個月：自由書寫、預先覺察、救援箱與支持網絡。不用註冊，資料只留在你的裝置上。">
+<meta property="og:url" content="https://wangchaowen12.github.io/irc-portal/recovery-journal.html">
+<meta property="og:image" content="https://wangchaowen12.github.io/irc-portal/og-home.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;500;600&family=Noto+Sans+TC:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F3F0E6;
+    --paper-raised:#FBF9F3;
+    --ink:#2E3430;
+    --ink-soft:#6B6F66;
+    --moss:#5C6B52;
+    --moss-deep:#404B3A;
+    --clay:#B4707A;
+    --clay-soft:#E9D3D3;
+    --line:#DDD8C8;
+    --radius:10px;
+    --serif: 'Noto Serif TC', serif;
+    --sans: 'Noto Sans TC', -apple-system, BlinkMacSystemFont, 'PingFang TC', sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:var(--sans);
+    line-height:1.7;
+    -webkit-font-smoothing:antialiased;
+  }
+  #app{max-width:640px;margin:0 auto;padding:0 20px 80px;}
+  header.top{
+    padding:28px 0 14px;
+    position:sticky;top:0;background:var(--paper);z-index:5;
+  }
+  header.top h1{
+    font-family:var(--serif);
+    font-weight:600;
+    font-size:1.5rem;
+    margin:0 0 4px;
+    color:var(--moss-deep);
+  }
+  header.top .sub{
+    font-size:0.88rem;color:var(--ink-soft);margin:0 0 16px;
+  }
+  nav.tabs{display:flex;gap:6px;border-bottom:1px solid var(--line);}
+  nav.tabs button{
+    background:none;border:none;font-family:var(--sans);font-size:0.95rem;
+    padding:9px 4px;margin-right:14px;color:var(--ink-soft);cursor:pointer;
+    border-bottom:2px solid transparent;transition:color .15s, border-color .15s;
+  }
+  nav.tabs button.active{color:var(--moss-deep);border-bottom-color:var(--moss);font-weight:500;}
+  nav.tabs button:focus-visible{outline:2px solid var(--moss);outline-offset:2px;}
+
+  section.view{display:none;padding-top:22px;}
+  section.view.active{display:block;}
+
+  h2.day-title{font-family:var(--serif);font-size:1.15rem;margin:0 0 2px;color:var(--ink);}
+  .day-meta{font-size:0.82rem;color:var(--ink-soft);margin:0 0 20px;}
+
+  .block{margin-bottom:26px;}
+  .block > label.block-label{
+    display:block;font-size:0.9rem;color:var(--moss-deep);font-weight:500;margin-bottom:8px;
+  }
+  .hint{font-size:0.8rem;color:var(--ink-soft);margin:-4px 0 10px;}
+
+  textarea, input[type=text], input[type=date]{
+    width:100%;font-family:var(--sans);font-size:0.95rem;color:var(--ink);
+    background:var(--paper-raised);border:1px solid var(--line);border-radius:var(--radius);
+    padding:10px 12px;resize:vertical;
+  }
+  textarea:focus, input:focus{outline:2px solid var(--moss);outline-offset:1px;}
+  textarea.freewrite{min-height:120px;}
+
+  .chip-row{display:flex;flex-wrap:wrap;gap:8px;}
+  .chip{
+    font-family:var(--sans);font-size:0.86rem;
+    background:var(--paper-raised);border:1px solid var(--line);color:var(--ink-soft);
+    border-radius:999px;padding:6px 13px;cursor:pointer;transition:.15s;
+  }
+  .chip.active{background:var(--moss);border-color:var(--moss);color:#fff;}
+  .chip.special-active{background:var(--clay);border-color:var(--clay);color:#fff;}
+  .chip.add-chip{border-style:dashed;color:var(--moss-deep);}
+
+  .add-inline{display:none;gap:6px;margin-top:8px;}
+  .add-inline.show{display:flex;}
+  .add-inline input{flex:1;}
+  .add-inline button{
+    font-family:var(--sans);font-size:0.85rem;background:var(--moss);color:#fff;
+    border:none;border-radius:var(--radius);padding:0 14px;cursor:pointer;
+  }
+
+  .quad{display:grid;grid-template-columns:1fr;gap:20px;}
+  @media(min-width:520px){.quad{grid-template-columns:1fr 1fr;}}
+  .quad-cat h3{
+    font-size:0.88rem;font-weight:500;margin:0 0 8px;color:var(--moss-deep);
+  }
+
+  .special-toggle{
+    display:flex;align-items:center;gap:8px;margin-bottom:10px;cursor:pointer;
+    font-size:0.9rem;color:var(--ink);
+  }
+  .special-toggle input{width:16px;height:16px;}
+  .special-fields{display:none;border-left:2px solid var(--clay-soft);padding-left:14px;margin-top:10px;}
+  .special-fields.show{display:block;}
+  .special-fields .f{margin-bottom:10px;}
+  .special-fields .f label{display:block;font-size:0.8rem;color:var(--ink-soft);margin-bottom:4px;}
+
+  .tomorrow-toggle{
+    background:none;border:1px solid var(--line);border-radius:var(--radius);
+    padding:10px 14px;width:100%;text-align:left;font-family:var(--sans);
+    font-size:0.9rem;color:var(--moss-deep);cursor:pointer;margin-top:6px;
+  }
+  #tomorrow-panel{margin-top:14px;display:none;}
+  #tomorrow-panel.show{display:block;}
+
+  /* Calendar */
+  .cal-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+  .cal-nav button{background:none;border:1px solid var(--line);border-radius:8px;padding:6px 12px;cursor:pointer;color:var(--moss-deep);font-size:1rem;}
+  .cal-nav .label{font-family:var(--serif);font-size:1.05rem;color:var(--ink);}
+  .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;}
+  .cal-dow{text-align:center;font-size:0.72rem;color:var(--ink-soft);padding-bottom:4px;}
+  .cal-cell{
+    position:relative;aspect-ratio:1;border-radius:8px;border:1px solid transparent;
+    display:flex;align-items:center;justify-content:center;font-size:0.88rem;
+    cursor:pointer;background:var(--paper-raised);color:var(--ink);
+  }
+  .cal-cell.empty{visibility:hidden;cursor:default;}
+  .cal-cell.today{border-color:var(--moss);font-weight:600;}
+  .cal-cell:hover{background:var(--clay-soft);}
+  .cal-dot{position:absolute;bottom:5px;width:5px;height:5px;border-radius:50%;background:var(--moss);}
+  .cal-cell.has-special .cal-dot{background:var(--clay);}
+  .cal-legend{display:flex;gap:16px;margin-top:16px;font-size:0.8rem;color:var(--ink-soft);}
+  .cal-legend span{display:inline-flex;align-items:center;gap:5px;}
+  .cal-legend i{width:6px;height:6px;border-radius:50%;display:inline-block;}
+
+  /* Modal */
+  #modal-overlay{
+    display:none;position:fixed;inset:0;background:rgba(46,52,48,.4);
+    align-items:flex-start;justify-content:center;padding:40px 16px;overflow-y:auto;z-index:20;
+  }
+  #modal-overlay.show{display:flex;}
+  #modal-box{background:var(--paper);border-radius:14px;padding:26px 22px;max-width:560px;width:100%;position:relative;}
+  #modal-close{position:absolute;top:14px;right:16px;background:none;border:none;font-size:1.3rem;color:var(--ink-soft);cursor:pointer;}
+
+  /* Settings */
+  .settings-group{margin-bottom:30px;}
+  .settings-group h3{font-family:var(--serif);font-size:1rem;color:var(--moss-deep);margin:0 0 10px;}
+  .list-edit{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px;}
+  .list-edit .chip{padding-right:8px;}
+  .list-edit .chip .x{margin-left:6px;color:inherit;opacity:.7;}
+  .rescue-intro{font-size:0.86rem;color:var(--ink-soft);margin:-6px 0 18px;}
+  .rf-card{
+    background:var(--paper-raised);border:1px solid var(--line);border-radius:var(--radius);
+    padding:14px 16px;margin-bottom:12px;
+  }
+  .rf-card .rf-num{font-size:0.78rem;color:var(--moss-deep);margin-bottom:8px;}
+  .rf-card .rf-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+  .rf-card .rf-grid input{width:100%;}
+  .rf-card .rf-help{margin-top:8px;}
+  .rf-card label.mini{display:block;font-size:0.76rem;color:var(--ink-soft);margin-bottom:3px;}
+
+  .contact-row{display:flex;gap:8px;margin-bottom:8px;align-items:center;}
+  .contact-row input{flex:1;}
+  .contact-row .rm{
+    background:none;border:none;color:var(--clay);font-size:1.1rem;cursor:pointer;padding:0 4px;
+  }
+
+  .danger{margin-top:40px;padding-top:20px;border-top:1px solid var(--line);}
+  .danger button{
+    background:none;border:1px solid var(--clay);color:var(--clay);border-radius:var(--radius);
+    padding:8px 14px;font-size:0.85rem;cursor:pointer;
+  }
+
+  /* Onboarding */
+  #onboarding-overlay{
+    display:none;position:fixed;inset:0;background:var(--paper);z-index:30;
+    align-items:center;justify-content:center;padding:24px;
+  }
+  #onboarding-overlay.show{display:flex;}
+  #onboarding-box{max-width:460px;width:100%;}
+  #onboarding-box h1{font-family:var(--serif);font-size:1.4rem;color:var(--moss-deep);margin:0 0 6px;}
+  #onboarding-box p.intro{color:var(--ink-soft);font-size:0.92rem;margin:0 0 24px;}
+  #onboarding-box .field{margin-bottom:18px;}
+  #onboarding-box label{display:block;font-size:0.88rem;margin-bottom:6px;color:var(--ink);}
+  #onboarding-box button.start{
+    background:var(--moss);color:#fff;border:none;border-radius:var(--radius);
+    padding:11px 22px;font-size:0.95rem;cursor:pointer;margin-top:8px;
+  }
+  .urgent-box{border:1px solid var(--clay);background:#F6E9E9;border-radius:var(--radius);padding:12px 14px;margin-top:10px;font-size:0.88rem;line-height:1.75;}
+  .urgent-box b{color:#8A4A54;}
+  .soft-prompt{border:1px solid var(--moss);background:var(--paper-raised);border-radius:var(--radius);padding:10px 14px;margin-top:10px;font-size:0.88rem;}
+  .link-btn{background:none;border:none;color:var(--moss-deep);font-family:var(--sans);font-size:0.82rem;text-decoration:underline;cursor:pointer;padding:6px 0;margin-top:4px;}
+  .soft-prompt .link-btn{font-size:0.88rem;margin:0 0 0 6px;padding:0;}
+  .task-mgr{margin-top:8px;padding:12px;border:1px dashed var(--line);border-radius:var(--radius);}
+  .task-row{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid var(--line);}
+  .task-row input[type=text]{flex:1 1 100%;}
+  .task-row select{font-family:var(--sans);font-size:0.82rem;border:1px solid var(--line);border-radius:8px;padding:5px 8px;background:var(--paper-raised);color:var(--ink);}
+  .task-row input.to{flex:1 1 150px;width:auto;}
+  .rm-x{background:none;border:none;color:var(--clay);font-size:1.1rem;cursor:pointer;padding:0 4px;margin-left:auto;}
+  .map-row{display:flex;align-items:center;gap:6px;margin-bottom:8px;}
+  .map-row .txt{flex:1;font-size:0.9rem;}
+  .toggle-mini{font-family:var(--sans);font-size:0.78rem;border:1px solid var(--line);background:var(--paper-raised);color:var(--ink-soft);border-radius:999px;padding:3px 10px;cursor:pointer;}
+  .toggle-mini.on-trigger{background:var(--moss);border-color:var(--moss);color:#fff;}
+  .toggle-mini.on-avoid{background:var(--clay);border-color:var(--clay);color:#fff;}
+  .j-quote{font-family:var(--serif);color:var(--ink-soft);font-size:0.9rem;margin:0 0 4px;}
+  .j-month{font-family:var(--serif);font-size:0.95rem;color:var(--moss-deep);margin:30px 0 4px;padding-bottom:6px;border-bottom:1px solid var(--line);}
+  .j-entry{padding:16px 0;border-bottom:1px solid var(--line);}
+  .j-head{display:flex;align-items:baseline;gap:8px;margin-bottom:6px;}
+  .j-date{font-family:var(--serif);font-size:1rem;font-weight:500;}
+  .j-tag{font-size:0.72rem;background:var(--clay-soft);color:#8A4A54;border-radius:999px;padding:1px 9px;}
+  .j-head .link-btn{margin:0 0 0 auto;padding:0;}
+  .j-text{margin:0 0 8px;white-space:pre-wrap;font-size:0.95rem;}
+  .j-line{display:flex;gap:10px;font-size:0.84rem;line-height:1.7;}
+  .j-k{flex:0 0 4.8em;color:var(--ink-soft);}
+  .j-v{flex:1;}
+  .j-plan{margin-top:8px;padding-left:12px;border-left:2px solid var(--clay-soft);}
+  .j-empty{color:var(--ink-soft);font-size:0.9rem;padding:20px 0;}
+  .j-tools{display:flex;justify-content:flex-end;margin-top:-4px;}
+  @media print{
+    header.top,.no-print,#modal-overlay{display:none !important;}
+    body{background:#fff;}
+    #app{max-width:none;padding:0;}
+    .j-entry{break-inside:avoid;}
+  }
+  .sup-row{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 8px;}
+  .sup-row .chip{font-size:0.78rem;padding:4px 10px;}
+  .sel-row{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;}
+  .tog-row{display:flex;flex-wrap:wrap;gap:8px;margin:-6px 0 20px;}
+  .tog{font-family:var(--sans);font-size:0.85rem;background:none;border:1px solid var(--line);color:var(--ink-soft);border-radius:999px;padding:6px 14px;cursor:pointer;}
+  .tog.open{border-color:var(--moss);color:var(--moss-deep);background:var(--paper-raised);font-weight:500;}
+  details.fold{border-bottom:1px solid var(--line);}
+  details.fold > summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:8px;padding:15px 0;font-family:var(--serif);font-size:1rem;color:var(--moss-deep);}
+  details.fold > summary::-webkit-details-marker{display:none;}
+  details.fold > summary::after{content:"＋";margin-left:auto;color:var(--ink-soft);font-family:var(--sans);font-size:0.9rem;}
+  details.fold[open] > summary::after{content:"－";}
+  details.fold .badge{font-family:var(--sans);font-size:0.74rem;color:var(--ink-soft);background:var(--paper-raised);border:1px solid var(--line);border-radius:999px;padding:0 8px;}
+  details.fold > .fold-body{padding:0 0 18px;}
+  .foot{margin-top:48px;font-size:0.78rem;color:var(--ink-soft);}
+  .foot a{color:var(--moss-deep);}
+</style>
+</head>
+<body>
+
+<div id="onboarding-overlay">
+  <div id="onboarding-box">
+    <h1>我的復原旅程</h1>
+    <p class="intro">先寫下起點，不是為了被評估。</p>
+    <div class="field">
+      <label for="ob-what">我發生了什麼事？</label>
+      <textarea id="ob-what" rows="3" placeholder="例如：我的一段重要關係結束了。"></textarea>
+    </div>
+    <div class="field">
+      <label for="ob-start">我想從哪一天開始這段旅程？</label>
+      <input type="date" id="ob-start">
+    </div>
+    <button class="start" id="ob-submit">開始</button>
+  </div>
+</div>
+
+<div id="app">
+  <header class="top">
+    <h1>我的復原旅程</h1>
+    <p class="sub">我可以按照自己的速度復原。</p>
+    <nav class="tabs">
+      <button data-view="today" class="active">今天</button>
+      <button data-view="journal">日誌</button>
+      <button data-view="calendar">月曆</button>
+      <button data-view="resources">資源包</button>
+      <button data-view="settings">設定</button>
+    </nav>
+  </header>
+
+  <section class="view active" id="view-today"></section>
+  <section class="view" id="view-journal"></section>
+  <section class="view" id="view-calendar"></section>
+  <section class="view" id="view-resources"></section>
+  <section class="view" id="view-settings"></section>
+
+  <p class="foot no-print">這個小工具，來自 <a href="https://wangchaowen12.github.io/irc-portal/">IRC｜Inner Reality Circle</a>。內容只存在這台裝置的瀏覽器裡。</p>
+</div>
+
+<div id="modal-overlay">
+  <div id="modal-box">
+    <button id="modal-close" aria-label="關閉">×</button>
+    <div id="modal-content"></div>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var STORAGE_KEY = "rj_data_v1";
+  var CATS = [
+    {key:"need", title:"要處理"},
+    {key:"want", title:"想做"},
+    {key:"care", title:"照顧自己"},
+    {key:"connect", title:"連結"}
+  ];
+
+  var URGENT = "有傷害自己的念頭";
+  var SUPPORT_SUGGEST = ["聽我說，不用給建議","給我空間來表達我的感覺","陪我散步","陪我吃飯","陪著我，不用說話","提醒我吃飯睡覺","接我的電話","幫我處理一件事","傳訊息關心我"];
+  function supportList(person){ return (person.helpWith || "").split("、").map(function(x){ return x.trim(); }).filter(Boolean); }
+  function uid(){ return "t" + Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
+  function taskById(id){ return data.tasks.filter(function(t){ return t.id===id; })[0]; }
+  function pad(n){ return n<10 ? "0"+n : ""+n; }
+  function fmt(d){ return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate()); }
+  function parseYMD(s){ var p=s.split("-").map(Number); return new Date(p[0],p[1]-1,p[2]); }
+  function todayStr(){ return fmt(new Date()); }
+  function addDays(dateStr, n){ var d=parseYMD(dateStr); d.setDate(d.getDate()+n); return fmt(d); }
+  function niceDate(dateStr){
+    var d=parseYMD(dateStr);
+    var w=["星期日","星期一","星期二","星期三","星期四","星期五","星期六"][d.getDay()];
+    return d.getFullYear()+"年"+(d.getMonth()+1)+"月"+d.getDate()+"日 "+w;
+  }
+
+  function defaultData(){
+    return {
+      meta:{ whatHappened:"", startDate: todayStr() },
+      map:["紀念日","以前的照片","一個人的時候","社群媒體","某些歌曲","某個地方"].map(function(t){ return {text:t, trigger:true, avoid:false}; }),
+      tasks:[{id:"t_seed", text:"處理一些文件或行政事項", when:"now", who:"self", to:""}],
+      warnSigns:[],
+      options:{
+        want:["做一件我一直想做的事"],
+        care:["好好吃一餐、好好睡一覺"],
+        connect:["傳個訊息給一個朋友"]
+      },
+      days:{},
+      rescueFive:[0,1,2,3,4].map(function(){ return {name:"",relation:"",contact:"",helpWith:""}; }),
+      rescueKit:{ peopleSelected:[false,false,false,false,false], places:[], things:[], professional:[] },
+      supportMessage:"",
+      supportMsgs:{}
+    };
+  }
+
+  function load(){
+    try{
+      var raw = localStorage.getItem(STORAGE_KEY);
+      if(!raw) return null;
+      return JSON.parse(raw);
+    }catch(e){ return null; }
+  }
+  function save(){
+    try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }catch(e){}
+  }
+
+  var data = load();
+  var hasOnboarded = !!data;
+  if(!data) data = defaultData();
+  if(!data.rescueFive) data.rescueFive = [0,1,2,3,4].map(function(){ return {name:"",relation:"",contact:"",helpWith:""}; });
+  if(!data.rescueKit) data.rescueKit = { peopleSelected:[false,false,false,false,false], places:[], things:[], professional:[] };
+  if(!data.rescueKit.peopleSelected) data.rescueKit.peopleSelected = [false,false,false,false,false];
+  if(typeof data.supportMessage !== "string") data.supportMessage = "";
+  if(!data.supportMsgs){
+    data.supportMsgs = {};
+    var OLD_MSG = "嗨，想先讓你知道——我最近正在經歷一段比較困難的復原期。如果有一天我真的撐不住了，可能會需要你的支持。到時候如果我聯絡你，希望你知道這不是無緣無故，也謝謝你先看到這段話。";
+    if(data.supportMessage && data.supportMessage !== OLD_MSG) data.supportMsgs.g = data.supportMessage;
+  }
+  if(!data.map){
+    data.map = (data.triggerList || []).map(function(t){ return {text:t, trigger:true, avoid:false}; });
+    delete data.triggerList;
+  }
+  if(!data.tasks){
+    var oldNeed = (data.options && data.options.need) || [];
+    data.tasks = oldNeed.map(function(t){ return {id:uid(), text:t, when:"now", who:"self", to:""}; });
+    Object.keys(data.days || {}).forEach(function(k){
+      var d = data.days[k];
+      if(d.selected && d.selected.need){
+        d.selected.need = d.selected.need.map(function(sx){
+          var m = data.tasks.filter(function(t){ return t.text===sx; })[0];
+          if(!m){ m = {id:uid(), text:sx, when:"now", who:"self", to:""}; data.tasks.push(m); }
+          return m.id;
+        });
+      }
+    });
+    if(data.options) delete data.options.need;
+  }
+  if(!data.warnSigns) data.warnSigns = [];
+
+  function ensureDay(dateStr){
+    if(!data.days[dateStr]){
+      data.days[dateStr] = {
+        freewrite:"", triggers:[], selected:{need:[],want:[],care:[],connect:[]},
+        special:false, plan:{where:"",what:"",who:"",contact:"",help:""}, warnings:[]
+      };
+    }
+    if(!data.days[dateStr].warnings) data.days[dateStr].warnings = [];
+    return data.days[dateStr];
+  }
+  function dayHasContent(day){
+    if(!day) return false;
+    if(day.freewrite && day.freewrite.trim()) return true;
+    if(day.triggers && day.triggers.length) return true;
+    if(day.warnings && day.warnings.length) return true;
+    var s=day.selected||{};
+    for(var k in s){ if(s[k] && s[k].length) return true; }
+    return false;
+  }
+
+  // ---------- chip list builder ----------
+  function buildChipRow(container, allItems, checkedItems, onToggle, addLabel, onAdd, styleClass, labelFn){
+    container.innerHTML = "";
+    var row = document.createElement("div");
+    row.className = "chip-row";
+    allItems.forEach(function(item){
+      var chip = document.createElement("button");
+      chip.type = "button";
+      chip.className = "chip" + (checkedItems.indexOf(item) > -1 ? " " + (styleClass||"active") : "");
+      chip.textContent = labelFn ? labelFn(item) : item;
+      chip.addEventListener("click", function(){ onToggle(item); });
+      row.appendChild(chip);
+    });
+    var addChip = document.createElement("button");
+    addChip.type = "button";
+    addChip.className = "chip add-chip";
+    addChip.textContent = "+ " + addLabel;
+    row.appendChild(addChip);
+    container.appendChild(row);
+
+    var inlineWrap = document.createElement("div");
+    inlineWrap.className = "add-inline";
+    var inlineInput = document.createElement("input");
+    inlineInput.type = "text";
+    inlineInput.placeholder = "輸入內容";
+    var inlineBtn = document.createElement("button");
+    inlineBtn.type = "button";
+    inlineBtn.textContent = "新增";
+    inlineWrap.appendChild(inlineInput);
+    inlineWrap.appendChild(inlineBtn);
+    container.appendChild(inlineWrap);
+
+    addChip.addEventListener("click", function(){
+      inlineWrap.classList.toggle("show");
+      if(inlineWrap.classList.contains("show")) inlineInput.focus();
+    });
+    function commit(){
+      var v = inlineInput.value.trim();
+      if(v){ onAdd(v); inlineInput.value=""; inlineWrap.classList.remove("show"); }
+    }
+    inlineBtn.addEventListener("click", commit);
+    inlineInput.addEventListener("keydown", function(e){ if(e.key==="Enter"){ e.preventDefault(); commit(); } });
+  }
+
+  // ---------- urgent panel ----------
+  function buildUrgentPanel(){
+    var box = document.createElement("div"); box.className = "urgent-box";
+    var html = "<b>如果現在有立即的危險，請先撥 119 或 110。</b><br>也可以現在就撥打：1925（安心專線，24 小時）、1995（生命線）。<br>";
+    box.innerHTML = html;
+    var mine = (data.rescueKit.professional || []).filter(function(x){ return (x.name && x.name.trim()) || (x.contact && x.contact.trim()); });
+    if(mine.length){
+      var t = document.createElement("div"); t.textContent = "我自己存的：";
+      box.appendChild(t);
+      mine.forEach(function(x){
+        var d = document.createElement("div"); d.textContent = (x.name || "") + (x.name && x.contact ? "：" : "") + (x.contact || "");
+        box.appendChild(d);
+      });
+    } else {
+      var h = document.createElement("div"); h.style.color = "var(--ink-soft)";
+      h.textContent = "還沒有存自己的專業／緊急聯絡方式，可以到「資源包」最下方填入。";
+      box.appendChild(h);
+    }
+    return box;
+  }
+
+  // ---------- task manager (one list, two attributes) ----------
+  var dlCounter = 0;
+  function renderTaskManager(container, onChange){
+    container.innerHTML = "";
+    var wrap = document.createElement("div"); wrap.className = "task-mgr";
+    var hint = document.createElement("p"); hint.className = "hint";
+    hint.textContent = "「等我好一些再做」的事先放著，不會出現在每日勾選。想一想：自己做，還是委託別人？";
+    wrap.appendChild(hint);
+    var dlId = "rj-five-" + (dlCounter++);
+    var dl = document.createElement("datalist"); dl.id = dlId;
+    data.rescueFive.forEach(function(pp){
+      if(pp.name && pp.name.trim()){ var o = document.createElement("option"); o.value = pp.name; dl.appendChild(o); }
+    });
+    wrap.appendChild(dl);
+    if(!data.tasks.length){
+      var e = document.createElement("p"); e.className = "hint"; e.textContent = "還沒有事項，可以先在上面「+ 新增」加入一件。";
+      wrap.appendChild(e);
+    }
+    data.tasks.forEach(function(t, idx){
+      var row = document.createElement("div"); row.className = "task-row";
+      var ti = document.createElement("input"); ti.type = "text"; ti.value = t.text;
+      ti.addEventListener("input", function(){ t.text = ti.value; save(); });
+      var sw = document.createElement("select");
+      [["now","現在處理"],["later","等我好一些再做"]].forEach(function(o){
+        var op = document.createElement("option"); op.value = o[0]; op.textContent = o[1]; sw.appendChild(op);
+      });
+      sw.value = t.when;
+      sw.addEventListener("change", function(){ t.when = sw.value; save(); if(onChange) onChange(); });
+      var sh = document.createElement("select");
+      [["self","自己處理"],["delegate","委託他人"]].forEach(function(o){
+        var op = document.createElement("option"); op.value = o[0]; op.textContent = o[1]; sh.appendChild(op);
+      });
+      sh.value = t.who;
+      sh.addEventListener("change", function(){ t.who = sh.value; save(); if(onChange) onChange(); });
+      row.appendChild(ti); row.appendChild(sw); row.appendChild(sh);
+      if(t.who === "delegate"){
+        var to = document.createElement("input"); to.type = "text"; to.className = "to";
+        to.setAttribute("list", dlId); to.placeholder = "委託給誰（可從救援小組選）"; to.value = t.to || "";
+        to.addEventListener("input", function(){ t.to = to.value; save(); });
+        row.appendChild(to);
+      }
+      var rm = document.createElement("button"); rm.type = "button"; rm.className = "rm-x"; rm.textContent = "×";
+      rm.addEventListener("click", function(){ data.tasks.splice(idx,1); save(); if(onChange) onChange(); });
+      row.appendChild(rm);
+      wrap.appendChild(row);
+    });
+    container.appendChild(wrap);
+  }
+
+  // ---------- Day editor (reusable for today / tomorrow / calendar modal) ----------
+  function renderDayEditor(dateStr, mount, opts){
+    opts = opts || {};
+    var day = ensureDay(dateStr);
+    mount.innerHTML = "";
+
+    var title = document.createElement("h2");
+    title.className = "day-title";
+    title.textContent = opts.heading || niceDate(dateStr);
+    mount.appendChild(title);
+
+    if(opts.subheading){
+      var sub = document.createElement("p");
+      sub.className = "day-meta";
+      sub.textContent = opts.subheading;
+      mount.appendChild(sub);
+    }
+
+    // freewrite
+    var b1 = document.createElement("div"); b1.className="block";
+    var l1 = document.createElement("label"); l1.className="block-label"; l1.textContent="這一天發生了什麼？我現在有什麼感受？";
+    var ta = document.createElement("textarea"); ta.className="freewrite";
+    ta.placeholder = "今天發生了什麼？現在有什麼感受？";
+    ta.value = day.freewrite || "";
+    ta.addEventListener("input", function(){ day.freewrite = ta.value; save(); });
+    b1.appendChild(ta); mount.appendChild(b1);
+
+    var togRow = document.createElement("div"); togRow.className = "tog-row"; mount.appendChild(togRow);
+    var badgeFns = [];
+    function updateBadges(){ badgeFns.forEach(function(f){ f(); }); }
+    function register(label, block, countFn){
+      block.style.display = "none";
+      mount.appendChild(block);
+      var btn = document.createElement("button"); btn.type = "button"; btn.className = "tog";
+      btn.addEventListener("click", function(){
+        var open = block.style.display === "none";
+        block.style.display = open ? "block" : "none";
+        btn.classList.toggle("open", open);
+      });
+      togRow.appendChild(btn);
+      badgeFns.push(function(){ var n = countFn(); btn.textContent = label + (n ? " " + n : ""); });
+    }
+    if(mount._badgeH){ mount.removeEventListener("click", mount._badgeH); mount.removeEventListener("input", mount._badgeH); }
+    mount._badgeH = function(){ setTimeout(updateBadges, 0); };
+    mount.addEventListener("click", mount._badgeH); mount.addEventListener("input", mount._badgeH);
+
+    // triggers
+    var b2 = document.createElement("div"); b2.className="block";
+    var l2 = document.createElement("label"); l2.className="block-label"; l2.textContent="有什麼事情觸發我了嗎？";
+    var hint2 = document.createElement("p"); hint2.className="hint"; hint2.textContent="被觸發不代表退步了，只是有件重要的事碰觸到了我。";
+    var chipMount2 = document.createElement("div");
+    b2.appendChild(chipMount2); register("觸發", b2, function(){ return day.triggers.length; });
+    var avoidNote = document.createElement("p"); avoidNote.className = "hint"; avoidNote.style.margin = "10px 0 0";
+    b2.appendChild(avoidNote);
+    function refreshTriggers(){
+      var items = data.map.filter(function(m){ return m.trigger; }).map(function(m){ return m.text; });
+      buildChipRow(chipMount2, items, day.triggers, function(item){
+        var i = day.triggers.indexOf(item);
+        if(i>-1) day.triggers.splice(i,1); else day.triggers.push(item);
+        save(); refreshTriggers();
+      }, "新增", function(v){
+        var ex = data.map.filter(function(m){ return m.text===v; })[0];
+        if(ex) ex.trigger = true; else data.map.push({text:v, trigger:true, avoid:false});
+        if(day.triggers.indexOf(v)===-1) day.triggers.push(v);
+        save(); refreshTriggers();
+      });
+      var hits = dateStr > todayStr() ? data.map.filter(function(m){ return m.avoid && day.triggers.indexOf(m.text)>-1; }).map(function(m){ return m.text; }) : [];
+      avoidNote.textContent = hits.length ? "可能碰到想避開的：" + hits.join("、") + "。想先準備嗎？" : "";
+      avoidNote.style.display = hits.length ? "block" : "none";
+    }
+    refreshTriggers();
+
+    // early-warning signs (only for today / past days)
+    if(dateStr <= todayStr()){
+      var bw = document.createElement("div"); bw.className = "block";
+      var lw = document.createElement("label"); lw.className = "block-label"; lw.textContent = "今天有出現哪些警訊？（選填）";
+      var hw = document.createElement("p"); hw.className = "hint"; hw.textContent = "這些是我變糟的早期信號。看見它們，就是使用救援箱的時機。";
+      var wMount = document.createElement("div"); var wExtra = document.createElement("div");
+      bw.appendChild(wMount); bw.appendChild(wExtra); register("警訊", bw, function(){ return day.warnings.length; });
+      var refreshWarn = function(){
+        var items = data.warnSigns.slice(); items.push(URGENT);
+        buildChipRow(wMount, items, day.warnings, function(item){
+          var i = day.warnings.indexOf(item);
+          if(i>-1) day.warnings.splice(i,1); else day.warnings.push(item);
+          save(); refreshWarn();
+        }, "新增", function(v){
+          if(v!==URGENT && data.warnSigns.indexOf(v)===-1) data.warnSigns.push(v);
+          if(day.warnings.indexOf(v)===-1) day.warnings.push(v);
+          save(); refreshWarn();
+        }, "special-active");
+        wExtra.innerHTML = "";
+        if(day.warnings.indexOf(URGENT)>-1){
+          wExtra.appendChild(buildUrgentPanel());
+        } else {
+          var n = day.warnings.filter(function(w){ return data.warnSigns.indexOf(w)>-1; }).length;
+          if(n >= 2){
+            var sp = document.createElement("div"); sp.className = "soft-prompt";
+            sp.appendChild(document.createTextNode("這幾個訊號一起出現了，也許是打開救援箱的時候。"));
+            var go = document.createElement("button"); go.type = "button"; go.className = "link-btn"; go.textContent = "打開救援箱";
+            go.addEventListener("click", function(){ switchView("resources"); });
+            sp.appendChild(go); wExtra.appendChild(sp);
+          }
+        }
+      };
+      refreshWarn();
+    }
+
+    // four quadrants
+    var b3 = document.createElement("div"); b3.className="block";
+    var l3 = document.createElement("label"); l3.className="block-label"; l3.textContent="給自己的四件事";
+    var quad = document.createElement("div"); quad.className="quad";
+    b3.appendChild(quad); register("四件事", b3, function(){ var n = 0; for(var k in day.selected){ n += day.selected[k].length; } return n; });
+    CATS.forEach(function(cat){
+      var catDiv = document.createElement("div"); catDiv.className="quad-cat";
+      var h3 = document.createElement("h3"); h3.textContent = cat.title;
+      var chipMount = document.createElement("div");
+      catDiv.appendChild(h3); catDiv.appendChild(chipMount);
+      quad.appendChild(catDiv);
+      var needOpen = false;
+      function refreshNeed(){
+        chipMount.innerHTML = "";
+        var chipArea = document.createElement("div"); chipMount.appendChild(chipArea);
+        var sel = day.selected.need;
+        var vis = data.tasks.filter(function(t){ return t.when==="now" || sel.indexOf(t.id)>-1; }).map(function(t){ return t.id; });
+        buildChipRow(chipArea, vis, sel, function(id){
+          var i = sel.indexOf(id);
+          if(i>-1) sel.splice(i,1); else sel.push(id);
+          save(); refreshNeed();
+        }, "新增", function(v){
+          var t = {id:uid(), text:v, when:"now", who:"self", to:""};
+          data.tasks.push(t); sel.push(t.id); save(); refreshNeed();
+        }, null, function(id){
+          var t = taskById(id);
+          if(!t) return id;
+          return t.text + (t.who==="delegate" ? "（委託" + (t.to ? " " + t.to : "") + "）" : "");
+        });
+        var later = data.tasks.filter(function(t){ return t.when==="later"; }).length;
+        var mb = document.createElement("button"); mb.type = "button"; mb.className = "link-btn";
+        mb.textContent = needOpen ? "收起整理" : "整理這些事" + (later ? "（等一等：" + later + "）" : "");
+        mb.addEventListener("click", function(){ needOpen = !needOpen; refreshNeed(); });
+        chipMount.appendChild(mb);
+        if(needOpen){ var m = document.createElement("div"); chipMount.appendChild(m); renderTaskManager(m, refreshNeed); }
+      }
+      function refresh(){
+        if(cat.key==="need"){ refreshNeed(); return; }
+        buildChipRow(chipMount, data.options[cat.key], day.selected[cat.key], function(item){
+          var arr = day.selected[cat.key];
+          var i = arr.indexOf(item);
+          if(i>-1) arr.splice(i,1); else arr.push(item);
+          save(); refresh();
+        }, "新增", function(v){
+          if(data.options[cat.key].indexOf(v)===-1) data.options[cat.key].push(v);
+          day.selected[cat.key].push(v); save(); refresh();
+        });
+      }
+      refresh();
+    });
+
+    updateBadges();
+
+    // special day toggle
+    var b4 = document.createElement("div"); b4.className="block";
+    var toggleLabel = document.createElement("label"); toggleLabel.className="special-toggle";
+    var cb = document.createElement("input"); cb.type="checkbox"; cb.checked = !!day.special;
+    toggleLabel.appendChild(cb);
+    toggleLabel.appendChild(document.createTextNode("標記為特別日（要預先計畫）"));
+    var fields = document.createElement("div"); fields.className="special-fields" + (day.special ? " show":"");
+    var planFields = [
+      {key:"where", label:"我會在哪裡？"},
+      {key:"what", label:"我要做什麼？"},
+      {key:"who", label:"我會和誰在一起？"},
+      {key:"contact", label:"我可以聯絡誰？"},
+      {key:"help", label:"什麼可能會幫助我度過這一天？"}
+    ];
+    planFields.forEach(function(pf){
+      var f = document.createElement("div"); f.className="f";
+      var fl = document.createElement("label"); fl.textContent = pf.label;
+      var fi = document.createElement("input"); fi.type="text"; fi.value = day.plan[pf.key] || "";
+      fi.addEventListener("input", function(){ day.plan[pf.key]=fi.value; save(); });
+      f.appendChild(fl); f.appendChild(fi); fields.appendChild(f);
+    });
+    cb.addEventListener("change", function(){
+      day.special = cb.checked; save();
+      fields.classList.toggle("show", cb.checked);
+      renderCalendarIfActive();
+    });
+    b4.appendChild(toggleLabel); b4.appendChild(fields); mount.appendChild(b4);
+  }
+
+  // ---------- Today view ----------
+  function renderToday(){
+    var mount = document.getElementById("view-today");
+    mount.innerHTML = "";
+    var editorMount = document.createElement("div");
+    mount.appendChild(editorMount);
+    renderDayEditor(todayStr(), editorMount, {heading:"今天"});
+
+    var tBtn = document.createElement("button");
+    tBtn.className = "tomorrow-toggle";
+    tBtn.textContent = "看看明天";
+    var tPanel = document.createElement("div");
+    tPanel.id = "tomorrow-panel";
+    tBtn.addEventListener("click", function(){
+      tPanel.classList.toggle("show");
+      if(tPanel.classList.contains("show") && !tPanel.dataset.rendered){
+        renderDayEditor(addDays(todayStr(),1), tPanel, {heading:"明天", subheading:"先想好也可以。"});
+        tPanel.dataset.rendered = "1";
+      }
+    });
+    mount.appendChild(tBtn);
+    mount.appendChild(tPanel);
+  }
+
+  // ---------- Calendar view ----------
+  var calCursor = new Date(); calCursor.setDate(1);
+  function renderCalendarIfActive(){
+    if(document.getElementById("view-calendar").classList.contains("active")) renderCalendar();
+  }
+  function renderCalendar(){
+    var mount = document.getElementById("view-calendar");
+    mount.innerHTML = "";
+
+    var nav = document.createElement("div"); nav.className="cal-nav";
+    var prev = document.createElement("button"); prev.textContent="←";
+    var next = document.createElement("button"); next.textContent="→";
+    var label = document.createElement("span"); label.className="label";
+    label.textContent = calCursor.getFullYear()+"年 "+(calCursor.getMonth()+1)+"月";
+    prev.addEventListener("click", function(){ calCursor.setMonth(calCursor.getMonth()-1); renderCalendar(); });
+    next.addEventListener("click", function(){ calCursor.setMonth(calCursor.getMonth()+1); renderCalendar(); });
+    nav.appendChild(prev); nav.appendChild(label); nav.appendChild(next);
+    mount.appendChild(nav);
+
+    var grid = document.createElement("div"); grid.className="cal-grid";
+    ["日","一","二","三","四","五","六"].forEach(function(d){
+      var el = document.createElement("div"); el.className="cal-dow"; el.textContent=d; grid.appendChild(el);
+    });
+    var firstOfMonth = new Date(calCursor.getFullYear(), calCursor.getMonth(), 1);
+    var startWeekday = firstOfMonth.getDay();
+    var daysInMonth = new Date(calCursor.getFullYear(), calCursor.getMonth()+1, 0).getDate();
+    for(var i=0;i<startWeekday;i++){
+      var empty = document.createElement("div"); empty.className="cal-cell empty"; grid.appendChild(empty);
+    }
+    for(var d=1; d<=daysInMonth; d++){
+      var dateStr = fmt(new Date(calCursor.getFullYear(), calCursor.getMonth(), d));
+      var cell = document.createElement("div"); cell.className="cal-cell";
+      if(dateStr === todayStr()) cell.classList.add("today");
+      var dayObj = data.days[dateStr];
+      if(dayObj && dayObj.special) cell.classList.add("has-special");
+      cell.textContent = d;
+      if(dayObj && (dayHasContent(dayObj) || dayObj.special)){
+        var dot = document.createElement("span"); dot.className="cal-dot"; cell.appendChild(dot);
+      }
+      cell.addEventListener("click", function(ds){
+        return function(){ openModal(ds); };
+      }(dateStr));
+      grid.appendChild(cell);
+    }
+    mount.appendChild(grid);
+
+    var legend = document.createElement("div"); legend.className="cal-legend";
+    legend.innerHTML = '<span><i style="background:var(--moss)"></i>已寫下一些什麼</span>' +
+                        '<span><i style="background:var(--clay)"></i>標記為特別日</span>';
+    mount.appendChild(legend);
+  }
+
+  function openModal(dateStr){
+    var overlay = document.getElementById("modal-overlay");
+    var content = document.getElementById("modal-content");
+    renderDayEditor(dateStr, content, {});
+    overlay.classList.add("show");
+  }
+  function refreshActive(){
+    var a = document.querySelector("nav.tabs button.active");
+    var name = a ? a.dataset.view : "today";
+    if(name==="calendar") renderCalendar();
+    if(name==="journal") renderJournal();
+  }
+  document.getElementById("modal-close").addEventListener("click", function(){
+    document.getElementById("modal-overlay").classList.remove("show");
+    refreshActive();
+  });
+  document.getElementById("modal-overlay").addEventListener("click", function(e){
+    if(e.target.id === "modal-overlay"){
+      document.getElementById("modal-overlay").classList.remove("show");
+      refreshActive();
+    }
+  });
+
+  // ---------- Journal view (read-only, concise) ----------
+  function shortDate(ds){
+    var d = parseYMD(ds);
+    return (d.getMonth()+1) + "月" + d.getDate() + "日 " + ["週日","週一","週二","週三","週四","週五","週六"][d.getDay()];
+  }
+  function taskLabel(id){
+    var t = taskById(id);
+    if(!t) return null;
+    return t.text + (t.who==="delegate" ? "（委託" + (t.to ? " " + t.to : "") + "）" : "");
+  }
+  function hasJournalContent(day){ return dayHasContent(day) || !!day.special; }
+  function buildEntry(ds, day){
+    var art = document.createElement("article"); art.className = "j-entry";
+    var head = document.createElement("div"); head.className = "j-head";
+    var dt = document.createElement("span"); dt.className = "j-date"; dt.textContent = shortDate(ds);
+    head.appendChild(dt);
+    if(day.special){ var tag = document.createElement("span"); tag.className = "j-tag"; tag.textContent = "特別日"; head.appendChild(tag); }
+    var eb = document.createElement("button"); eb.type = "button"; eb.className = "link-btn no-print"; eb.textContent = "編輯";
+    eb.addEventListener("click", function(){ openModal(ds); });
+    head.appendChild(eb);
+    art.appendChild(head);
+    if(day.freewrite && day.freewrite.trim()){
+      var tx = document.createElement("p"); tx.className = "j-text"; tx.textContent = day.freewrite.trim(); art.appendChild(tx);
+    }
+    function line(parent, k, v){
+      var r = document.createElement("div"); r.className = "j-line";
+      var kk = document.createElement("span"); kk.className = "j-k"; kk.textContent = k;
+      var vv = document.createElement("span"); vv.className = "j-v"; vv.textContent = v;
+      r.appendChild(kk); r.appendChild(vv); parent.appendChild(r);
+    }
+    var sel = day.selected || {};
+    if(day.triggers && day.triggers.length) line(art, "觸發", day.triggers.join("、"));
+    if(day.warnings && day.warnings.length) line(art, "警訊", day.warnings.join("、"));
+    var need = (sel.need || []).map(taskLabel).filter(Boolean);
+    if(need.length) line(art, "需要處理", need.join("、"));
+    if(sel.want && sel.want.length) line(art, "想做", sel.want.join("、"));
+    if(sel.care && sel.care.length) line(art, "照顧自己", sel.care.join("、"));
+    if(sel.connect && sel.connect.length) line(art, "與人連結", sel.connect.join("、"));
+    if(day.special){
+      var pl = day.plan || {};
+      var rows = [["where","地點"],["what","要做"],["who","陪伴"],["contact","可聯絡"],["help","幫助我的"]].filter(function(x){ return pl[x[0]] && pl[x[0]].trim(); });
+      if(rows.length){
+        var box = document.createElement("div"); box.className = "j-plan";
+        rows.forEach(function(x){ line(box, x[1], pl[x[0]].trim()); });
+        art.appendChild(box);
+      }
+    }
+    return art;
+  }
+  function renderJournal(){
+    var mount = document.getElementById("view-journal");
+    mount.innerHTML = "";
+    var t = todayStr();
+    var keys = Object.keys(data.days).filter(function(k){ return hasJournalContent(data.days[k]); }).sort();
+    var future = keys.filter(function(k){ return k > t; });
+    var past = keys.filter(function(k){ return k <= t; }).reverse();
+
+    var h = document.createElement("h2"); h.className = "day-title"; h.textContent = "我的日誌";
+    mount.appendChild(h);
+    var meta = document.createElement("p"); meta.className = "day-meta";
+    var written = past.filter(function(k){ return dayHasContent(data.days[k]); }).length;
+    var sd = data.meta.startDate ? parseYMD(data.meta.startDate) : null;
+    meta.textContent = (sd ? "從 " + sd.getFullYear() + "年" + (sd.getMonth()+1) + "月" + sd.getDate() + "日開始" : "") + (written ? "，已寫下 " + written + " 天" : "");
+    mount.appendChild(meta);
+    if(data.meta.whatHappened && data.meta.whatHappened.trim()){
+      var q = document.createElement("p"); q.className = "j-quote"; q.textContent = data.meta.whatHappened.trim();
+      mount.appendChild(q);
+    }
+    if(keys.length){
+      var tools = document.createElement("div"); tools.className = "j-tools no-print";
+      var pb = document.createElement("button"); pb.type = "button"; pb.className = "link-btn"; pb.textContent = "列印／存成 PDF";
+      pb.addEventListener("click", function(){ window.print(); });
+      tools.appendChild(pb); mount.appendChild(tools);
+    }
+    if(!keys.length){
+      var e = document.createElement("p"); e.className = "j-empty";
+      e.textContent = "還沒有紀錄。在「今天」寫下第一天之後，這裡會慢慢長出你的日誌。";
+      mount.appendChild(e);
+      return;
+    }
+    if(future.length){
+      var fh = document.createElement("div"); fh.className = "j-month"; fh.textContent = "接下來";
+      mount.appendChild(fh);
+      future.forEach(function(k){ mount.appendChild(buildEntry(k, data.days[k])); });
+    }
+    var lastMonth = "";
+    past.forEach(function(k){
+      var m = k.slice(0,7);
+      if(m !== lastMonth){
+        lastMonth = m;
+        var mh = document.createElement("div"); mh.className = "j-month";
+        mh.textContent = k.slice(0,4) + "年" + parseInt(k.slice(5,7),10) + "月";
+        mount.appendChild(mh);
+      }
+      mount.appendChild(buildEntry(k, data.days[k]));
+    });
+  }
+
+  // ---------- Settings view ----------
+  function renderSettings(){
+    var mount = document.getElementById("view-settings");
+    mount.innerHTML = "";
+
+    var g1 = document.createElement("div"); g1.className="settings-group";
+    g1.innerHTML = '<h3>這段旅程</h3>';
+    var whatLabel = document.createElement("label"); whatLabel.textContent="我發生了什麼事？"; whatLabel.style.display="block"; whatLabel.style.fontSize="0.85rem"; whatLabel.style.marginBottom="6px";
+    var whatTa = document.createElement("textarea"); whatTa.rows=2; whatTa.value = data.meta.whatHappened || "";
+    whatTa.addEventListener("input", function(){ data.meta.whatHappened = whatTa.value; save(); });
+    var startLabel = document.createElement("label"); startLabel.textContent="旅程開始日期"; startLabel.style.display="block"; startLabel.style.fontSize="0.85rem"; startLabel.style.margin="14px 0 6px";
+    var startInput = document.createElement("input"); startInput.type="date"; startInput.value = data.meta.startDate;
+    startInput.addEventListener("input", function(){ data.meta.startDate = startInput.value; save(); });
+    g1.appendChild(whatLabel); g1.appendChild(whatTa); g1.appendChild(startLabel); g1.appendChild(startInput);
+    mount.appendChild(g1);
+
+    var g2 = document.createElement("div"); g2.className="settings-group";
+    g2.innerHTML = '<h3>觸發與界線</h3>';
+    var mHint = document.createElement("p"); mHint.className = "rescue-intro";
+    mHint.textContent = "觸發：會碰到我的事物。避開：我決定先不碰、不做、不見的。可以兩者都選。";
+    g2.appendChild(mHint);
+    var mapList = document.createElement("div"); g2.appendChild(mapList);
+    var addBox = document.createElement("div"); addBox.className = "map-row"; addBox.style.marginTop = "10px";
+    var addIn = document.createElement("input"); addIn.type = "text"; addIn.placeholder = "例如：前任的社群、深夜喝酒";
+    var addTrig = {trigger:true, avoid:false};
+    var tBtn = document.createElement("button"); tBtn.type = "button"; tBtn.className = "toggle-mini on-trigger"; tBtn.textContent = "觸發";
+    var aBtn = document.createElement("button"); aBtn.type = "button"; aBtn.className = "toggle-mini"; aBtn.textContent = "避開";
+    tBtn.addEventListener("click", function(){ addTrig.trigger = !addTrig.trigger; tBtn.classList.toggle("on-trigger", addTrig.trigger); });
+    aBtn.addEventListener("click", function(){ addTrig.avoid = !addTrig.avoid; aBtn.classList.toggle("on-avoid", addTrig.avoid); });
+    var addGo = document.createElement("button"); addGo.type = "button"; addGo.textContent = "新增";
+    addGo.style.cssText = "font-family:var(--sans);font-size:0.85rem;background:var(--moss);color:#fff;border:none;border-radius:10px;padding:8px 14px;cursor:pointer;";
+    function commitMap(){
+      var v = addIn.value.trim();
+      if(!v) return;
+      if(!addTrig.trigger && !addTrig.avoid) addTrig.trigger = true;
+      var ex = data.map.filter(function(m){ return m.text===v; })[0];
+      if(ex){ ex.trigger = ex.trigger || addTrig.trigger; ex.avoid = ex.avoid || addTrig.avoid; }
+      else data.map.push({text:v, trigger:addTrig.trigger, avoid:addTrig.avoid});
+      addIn.value = ""; save(); refreshMap();
+      tBtn.classList.toggle("on-trigger", addTrig.trigger);
+    }
+    addGo.addEventListener("click", commitMap);
+    addIn.addEventListener("keydown", function(e){ if(e.key==="Enter"){ e.preventDefault(); commitMap(); } });
+    addBox.appendChild(addIn); addBox.appendChild(tBtn); addBox.appendChild(aBtn); addBox.appendChild(addGo);
+    g2.appendChild(addBox);
+    mount.appendChild(g2);
+    function refreshMap(){
+      mapList.innerHTML = "";
+      data.map.forEach(function(m, idx){
+        var row = document.createElement("div"); row.className = "map-row";
+        var txt = document.createElement("span"); txt.className = "txt"; txt.textContent = m.text;
+        var t = document.createElement("button"); t.type = "button"; t.className = "toggle-mini" + (m.trigger ? " on-trigger" : ""); t.textContent = "觸發";
+        var a = document.createElement("button"); a.type = "button"; a.className = "toggle-mini" + (m.avoid ? " on-avoid" : ""); a.textContent = "避開";
+        t.addEventListener("click", function(){ m.trigger = !m.trigger; if(!m.trigger && !m.avoid) m.avoid = true; save(); refreshMap(); });
+        a.addEventListener("click", function(){ m.avoid = !m.avoid; if(!m.trigger && !m.avoid) m.trigger = true; save(); refreshMap(); });
+        var x = document.createElement("button"); x.type = "button"; x.className = "rm-x"; x.style.marginLeft = "0"; x.textContent = "×";
+        x.addEventListener("click", function(){ data.map.splice(idx,1); save(); refreshMap(); });
+        row.appendChild(txt); row.appendChild(t); row.appendChild(a); row.appendChild(x);
+        mapList.appendChild(row);
+      });
+    }
+    refreshMap();
+
+    CATS.forEach(function(cat){
+      var g = document.createElement("div"); g.className="settings-group";
+      var h = document.createElement("h3"); h.textContent = cat.title; g.appendChild(h);
+      if(cat.key==="need"){
+        var tm = document.createElement("div");
+        var refreshTM = function(){ renderTaskManager(tm, refreshTM); };
+        g.appendChild(buildEditAddRow(function(v){
+          data.tasks.push({id:uid(), text:v, when:"now", who:"self", to:""}); save(); refreshTM();
+        }, "新增一件需要處理的事"));
+        g.appendChild(tm); refreshTM();
+        mount.appendChild(g);
+        return;
+      }
+      var list = document.createElement("div"); list.className="list-edit"; g.appendChild(list);
+      var addRow = buildEditAddRow(function(v){
+        if(v && data.options[cat.key].indexOf(v)===-1){ data.options[cat.key].push(v); save(); refresh(); }
+      });
+      g.appendChild(addRow);
+      mount.appendChild(g);
+      function refresh(){
+        list.innerHTML = "";
+        data.options[cat.key].forEach(function(item){
+          list.appendChild(editChip(item, function(){
+            data.options[cat.key] = data.options[cat.key].filter(function(x){ return x!==item; });
+            save(); refresh();
+          }));
+        });
+      }
+      refresh();
+    });
+
+    var danger = document.createElement("div"); danger.className="danger";
+    var dBtn = document.createElement("button");
+    dBtn.textContent = "清除這台裝置上的所有資料";
+    dBtn.addEventListener("click", function(){
+      if(confirm("這會清除這台裝置上目前記錄的所有內容，且無法復原。確定要繼續嗎？")){
+        localStorage.removeItem(STORAGE_KEY);
+        location.reload();
+      }
+    });
+    danger.appendChild(dBtn);
+    mount.appendChild(danger);
+    foldify(mount, settingsCount);
+  }
+  function editChip(text, onRemove){
+    var chip = document.createElement("span"); chip.className="chip active";
+    chip.textContent = text;
+    var x = document.createElement("span"); x.className="x"; x.textContent=" ×";
+    x.addEventListener("click", onRemove);
+    chip.appendChild(x);
+    return chip;
+  }
+  function buildEditAddRow(onAdd, placeholder){
+    var row = document.createElement("div"); row.style.display="flex"; row.style.gap="6px"; row.style.marginTop="4px";
+    var input = document.createElement("input"); input.type="text"; input.placeholder = placeholder || "新增項目";
+    var btn = document.createElement("button"); btn.textContent="新增";
+    btn.style.cssText = "font-family:var(--sans);font-size:0.85rem;background:var(--moss);color:#fff;border:none;border-radius:10px;padding:0 14px;cursor:pointer;";
+    function commit(){ var v=input.value.trim(); if(v){ onAdd(v); input.value=""; } }
+    btn.addEventListener("click", commit);
+    input.addEventListener("keydown", function(e){ if(e.key==="Enter"){ e.preventDefault(); commit(); } });
+    row.appendChild(input); row.appendChild(btn);
+    return row;
+  }
+
+  // ---------- fold groups into collapsible sections ----------
+  function foldify(mount, countFn){
+    var folds = [];
+    Array.prototype.slice.call(mount.querySelectorAll(".settings-group")).forEach(function(g){
+      var h = g.querySelector("h3");
+      if(!h || g.dataset.nofold) return;
+      var title = h.textContent;
+      var det = document.createElement("details"); det.className = "fold";
+      var sm = document.createElement("summary");
+      var tt = document.createElement("span"); tt.textContent = title;
+      var bd = document.createElement("span"); bd.className = "badge";
+      sm.appendChild(tt); sm.appendChild(bd);
+      var body = document.createElement("div"); body.className = "fold-body";
+      h.parentNode.removeChild(h);
+      while(g.firstChild) body.appendChild(g.firstChild);
+      det.appendChild(sm); det.appendChild(body);
+      g.parentNode.replaceChild(det, g);
+      folds.push({title:title, bd:bd});
+    });
+    function upd(){
+      folds.forEach(function(f){ var n = countFn(f.title); f.bd.textContent = n || ""; f.bd.style.display = n ? "inline" : "none"; });
+    }
+    upd();
+    if(mount._foldH){ ["click","input","change","keydown"].forEach(function(ev){ mount.removeEventListener(ev, mount._foldH); }); }
+    mount._foldH = function(){ setTimeout(upd, 0); };
+    ["click","input","change","keydown"].forEach(function(ev){ mount.addEventListener(ev, mount._foldH); });
+  }
+  function resCount(title){
+    if(title.indexOf("第 0 步") === 0) return data.warnSigns.length;
+    if(title.indexOf("People") === 0) return data.rescueKit.peopleSelected.filter(Boolean).length;
+    if(title.indexOf("Places") === 0) return data.rescueKit.places.length;
+    if(title.indexOf("Things") === 0) return data.rescueKit.things.length;
+    if(title === "這段時間先不要") return data.map.filter(function(m){ return m.avoid; }).length;
+    if(title.indexOf("Professional") === 0) return data.rescueKit.professional.filter(function(x){ return (x.name && x.name.trim()) || (x.contact && x.contact.trim()); }).length;
+    if(title === "我的救援五人小組") return data.rescueFive.filter(function(x){ return x.name && x.name.trim(); }).length;
+    return 0;
+  }
+  function settingsCount(title){
+    if(title === "觸發與界線") return data.map.length;
+    for(var i = 0; i < CATS.length; i++){
+      if(CATS[i].title === title) return CATS[i].key === "need" ? data.tasks.length : data.options[CATS[i].key].length;
+    }
+    return 0;
+  }
+
+  // ---------- Resources view (Rescue Five + Rescue Kit) ----------
+  function renderResources(){
+    var mount = document.getElementById("view-resources");
+    mount.innerHTML = "";
+    var fiveWrap = document.createElement("div");
+    var quick = document.createElement("div"); quick.className = "urgent-box"; quick.style.cssText = "margin:0 0 6px;padding:8px 12px;font-size:0.82rem;";
+    quick.textContent = "緊急：119／110　安心專線 1925　生命線 1995";
+    mount.appendChild(quick);
+
+    var g1 = document.createElement("div"); g1.className="settings-group";
+    var h1 = document.createElement("h3"); h1.textContent = "我的救援五人小組";
+    var p1 = document.createElement("p"); p1.className="rescue-intro";
+    p1.textContent = "需要時可以找的五個人。最好事先讓他們知道。";
+    g1.appendChild(h1); g1.appendChild(p1);
+
+    data.rescueFive.forEach(function(person, idx){
+      var card = document.createElement("div"); card.className="rf-card";
+      var num = document.createElement("div"); num.className="rf-num"; num.textContent = "第 " + (idx+1) + " 位";
+      card.appendChild(num);
+
+      var grid = document.createElement("div"); grid.className="rf-grid";
+      [["name","姓名"],["relation","關係"],["contact","電話／聯絡方式"]].forEach(function(pair){
+        var wrap = document.createElement("div");
+        var lab = document.createElement("label"); lab.className="mini"; lab.textContent = pair[1];
+        var inp = document.createElement("input"); inp.type="text"; inp.value = person[pair[0]] || "";
+        inp.addEventListener("input", function(){ person[pair[0]] = inp.value; save(); if(pair[0]!=="contact"){ refreshPeoplePick(); refreshSupport(); } });
+        wrap.appendChild(lab); wrap.appendChild(inp);
+        grid.appendChild(wrap);
+      });
+      card.appendChild(grid);
+
+      var helpWrap = document.createElement("div"); helpWrap.className="rf-help";
+      var helpLab = document.createElement("label"); helpLab.className="mini"; helpLab.textContent="他適合提供的支持";
+      var supRow = document.createElement("div"); supRow.className = "sup-row";
+      var helpInp = document.createElement("input"); helpInp.type="text"; helpInp.value = person.helpWith || "";
+      var supChips = [];
+      var moreOpen = false;
+      var moreBtn = document.createElement("button"); moreBtn.type = "button"; moreBtn.className = "link-btn"; moreBtn.style.margin = "0";
+      function paintSupChips(){
+        var cur = supportList(person);
+        supChips.forEach(function(c, i){
+          var on = cur.indexOf(c.text) > -1;
+          c.el.classList.toggle("active", on);
+          c.el.style.display = (i < 4 || on || moreOpen) ? "" : "none";
+        });
+        moreBtn.textContent = moreOpen ? "收起" : "更多";
+      }
+      moreBtn.addEventListener("click", function(){ moreOpen = !moreOpen; paintSupChips(); });
+      SUPPORT_SUGGEST.forEach(function(txt){
+        var el = document.createElement("button"); el.type = "button"; el.className = "chip"; el.textContent = txt;
+        el.addEventListener("click", function(){
+          var cur = supportList(person);
+          var i = cur.indexOf(txt);
+          if(i > -1) cur.splice(i,1); else cur.push(txt);
+          person.helpWith = cur.join("、"); helpInp.value = person.helpWith;
+          save(); paintSupChips(); refreshSupport();
+        });
+        supChips.push({text:txt, el:el}); supRow.appendChild(el);
+      });
+      supRow.appendChild(moreBtn);
+      helpInp.addEventListener("input", function(){ person.helpWith = helpInp.value; save(); paintSupChips(); refreshSupport(); });
+      paintSupChips();
+      helpWrap.appendChild(helpLab); helpWrap.appendChild(supRow); helpWrap.appendChild(helpInp);
+      card.appendChild(helpWrap);
+
+      g1.appendChild(card);
+    });
+    fiveWrap.appendChild(g1);
+
+    var gMsg = document.createElement("div"); gMsg.className="settings-group";
+    var hMsg = document.createElement("h3"); hMsg.textContent = "請求支援單張";
+    var pMsg = document.createElement("p"); pMsg.className="rescue-intro";
+    pMsg.textContent = "選一位，會自動帶入名字和他適合提供的支持。可以修改，再複製或分享給他。";
+    var selRow = document.createElement("div"); selRow.className = "sel-row";
+    var msgTa = document.createElement("textarea"); msgTa.rows = 7;
+    var supHint = document.createElement("p"); supHint.className = "hint"; supHint.style.margin = "6px 0 0";
+    var btnRow = document.createElement("div"); btnRow.style.cssText = "display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:8px;";
+    var btnCss = "font-family:var(--sans);font-size:0.85rem;background:var(--moss);color:#fff;border:none;border-radius:10px;padding:8px 16px;cursor:pointer;";
+    var copyBtn = document.createElement("button"); copyBtn.type = "button"; copyBtn.textContent = "複製文字"; copyBtn.style.cssText = btnCss;
+    var shareBtn = document.createElement("button"); shareBtn.type = "button"; shareBtn.textContent = "分享"; shareBtn.style.cssText = btnCss;
+    var resetBtn = document.createElement("button"); resetBtn.type = "button"; resetBtn.className = "link-btn"; resetBtn.textContent = "重新帶入"; resetBtn.style.margin = "0";
+    var supSel = -1;
+    function supKey(){ return supSel < 0 ? "g" : String(supSel); }
+    function generateMsg(idx){
+      var base = "我最近在走一段比較辛苦的路。如果哪天撐不住，可能會找你。";
+      if(idx < 0) return "嗨，" + base + "謝謝你先知道。";
+      var pp = data.rescueFive[idx];
+      var nm = (pp.name || "").trim();
+      var sup = supportList(pp);
+      var t = "嗨" + (nm ? " " + nm : "") + "，" + base;
+      if(sup.length) t += "\n\n我需要的是：\n" + sup.map(function(x){ return "・" + x; }).join("\n");
+      return t + "\n\n謝謝你先知道。";
+    }
+    function refreshSupport(){
+      var named = [];
+      data.rescueFive.forEach(function(pp, i){ if(pp.name && pp.name.trim()) named.push(i); });
+      if(supSel >= 0 && named.indexOf(supSel) === -1) supSel = -1;
+      selRow.innerHTML = "";
+      var opts = [{i:-1, label:"通用"}].concat(named.map(function(i){ return {i:i, label:data.rescueFive[i].name.trim()}; }));
+      opts.forEach(function(o){
+        var b = document.createElement("button"); b.type = "button";
+        b.className = "chip" + (o.i === supSel ? " active" : ""); b.textContent = o.label;
+        b.addEventListener("click", function(){ supSel = o.i; refreshSupport(); });
+        selRow.appendChild(b);
+      });
+      var custom = data.supportMsgs[supKey()];
+      if(typeof custom === "string"){ if(document.activeElement !== msgTa) msgTa.value = custom; }
+      else msgTa.value = generateMsg(supSel);
+      resetBtn.style.display = typeof custom === "string" ? "inline" : "none";
+      supHint.textContent = (supSel >= 0 && !supportList(data.rescueFive[supSel]).length) ? "可在上面他的卡片點選支持項目。" : "";
+    }
+    msgTa.addEventListener("input", function(){ data.supportMsgs[supKey()] = msgTa.value; save(); resetBtn.style.display = "inline"; });
+    resetBtn.addEventListener("click", function(){ delete data.supportMsgs[supKey()]; save(); refreshSupport(); });
+    copyBtn.addEventListener("click", function(){
+      function done(){ copyBtn.textContent = "已複製！"; setTimeout(function(){ copyBtn.textContent = "複製文字"; }, 1500); }
+      function fallback(){ msgTa.select(); try{ document.execCommand("copy"); }catch(e){} done(); }
+      if(navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(msgTa.value).then(done, fallback); }
+      else fallback();
+    });
+    shareBtn.addEventListener("click", function(){
+      if(navigator.share){ navigator.share({text: msgTa.value}).catch(function(){}); }
+    });
+    btnRow.appendChild(copyBtn);
+    if(navigator.share) btnRow.appendChild(shareBtn);
+    btnRow.appendChild(resetBtn);
+    gMsg.appendChild(hMsg); gMsg.appendChild(pMsg); gMsg.appendChild(selRow); gMsg.appendChild(msgTa); gMsg.appendChild(supHint); gMsg.appendChild(btnRow);
+    refreshSupport();
+    fiveWrap.appendChild(gMsg);
+
+    var g2 = document.createElement("div"); g2.className="settings-group";
+    var h2 = document.createElement("h3"); h2.textContent = "我的救援箱";
+    var p2 = document.createElement("p"); p2.className="rescue-intro";
+    p2.textContent = "為了避免很崩潰的時候不知道該怎麼辦，先計畫好——在情況非常糟的時候，可以不用多想、直接去做的事。";
+    g2.dataset.nofold = "1";
+    g2.appendChild(h2); g2.appendChild(p2);
+    mount.appendChild(g2);
+
+    var gWarn = document.createElement("div"); gWarn.className = "settings-group";
+    var hWarn = document.createElement("h3"); hWarn.textContent = "第 0 步｜我怎麼知道自己在變糟？";
+    var pWarn = document.createElement("p"); pWarn.className = "rescue-intro";
+    pWarn.textContent = "先寫下早期信號，這就是打開救援箱的時機。";
+    gWarn.appendChild(hWarn); gWarn.appendChild(pWarn);
+    var warnList = document.createElement("div"); warnList.className = "list-edit"; gWarn.appendChild(warnList);
+    function refreshWarnList(){
+      warnList.innerHTML = "";
+      data.warnSigns.forEach(function(item, i){
+        warnList.appendChild(editChip(item, function(){ data.warnSigns.splice(i,1); save(); refreshWarnList(); }));
+      });
+      var fixed = document.createElement("span"); fixed.className = "chip special-active"; fixed.textContent = URGENT;
+      warnList.appendChild(fixed);
+    }
+    refreshWarnList();
+    gWarn.appendChild(buildEditAddRow(function(v){
+      if(v && data.warnSigns.indexOf(v)===-1){ data.warnSigns.push(v); save(); refreshWarnList(); }
+    }, "例如：連續兩晚睡不著、不想吃東西、一直滑前任的社群"));
+    var urgentNote = document.createElement("p"); urgentNote.className = "hint"; urgentNote.style.marginTop = "12px";
+    urgentNote.textContent = "出現「" + URGENT + "」時，請直接聯絡專業或緊急支持：";
+    gWarn.appendChild(urgentNote);
+    gWarn.appendChild(buildUrgentPanel());
+    mount.appendChild(gWarn);
+
+    var gPeople = document.createElement("div"); gPeople.className="settings-group";
+    var hPeople = document.createElement("h3"); hPeople.textContent = "People｜可以找誰？";
+    var pPeople = document.createElement("p"); pPeople.className="rescue-intro";
+    pPeople.textContent = "從救援小組勾選，先想好要找誰。";
+    gPeople.appendChild(hPeople); gPeople.appendChild(pPeople);
+    var peopleList = document.createElement("div");
+    gPeople.appendChild(peopleList);
+    mount.appendChild(gPeople);
+    function refreshPeoplePick(){
+      peopleList.innerHTML = "";
+      var anyName = false;
+      data.rescueFive.forEach(function(person, i){
+        if(!person.name || !person.name.trim()) return;
+        anyName = true;
+        var row = document.createElement("label");
+        row.style.cssText = "display:flex;align-items:center;gap:8px;margin-bottom:8px;font-size:0.9rem;";
+        var cb = document.createElement("input"); cb.type="checkbox";
+        cb.checked = !!data.rescueKit.peopleSelected[i];
+        cb.addEventListener("change", function(){ data.rescueKit.peopleSelected[i] = cb.checked; save(); });
+        row.appendChild(cb);
+        row.appendChild(document.createTextNode(person.name + (person.relation ? "（"+person.relation+"）" : "")));
+        peopleList.appendChild(row);
+      });
+      if(!anyName){
+        var empty = document.createElement("p"); empty.className="hint";
+        empty.textContent = "先在下面填救援小組的名字，就能在這裡勾選。";
+        peopleList.appendChild(empty);
+      }
+    }
+    refreshPeoplePick();
+
+    function simpleListBlock(title, key, placeholderExample){
+      var g = document.createElement("div"); g.className="settings-group";
+      var h = document.createElement("h3"); h.textContent = title; g.appendChild(h);
+      var list = document.createElement("div"); list.className="list-edit"; g.appendChild(list);
+      var addRow = buildEditAddRow(function(v){
+        if(v){ data.rescueKit[key].push(v); save(); refresh(); }
+      }, placeholderExample);
+      g.appendChild(addRow);
+      mount.appendChild(g);
+      function refresh(){
+        list.innerHTML = "";
+        data.rescueKit[key].forEach(function(item, i){
+          list.appendChild(editChip(item, function(){
+            data.rescueKit[key].splice(i,1); save(); refresh();
+          }));
+        });
+      }
+      refresh();
+    }
+    simpleListBlock("Places｜可以去哪裡？", "places", "例如：某某好友家");
+    simpleListBlock("Things I Can Do｜我可以做什麼？", "things", "例如：打電話給生命線");
+
+    var gAvoid = document.createElement("div"); gAvoid.className = "settings-group";
+    var hAvoid = document.createElement("h3"); hAvoid.textContent = "這段時間先不要";
+    gAvoid.appendChild(hAvoid);
+    var avoidItems = data.map.filter(function(m){ return m.avoid; });
+    if(avoidItems.length){
+      var avRow = document.createElement("div"); avRow.className = "list-edit";
+      avoidItems.forEach(function(m){ var c = document.createElement("span"); c.className = "chip special-active"; c.textContent = m.text; avRow.appendChild(c); });
+      gAvoid.appendChild(avRow);
+    } else {
+      var avEmpty = document.createElement("p"); avEmpty.className = "hint"; avEmpty.textContent = "到設定的「觸發與界線」標記想避開的事與人。";
+      gAvoid.appendChild(avEmpty);
+    }
+    var avGo = document.createElement("button"); avGo.type = "button"; avGo.className = "link-btn"; avGo.textContent = "去編輯";
+    avGo.addEventListener("click", function(){ switchView("settings"); });
+    gAvoid.appendChild(avGo);
+    mount.appendChild(gAvoid);
+
+    var g3 = document.createElement("div"); g3.className="settings-group";
+    var h3 = document.createElement("h3"); h3.textContent = "Professional / Emergency Support｜專業／緊急支持";
+    g3.appendChild(h3);
+    var profList = document.createElement("div");
+    g3.appendChild(profList);
+    var addProfBtn = document.createElement("button");
+    addProfBtn.textContent = "+ 新增一筆";
+    addProfBtn.style.cssText = "font-family:var(--sans);font-size:0.85rem;background:none;border:1px dashed var(--line);color:var(--moss-deep);border-radius:10px;padding:6px 14px;cursor:pointer;margin-top:4px;";
+    addProfBtn.addEventListener("click", function(){
+      data.rescueKit.professional.push({name:"",contact:""}); save(); refreshProf();
+    });
+    g3.appendChild(addProfBtn);
+    mount.appendChild(g3);
+    function refreshProf(){
+      profList.innerHTML = "";
+      data.rescueKit.professional.forEach(function(entry, i){
+        var row = document.createElement("div"); row.className="contact-row";
+        var n = document.createElement("input"); n.type="text"; n.placeholder="名稱（例如：諮商師、醫療資源）"; n.value=entry.name||"";
+        n.addEventListener("input", function(){ entry.name=n.value; save(); });
+        var c = document.createElement("input"); c.type="text"; c.placeholder="聯絡方式"; c.value=entry.contact||"";
+        c.addEventListener("input", function(){ entry.contact=c.value; save(); });
+        var rm = document.createElement("button"); rm.className="rm"; rm.textContent="×";
+        rm.addEventListener("click", function(){ data.rescueKit.professional.splice(i,1); save(); refreshProf(); });
+        row.appendChild(n); row.appendChild(c); row.appendChild(rm);
+        profList.appendChild(row);
+      });
+    }
+    refreshProf();
+
+    mount.appendChild(fiveWrap);
+    foldify(mount, resCount);
+  }
+
+  // ---------- tab switching ----------
+  var tabs = document.querySelectorAll("nav.tabs button");
+  function switchView(name){
+    document.getElementById("modal-overlay").classList.remove("show");
+    tabs.forEach(function(b){ b.classList.toggle("active", b.dataset.view===name); });
+    document.querySelectorAll("section.view").forEach(function(v){ v.classList.remove("active"); });
+    document.getElementById("view-"+name).classList.add("active");
+    if(name==="today") renderToday();
+    if(name==="journal") renderJournal();
+    if(name==="calendar") renderCalendar();
+    if(name==="resources") renderResources();
+    if(name==="settings") renderSettings();
+    window.scrollTo(0,0);
+  }
+  tabs.forEach(function(btn){
+    btn.addEventListener("click", function(){ switchView(btn.dataset.view); });
+  });
+
+  // ---------- onboarding ----------
+  function startApp(){
+    document.getElementById("onboarding-overlay").classList.remove("show");
+    renderToday();
+  }
+  if(!hasOnboarded){
+    document.getElementById("onboarding-overlay").classList.add("show");
+    document.getElementById("ob-start").value = todayStr();
+    document.getElementById("ob-submit").addEventListener("click", function(){
+      data.meta.whatHappened = document.getElementById("ob-what").value.trim();
+      data.meta.startDate = document.getElementById("ob-start").value || todayStr();
+      save();
+      startApp();
+    });
+  } else {
+    startApp();
+  }
+})();
+</script>
+</body>
+</html>
