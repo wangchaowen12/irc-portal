@@ -42,37 +42,37 @@
   }
   #app{max-width:640px;margin:0 auto;padding:0 20px 80px;}
   header.top{
-    padding:28px 0 14px;
+    padding:30px 0 0;
     position:sticky;top:0;background:var(--paper);z-index:5;
   }
   header.top h1{
     font-family:var(--serif);
     font-weight:600;
     font-size:1.5rem;
-    margin:0 0 4px;
+    margin:0 0 6px;
     color:var(--moss-deep);
   }
   header.top .sub{
-    font-size:0.88rem;color:var(--ink-soft);margin:0 0 16px;
+    font-size:0.88rem;color:var(--ink-soft);margin:0 0 20px;
   }
-  nav.tabs{display:flex;gap:6px;border-bottom:1px solid var(--line);}
+  nav.tabs{display:flex;flex-wrap:wrap;gap:4px 8px;border-bottom:1px solid var(--line);}
   nav.tabs button{
     background:none;border:none;font-family:var(--sans);font-size:0.95rem;
-    padding:9px 4px;margin-right:14px;color:var(--ink-soft);cursor:pointer;
+    padding:10px 6px;margin-right:10px;color:var(--ink-soft);cursor:pointer;
     border-bottom:2px solid transparent;transition:color .15s, border-color .15s;
   }
   nav.tabs button.active{color:var(--moss-deep);border-bottom-color:var(--moss);font-weight:500;}
   nav.tabs button:focus-visible{outline:2px solid var(--moss);outline-offset:2px;}
 
-  section.view{display:none;padding-top:22px;}
+  section.view{display:none;padding-top:26px;}
   section.view.active{display:block;}
 
   h2.day-title{font-family:var(--serif);font-size:1.15rem;margin:0 0 2px;color:var(--ink);}
   .day-meta{font-size:0.82rem;color:var(--ink-soft);margin:0 0 20px;}
 
-  .block{margin-bottom:26px;}
+  .block{margin-bottom:34px;}
   .block > label.block-label{
-    display:block;font-size:0.9rem;color:var(--moss-deep);font-weight:500;margin-bottom:8px;
+    display:block;font-size:0.9rem;color:var(--moss-deep);font-weight:500;margin-bottom:10px;
   }
   .hint{font-size:0.8rem;color:var(--ink-soft);margin:-4px 0 10px;}
 
@@ -84,11 +84,11 @@
   textarea:focus, input:focus{outline:2px solid var(--moss);outline-offset:1px;}
   textarea.freewrite{min-height:120px;}
 
-  .chip-row{display:flex;flex-wrap:wrap;gap:8px;}
+  .chip-row{display:flex;flex-wrap:wrap;gap:10px;}
   .chip{
     font-family:var(--sans);font-size:0.86rem;
     background:var(--paper-raised);border:1px solid var(--line);color:var(--ink-soft);
-    border-radius:999px;padding:6px 13px;cursor:pointer;transition:.15s;
+    border-radius:999px;padding:7px 15px;cursor:pointer;transition:.15s;
   }
   .chip.active{background:var(--moss);border-color:var(--moss);color:#fff;}
   .chip.special-active{background:var(--clay);border-color:var(--clay);color:#fff;}
@@ -102,10 +102,10 @@
     border:none;border-radius:var(--radius);padding:0 14px;cursor:pointer;
   }
 
-  .quad{display:grid;grid-template-columns:1fr;gap:20px;}
+  .quad{display:grid;grid-template-columns:1fr;gap:26px;}
   @media(min-width:520px){.quad{grid-template-columns:1fr 1fr;}}
   .quad-cat h3{
-    font-size:0.88rem;font-weight:500;margin:0 0 8px;color:var(--moss-deep);
+    font-size:0.88rem;font-weight:500;margin:0 0 10px;color:var(--moss-deep);
   }
 
   .special-toggle{
@@ -113,9 +113,9 @@
     font-size:0.9rem;color:var(--ink);
   }
   .special-toggle input{width:16px;height:16px;}
-  .special-fields{display:none;border-left:2px solid var(--clay-soft);padding-left:14px;margin-top:10px;}
+  .special-fields{display:none;border-left:2px solid var(--clay-soft);padding-left:16px;margin-top:14px;}
   .special-fields.show{display:block;}
-  .special-fields .f{margin-bottom:10px;}
+  .special-fields .f{margin-bottom:14px;}
   .special-fields .f label{display:block;font-size:0.8rem;color:var(--ink-soft);margin-bottom:4px;}
 
   .tomorrow-toggle{
@@ -156,23 +156,23 @@
   #modal-close{position:absolute;top:14px;right:16px;background:none;border:none;font-size:1.3rem;color:var(--ink-soft);cursor:pointer;}
 
   /* Settings */
-  .settings-group{margin-bottom:30px;}
-  .settings-group h3{font-family:var(--serif);font-size:1rem;color:var(--moss-deep);margin:0 0 10px;}
-  .list-edit{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px;}
+  .settings-group{margin-bottom:38px;}
+  .settings-group h3{font-family:var(--serif);font-size:1rem;color:var(--moss-deep);margin:0 0 12px;}
+  .list-edit{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:12px;}
   .list-edit .chip{padding-right:8px;}
   .list-edit .chip .x{margin-left:6px;color:inherit;opacity:.7;}
-  .rescue-intro{font-size:0.86rem;color:var(--ink-soft);margin:-6px 0 18px;}
+  .rescue-intro{font-size:0.86rem;color:var(--ink-soft);margin:0 0 18px;}
   .rf-card{
     background:var(--paper-raised);border:1px solid var(--line);border-radius:var(--radius);
-    padding:14px 16px;margin-bottom:12px;
+    padding:16px 18px;margin-bottom:16px;
   }
-  .rf-card .rf-num{font-size:0.78rem;color:var(--moss-deep);margin-bottom:8px;}
-  .rf-card .rf-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+  .rf-card .rf-num{font-size:0.78rem;color:var(--moss-deep);margin-bottom:10px;}
+  .rf-card .rf-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px 12px;}
   .rf-card .rf-grid input{width:100%;}
-  .rf-card .rf-help{margin-top:8px;}
+  .rf-card .rf-help{margin-top:12px;}
   .rf-card label.mini{display:block;font-size:0.76rem;color:var(--ink-soft);margin-bottom:3px;}
 
-  .contact-row{display:flex;gap:8px;margin-bottom:8px;align-items:center;}
+  .contact-row{display:flex;gap:8px;margin-bottom:10px;align-items:center;}
   .contact-row input{flex:1;}
   .contact-row .rm{
     background:none;border:none;color:var(--clay);font-size:1.1rem;cursor:pointer;padding:0 4px;
@@ -217,13 +217,13 @@
   .toggle-mini.on-avoid{background:var(--clay);border-color:var(--clay);color:#fff;}
   .j-quote{font-family:var(--serif);color:var(--ink-soft);font-size:0.9rem;margin:0 0 4px;}
   .j-month{font-family:var(--serif);font-size:0.95rem;color:var(--moss-deep);margin:30px 0 4px;padding-bottom:6px;border-bottom:1px solid var(--line);}
-  .j-entry{padding:16px 0;border-bottom:1px solid var(--line);}
+  .j-entry{padding:20px 0;border-bottom:1px solid var(--line);}
   .j-head{display:flex;align-items:baseline;gap:8px;margin-bottom:6px;}
   .j-date{font-family:var(--serif);font-size:1rem;font-weight:500;}
   .j-tag{font-size:0.72rem;background:var(--clay-soft);color:#8A4A54;border-radius:999px;padding:1px 9px;}
   .j-head .link-btn{margin:0 0 0 auto;padding:0;}
-  .j-text{margin:0 0 8px;white-space:pre-wrap;font-size:0.95rem;}
-  .j-line{display:flex;gap:10px;font-size:0.84rem;line-height:1.7;}
+  .j-text{margin:0 0 12px;white-space:pre-wrap;font-size:0.95rem;}
+  .j-line{display:flex;gap:10px;font-size:0.84rem;line-height:1.9;}
   .j-k{flex:0 0 4.8em;color:var(--ink-soft);}
   .j-v{flex:1;}
   .j-plan{margin-top:8px;padding-left:12px;border-left:2px solid var(--clay-soft);}
@@ -238,18 +238,53 @@
   .sup-row{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 8px;}
   .sup-row .chip{font-size:0.78rem;padding:4px 10px;}
   .sel-row{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;}
-  .tog-row{display:flex;flex-wrap:wrap;gap:8px;margin:-6px 0 20px;}
+  .tog-row{display:flex;flex-wrap:wrap;gap:10px;margin:4px 0 28px;}
   .tog{font-family:var(--sans);font-size:0.85rem;background:none;border:1px solid var(--line);color:var(--ink-soft);border-radius:999px;padding:6px 14px;cursor:pointer;}
   .tog.open{border-color:var(--moss);color:var(--moss-deep);background:var(--paper-raised);font-weight:500;}
   details.fold{border-bottom:1px solid var(--line);}
-  details.fold > summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:8px;padding:15px 0;font-family:var(--serif);font-size:1rem;color:var(--moss-deep);}
+  details.fold > summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:8px;padding:18px 2px;font-family:var(--serif);font-size:1rem;color:var(--moss-deep);}
   details.fold > summary::-webkit-details-marker{display:none;}
   details.fold > summary::after{content:"＋";margin-left:auto;color:var(--ink-soft);font-family:var(--sans);font-size:0.9rem;}
   details.fold[open] > summary::after{content:"－";}
   details.fold .badge{font-family:var(--sans);font-size:0.74rem;color:var(--ink-soft);background:var(--paper-raised);border:1px solid var(--line);border-radius:999px;padding:0 8px;}
-  details.fold > .fold-body{padding:0 0 18px;}
+  details.fold > .fold-body{padding:2px 2px 22px;}
   .foot{margin-top:48px;font-size:0.78rem;color:var(--ink-soft);}
   .foot a{color:var(--moss-deep);}
+  .hdr-actions{display:flex;gap:16px;margin:14px 0 4px;}
+  .hdr-actions button{background:none;border:none;font-family:var(--sans);font-size:0.82rem;color:var(--moss-deep);cursor:pointer;padding:0;text-decoration:underline;}
+
+  #share-overlay{display:none;position:fixed;inset:0;background:rgba(46,52,48,.4);z-index:25;align-items:flex-end;justify-content:center;}
+  #share-overlay.show{display:flex;}
+  #share-panel{background:var(--paper);width:100%;max-width:480px;border-radius:16px 16px 0 0;padding:22px 20px 26px;box-shadow:0 -10px 30px rgba(46,52,48,.2);}
+  #share-panel h3{font-family:var(--serif);font-size:1.05rem;color:var(--moss-deep);margin:0 0 6px;}
+  #share-panel p.desc{font-size:0.85rem;color:var(--ink-soft);margin:0 0 16px;}
+  .share-actions{display:flex;flex-direction:column;gap:10px;}
+  .share-btn{
+    display:flex;align-items:center;gap:10px;width:100%;text-align:left;
+    background:var(--paper-raised);border:1px solid var(--line);border-radius:var(--radius);
+    padding:11px 14px;font-family:var(--sans);font-size:0.9rem;color:var(--ink);cursor:pointer;text-decoration:none;
+  }
+  .share-btn.primary{background:var(--moss);border-color:var(--moss);color:#fff;}
+  .share-link{font-size:0.76rem;color:var(--ink-soft);word-break:break-all;margin-top:14px;}
+  .share-close{display:block;margin:16px auto 0;background:none;border:none;color:var(--ink-soft);font-size:0.85rem;cursor:pointer;}
+
+  .backup-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:4px;}
+  .backup-row button{
+    font-family:var(--sans);font-size:0.85rem;background:var(--paper-raised);border:1px solid var(--line);
+    color:var(--moss-deep);border-radius:var(--radius);padding:9px 16px;cursor:pointer;
+  }
+  .backup-row button.primary{background:var(--moss);border-color:var(--moss);color:#fff;}
+  .voice-row{display:flex;align-items:center;gap:10px;margin-top:10px;}
+  .voice-btn{
+    display:inline-flex;align-items:center;gap:6px;font-family:var(--sans);font-size:0.82rem;
+    background:var(--paper-raised);border:1px solid var(--line);color:var(--moss-deep);
+    border-radius:999px;padding:7px 14px;cursor:pointer;
+  }
+  .voice-btn .dot{width:7px;height:7px;border-radius:50%;background:var(--ink-soft);}
+  .voice-btn.listening{background:var(--clay);border-color:var(--clay);color:#fff;}
+  .voice-btn.listening .dot{background:#fff;animation:pulse 1s infinite;}
+  @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.3;}}
+  .voice-interim{font-size:0.82rem;color:var(--ink-soft);font-style:italic;flex:1;}
 </style>
 </head>
 <body>
@@ -281,6 +316,9 @@
       <button data-view="resources">資源包</button>
       <button data-view="settings">設定</button>
     </nav>
+    <div class="hdr-actions no-print">
+      <button type="button" id="share-open-btn">分享給朋友</button>
+    </div>
   </header>
 
   <section class="view active" id="view-today"></section>
@@ -290,6 +328,16 @@
   <section class="view" id="view-settings"></section>
 
   <p class="foot no-print">這個小工具，來自 <a href="https://wangchaowen12.github.io/irc-portal/">IRC｜Inner Reality Circle</a>。內容只存在這台裝置的瀏覽器裡。</p>
+</div>
+
+<div id="share-overlay">
+  <div id="share-panel">
+    <h3>分享給朋友</h3>
+    <p class="desc">如果你覺得這個工具有幫助，也可以分享給正在經歷困難時期的朋友。</p>
+    <div class="share-actions" id="share-actions"></div>
+    <p class="share-link" id="share-link-text"></p>
+    <button type="button" class="share-close" id="share-close-btn">關閉</button>
+  </div>
 </div>
 
 <div id="modal-overlay">
@@ -311,6 +359,68 @@
   ];
 
   var URGENT = "有傷害自己的念頭";
+  var activeRecognition = null;
+  function stopActiveRecognition(){
+    if(activeRecognition){
+      var r = activeRecognition; activeRecognition = null;
+      r.onend = null; r.onresult = null; r.onerror = null;
+      try{ r.stop(); }catch(e){}
+    }
+  }
+  var SpeechRecognitionCtor = window.SpeechRecognition || window.webkitSpeechRecognition;
+  function addVoiceInput(textarea, container){
+    if(!SpeechRecognitionCtor) return;
+    var row = document.createElement("div"); row.className = "voice-row no-print";
+    var btn = document.createElement("button"); btn.type = "button"; btn.className = "voice-btn";
+    var dot = document.createElement("span"); dot.className = "dot";
+    btn.appendChild(dot); btn.appendChild(document.createTextNode("語音輸入"));
+    var interim = document.createElement("span"); interim.className = "voice-interim";
+    row.appendChild(btn); row.appendChild(interim);
+    container.appendChild(row);
+
+    var recog = null;
+    var listening = false;
+    function setListening(on){
+      listening = on;
+      btn.classList.toggle("listening", on);
+      btn.lastChild && (btn.childNodes[1].textContent = on ? "點一下結束" : "語音輸入");
+      if(!on) interim.textContent = "";
+    }
+    btn.addEventListener("click", function(){
+      if(listening){ stopActiveRecognition(); setListening(false); return; }
+      stopActiveRecognition();
+      recog = new SpeechRecognitionCtor();
+      recog.lang = "zh-TW"; recog.continuous = true; recog.interimResults = true;
+      recog.onresult = function(e){
+        var finalText = "", liveText = "";
+        for(var i = e.resultIndex; i < e.results.length; i++){
+          var seg = e.results[i][0].transcript;
+          if(e.results[i].isFinal) finalText += seg; else liveText += seg;
+        }
+        if(finalText){
+          var cur = textarea.value;
+          var sep = cur && !/[\s\n]$/.test(cur) ? "" : "";
+          textarea.value = cur + (cur && !/\n$/.test(cur) ? "" : "") + finalText;
+          textarea.dispatchEvent(new Event("input", {bubbles:true}));
+        }
+        interim.textContent = liveText;
+      };
+      recog.onerror = function(e){
+        setListening(false);
+        if(e.error === "not-allowed" || e.error === "service-not-allowed"){
+          interim.textContent = "沒有取得麥克風權限。";
+        } else if(e.error !== "no-speech" && e.error !== "aborted"){
+          interim.textContent = "語音輸入發生問題，請再試一次。";
+        }
+      };
+      recog.onend = function(){ if(activeRecognition === recog) setListening(false); activeRecognition = null; };
+      try{
+        recog.start();
+        activeRecognition = recog;
+        setListening(true);
+      }catch(err){ interim.textContent = "無法啟動語音輸入。"; }
+    });
+  }
   var SUPPORT_SUGGEST = ["聽我說，不用給建議","給我空間來表達我的感覺","陪我散步","陪我吃飯","陪著我，不用說話","提醒我吃飯睡覺","接我的電話","幫我處理一件事","傳訊息關心我"];
   function supportList(person){ return (person.helpWith || "").split("、").map(function(x){ return x.trim(); }).filter(Boolean); }
   function uid(){ return "t" + Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
@@ -548,7 +658,9 @@
     ta.placeholder = "今天發生了什麼？現在有什麼感受？";
     ta.value = day.freewrite || "";
     ta.addEventListener("input", function(){ day.freewrite = ta.value; save(); });
-    b1.appendChild(ta); mount.appendChild(b1);
+    b1.appendChild(ta);
+    addVoiceInput(ta, b1);
+    mount.appendChild(b1);
 
     var togRow = document.createElement("div"); togRow.className = "tog-row"; mount.appendChild(togRow);
     var badgeFns = [];
@@ -801,11 +913,13 @@
     if(name==="journal") renderJournal();
   }
   document.getElementById("modal-close").addEventListener("click", function(){
+    stopActiveRecognition();
     document.getElementById("modal-overlay").classList.remove("show");
     refreshActive();
   });
   document.getElementById("modal-overlay").addEventListener("click", function(e){
     if(e.target.id === "modal-overlay"){
+      stopActiveRecognition();
       document.getElementById("modal-overlay").classList.remove("show");
       refreshActive();
     }
@@ -914,6 +1028,22 @@
     var mount = document.getElementById("view-settings");
     mount.innerHTML = "";
 
+    var gBackup = document.createElement("div"); gBackup.className="settings-group"; gBackup.dataset.nofold = "1";
+    gBackup.innerHTML = '<h3>備份</h3><p class="rescue-intro">內容只存在這台裝置的瀏覽器裡，清除瀏覽資料或換裝置就會不見。建議偶爾匯出備份一次，尤其是清除資料或換手機之前。</p>';
+    var bkRow = document.createElement("div"); bkRow.className = "backup-row";
+    var expBtn = document.createElement("button"); expBtn.type = "button"; expBtn.className = "primary"; expBtn.textContent = "匯出備份";
+    expBtn.addEventListener("click", exportBackup);
+    var impBtn = document.createElement("button"); impBtn.type = "button"; impBtn.textContent = "匯入備份";
+    var impFile = document.createElement("input"); impFile.type = "file"; impFile.accept = "application/json"; impFile.style.display = "none";
+    impBtn.addEventListener("click", function(){ impFile.click(); });
+    impFile.addEventListener("change", function(){
+      if(impFile.files && impFile.files[0]) importBackupFile(impFile.files[0], function(){ renderSettings(); });
+      impFile.value = "";
+    });
+    bkRow.appendChild(expBtn); bkRow.appendChild(impBtn); bkRow.appendChild(impFile);
+    gBackup.appendChild(bkRow);
+    mount.appendChild(gBackup);
+
     var g1 = document.createElement("div"); g1.className="settings-group";
     g1.innerHTML = '<h3>這段旅程</h3>';
     var whatLabel = document.createElement("label"); whatLabel.textContent="我發生了什麼事？"; whatLabel.style.display="block"; whatLabel.style.fontSize="0.85rem"; whatLabel.style.marginBottom="6px";
@@ -1007,7 +1137,8 @@
     var dBtn = document.createElement("button");
     dBtn.textContent = "清除這台裝置上的所有資料";
     dBtn.addEventListener("click", function(){
-      if(confirm("這會清除這台裝置上目前記錄的所有內容，且無法復原。確定要繼續嗎？")){
+      exportBackup();
+      if(confirm("已經先幫你匯出一份備份到下載資料夾。這會清除這台裝置上目前記錄的所有內容，且無法復原。確定要繼續嗎？")){
         localStorage.removeItem(STORAGE_KEY);
         location.reload();
       }
@@ -1348,6 +1479,7 @@
   // ---------- tab switching ----------
   var tabs = document.querySelectorAll("nav.tabs button");
   function switchView(name){
+    stopActiveRecognition();
     document.getElementById("modal-overlay").classList.remove("show");
     tabs.forEach(function(b){ b.classList.toggle("active", b.dataset.view===name); });
     document.querySelectorAll("section.view").forEach(function(v){ v.classList.remove("active"); });
@@ -1362,6 +1494,82 @@
   tabs.forEach(function(btn){
     btn.addEventListener("click", function(){ switchView(btn.dataset.view); });
   });
+
+  // ---------- share ----------
+  (function(){
+    var SHARE_URL = "https://wangchaowen12.github.io/irc-portal/recovery-journal.html";
+    var SHARE_TEXT = "這是 IRC 的一個小工具：六個月復原旅程。陪你在重大失落之後，按自己的速度慢慢復原。";
+    var overlay = document.getElementById("share-overlay");
+    var actions = document.getElementById("share-actions");
+    document.getElementById("share-link-text").textContent = SHARE_URL;
+
+    function addBtn(label, cls, handler){
+      var b = document.createElement("button");
+      b.type = "button"; b.className = "share-btn" + (cls ? " " + cls : "");
+      b.textContent = label;
+      b.addEventListener("click", handler);
+      actions.appendChild(b);
+      return b;
+    }
+    if(navigator.share){
+      addBtn("分享…", "primary", function(){
+        navigator.share({ title:"六個月復原旅程｜IRC", text:SHARE_TEXT, url:SHARE_URL }).catch(function(){});
+      });
+    }
+    var lineUrl = "https://line.me/R/msg/text/?" + encodeURIComponent(SHARE_TEXT + "\n" + SHARE_URL);
+    var lineBtn = document.createElement("a");
+    lineBtn.className = "share-btn"; lineBtn.href = lineUrl; lineBtn.target = "_blank"; lineBtn.rel = "noopener";
+    lineBtn.textContent = "用 LINE 傳給朋友";
+    actions.appendChild(lineBtn);
+    addBtn("複製連結", null, function(btn){
+      return function(){
+        function done(){ btn.textContent = "已複製連結！"; setTimeout(function(){ btn.textContent = "複製連結"; }, 1500); }
+        if(navigator.clipboard && navigator.clipboard.writeText){
+          navigator.clipboard.writeText(SHARE_URL).then(done, done);
+        } else {
+          var ta = document.createElement("textarea"); ta.value = SHARE_URL; document.body.appendChild(ta);
+          ta.select(); try{ document.execCommand("copy"); }catch(e){} document.body.removeChild(ta); done();
+        }
+      };
+    }(actions.lastChild));
+
+    document.getElementById("share-open-btn").addEventListener("click", function(){ overlay.classList.add("show"); });
+    document.getElementById("share-close-btn").addEventListener("click", function(){ overlay.classList.remove("show"); });
+    overlay.addEventListener("click", function(e){ if(e.target.id === "share-overlay") overlay.classList.remove("show"); });
+  })();
+
+  // ---------- backup export / import ----------
+  function exportBackup(){
+    var blob = new Blob([JSON.stringify(data, null, 2)], {type:"application/json"});
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    var d = new Date();
+    a.href = url;
+    a.download = "recovery-journal-backup-" + fmt(d) + ".json";
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(function(){ URL.revokeObjectURL(url); }, 1000);
+  }
+  function importBackupFile(file, afterFn){
+    var reader = new FileReader();
+    reader.onload = function(){
+      var parsed;
+      try{ parsed = JSON.parse(reader.result); }catch(e){ alert("這個檔案讀不太出來，請確認是不是匯出的備份檔。"); return; }
+      if(!parsed || typeof parsed !== "object" || !parsed.meta){ alert("這個檔案的內容看起來不是備份檔。"); return; }
+      if(!confirm("匯入後會覆蓋這台裝置目前的所有內容，且無法復原。確定要匯入嗎？")) return;
+      data = parsed;
+      if(!data.rescueFive) data.rescueFive = [0,1,2,3,4].map(function(){ return {name:"",relation:"",contact:"",helpWith:""}; });
+      if(!data.rescueKit) data.rescueKit = { peopleSelected:[false,false,false,false,false], places:[], things:[], professional:[] };
+      if(!data.rescueKit.peopleSelected) data.rescueKit.peopleSelected = [false,false,false,false,false];
+      if(typeof data.supportMessage !== "string") data.supportMessage = "";
+      if(!data.supportMsgs) data.supportMsgs = {};
+      if(!data.map) data.map = [];
+      if(!data.tasks) data.tasks = [];
+      if(!data.warnSigns) data.warnSigns = [];
+      save();
+      if(afterFn) afterFn();
+    };
+    reader.readAsText(file);
+  }
 
   // ---------- onboarding ----------
   function startApp(){
