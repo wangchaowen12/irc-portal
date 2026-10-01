@@ -391,15 +391,17 @@
       stopActiveRecognition();
       recog = new SpeechRecognitionCtor();
       recog.lang = "zh-TW"; recog.continuous = true; recog.interimResults = true;
+      var processedUpTo = 0;
       recog.onresult = function(e){
         var finalText = "", liveText = "";
-        for(var i = e.resultIndex; i < e.results.length; i++){
+        var start = Math.max(e.resultIndex, processedUpTo);
+        for(var i = start; i < e.results.length; i++){
           var seg = e.results[i][0].transcript;
-          if(e.results[i].isFinal) finalText += seg; else liveText += seg;
+          if(e.results[i].isFinal){ finalText += seg; processedUpTo = i + 1; }
+          else liveText += seg;
         }
         if(finalText){
           var cur = textarea.value;
-          var sep = cur && !/[\s\n]$/.test(cur) ? "" : "";
           textarea.value = cur + (cur && !/\n$/.test(cur) ? "" : "") + finalText;
           textarea.dispatchEvent(new Event("input", {bubbles:true}));
         }
